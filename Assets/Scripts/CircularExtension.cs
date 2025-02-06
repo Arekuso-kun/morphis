@@ -9,7 +9,7 @@ public class CircularExtension : MonoBehaviour
     [Tooltip("The grid object for reference")]
     public GameObject grid;
 
-    [Tooltip("The mode of transformation")]
+    [Tooltip("The mode of transformation (1 = circular, 2 = stretch)")]
     public int mode = 1;
 
     private Vector3[] previousVertices;
@@ -45,49 +45,45 @@ public class CircularExtension : MonoBehaviour
         Vector3[] targetVertices = targetMesh.vertices;
         previousVertices = targetVertices;
 
-        float minX = float.MaxValue, maxX = float.MinValue;
-        float minZ = float.MaxValue, maxZ = float.MinValue;
-        foreach (var vertex in targetVertices)
-        {
-            if (vertex.x < minX) minX = vertex.x;
-            if (vertex.x > maxX) maxX = vertex.x;
-            if (vertex.z < minZ) minZ = vertex.z;
-            if (vertex.z > maxZ) maxZ = vertex.z;
-        }
-
-        Vector3 gridCenter = Vector3.zero;
+        Vector3 gridCenter = transform.position;
         if (grid)
         {
             gridCenter = grid.transform.position;
             float halfHeight = GetComponent<Renderer>().bounds.size.y / 2.0f;
             transform.position = grid.transform.position + new Vector3(0, halfHeight, 0);
         }
-        else
-        {
-            gridCenter = transform.position;
-        }
-        Vector3 targetObjectPosition = targetObject.transform.position;
 
-        minX += (targetObjectPosition.x - gridCenter.x);
-        maxX += (targetObjectPosition.x - gridCenter.x);
-        minZ += (targetObjectPosition.z - gridCenter.z);
-        maxZ += (targetObjectPosition.z - gridCenter.z);
+        Vector3 targetObjectPosition = targetObject.transform.position;
 
         float maxAll = 4f;
 
-        minX = -maxAll;
-        maxX = maxAll;
-        minZ = -maxAll;
-        maxZ = maxAll;
+        float minX = -maxAll;
+        float minZ = -maxAll;
+        float maxX = maxAll;
+        float maxZ = maxAll;
 
+        if (mode == 1)
+        {
+            ApplyCircularTransformation(targetVertices, targetMesh, gridCenter, targetObjectPosition, minX, minZ, maxX, maxZ);
+        }
+        else if (mode == 2)
+        {
+            ApplyStretchTransformation(targetVertices, targetMesh, gridCenter, targetObjectPosition, minX, minZ, maxX, maxZ);
+        }
+
+        UpdateMesh();
+    }
+
+    void ApplyCircularTransformation(Vector3[] targetVertices, Mesh targetMesh, Vector3 gridCenter, Vector3 targetObjectPosition, float minX, float minZ, float maxX, float maxZ)
+    {
         vertices = new Vector3[targetVertices.Length];
 
         for (int i = 0; i < targetVertices.Length; i++)
         {
             float targetX = targetVertices[i].x;
-            targetX += (targetObjectPosition.x - gridCenter.x);
             float targetZ = targetVertices[i].z;
-            targetZ += (targetObjectPosition.z - gridCenter.z);
+            targetX += (targetObjectPosition.x);
+            targetZ += (targetObjectPosition.z);
 
             float normalizedX = (targetX - minX) / (maxX - minX);
             float normalizedZ = (targetZ - minZ) / (maxZ - minZ);
@@ -107,9 +103,9 @@ public class CircularExtension : MonoBehaviour
             float targetZ2 = targetVertices[triangles[i + 1]].z;
             float targetZ3 = targetVertices[triangles[i + 2]].z;
 
-            targetZ1 += (targetObjectPosition.z - gridCenter.z);
-            targetZ2 += (targetObjectPosition.z - gridCenter.z);
-            targetZ3 += (targetObjectPosition.z - gridCenter.z);
+            targetZ1 += (targetObjectPosition.z);
+            targetZ2 += (targetObjectPosition.z);
+            targetZ3 += (targetObjectPosition.z);
 
             float targetZcenter = (targetZ1 + targetZ2 + targetZ3) / 3;
 
@@ -118,8 +114,35 @@ public class CircularExtension : MonoBehaviour
                 (triangles[i + 1], triangles[i]) = (triangles[i], triangles[i + 1]);
             }
         }
+    }
 
-        UpdateMesh();
+    void ApplyStretchTransformation(Vector3[] targetVertices, Mesh targetMesh, Vector3 gridCenter, Vector3 targetObjectPosition, float minX, float minZ, float maxX, float maxZ)
+    {
+        float stretchFactor = 2.0f;
+        vertices = new Vector3[targetVertices.Length];
+
+        for (int i = 0; i < targetVertices.Length; i++)
+        {
+            float targetX = targetVertices[i].x;
+            float targetZ = targetVertices[i].z;
+            targetX += (targetObjectPosition.x);
+            targetZ += (targetObjectPosition.z);
+
+            float normalizedX = (targetX - minX) / (maxX - minX);
+            float normalizedZ = (targetZ - minZ) / (maxZ - minZ);
+
+            normalizedX += 0.5f;
+            normalizedZ -= 0.5f;
+
+            targetX = normalizedX * 8;
+            targetZ = normalizedZ * 8;
+
+            vertices[i] = new Vector3(targetX * stretchFactor + 4, targetVertices[i].y, targetZ);
+        }
+
+        // Debug.Log(targetVertices[1]);
+
+        triangles = targetMesh.triangles;
     }
 
     void UpdateMesh()

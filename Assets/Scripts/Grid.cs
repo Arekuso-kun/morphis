@@ -68,8 +68,6 @@ public class Grid : MonoBehaviour
             }
         }
 
-        Debug.Log("Vertices: " + vertices.Length);
-
         UpdateMesh();
     }
 
