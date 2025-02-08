@@ -1,11 +1,11 @@
-using Unity.VisualScripting;
 using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
+[RequireComponent(typeof(BoxCollider))]
 public class ProceduralCube : MonoBehaviour
 {
     [Tooltip("Number of squares along one side of the cube")]
-    public int divisions = 4;
+    public int divisions = 96;
 
     [Tooltip("Size of the cube")]
     public float size = 1f;
@@ -19,6 +19,8 @@ public class ProceduralCube : MonoBehaviour
     {
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
+
+        GetComponent<BoxCollider>().size = new Vector3(size, size, size);
 
         CreateCube();
     }

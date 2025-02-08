@@ -1,7 +1,8 @@
-using Unity.VisualScripting;
 using UnityEngine;
 
-public class CircularExtension : MonoBehaviour
+[RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
+[RequireComponent(typeof(MoveAboveGrid))]
+public class MeshTransformer : MonoBehaviour
 {
     [Tooltip("The target object to be transformed")]
     public GameObject targetObject;
@@ -9,23 +10,45 @@ public class CircularExtension : MonoBehaviour
     [Tooltip("The grid object for reference")]
     public GameObject grid;
 
-    [Tooltip("The mode of transformation (1 = circular, 2 = stretch)")]
-    public int mode = 1;
-
-    private Vector3[] previousVertices;
+    private int mode;
+    private float gridSize;
+    private float gridHeightOffset;
     private Mesh mesh;
     private Vector3[] vertices;
     private int[] triangles;
+    private Vector3[] previousVertices;
     private Vector3 previousPosition;
+
+    private MoveAboveGrid moveAboveGrid;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        ObjectManager objectManager = GetComponentInParent<ObjectManager>();
+        if (objectManager == null)
+        {
+            Debug.LogError("ObjectManager component is missing!");
+            return;
+        }
+
+        mode = objectManager.mode;
+        GameObject targetGrid = objectManager.GetGrid();
+        gridSize = targetGrid.GetComponent<Grid>().size * targetGrid.GetComponent<Grid>().squareSize;
+        gridHeightOffset = targetGrid.GetComponent<Grid>().heightOffset;
+
+        moveAboveGrid = GetComponent<MoveAboveGrid>();
+        if (moveAboveGrid == null)
+        {
+            Debug.LogError("MoveAboveGrid component is missing!");
+            return;
+        }
+
         mesh = new Mesh();
-        GetComponent<MeshFilter>().mesh = mesh;
 
         UpdateShape();
         previousPosition = targetObject.transform.position;
+
+        GetComponent<MeshFilter>().mesh = mesh;
     }
 
     // Update is called once per frame
@@ -37,6 +60,11 @@ public class CircularExtension : MonoBehaviour
         }
     }
 
+    public Mesh GetMesh()
+    {
+        return mesh;
+    }
+
     void UpdateShape()
     {
         MeshFilter targetMeshFilter = targetObject.GetComponent<MeshFilter>();
@@ -45,36 +73,26 @@ public class CircularExtension : MonoBehaviour
         Vector3[] targetVertices = targetMesh.vertices;
         previousVertices = targetVertices;
 
-        Vector3 gridCenter = transform.position;
         if (grid)
         {
-            gridCenter = grid.transform.position;
-            float halfHeight = GetComponent<Renderer>().bounds.size.y / 2.0f;
-            transform.position = grid.transform.position + new Vector3(0, halfHeight, 0);
+            moveAboveGrid.AdjustHeightAboveGrid(grid.transform.position.y, gridHeightOffset);
         }
 
         Vector3 targetObjectPosition = targetObject.transform.position;
 
-        float maxAll = 4f;
-
-        float minX = -maxAll;
-        float minZ = -maxAll;
-        float maxX = maxAll;
-        float maxZ = maxAll;
-
         if (mode == 1)
         {
-            ApplyCircularTransformation(targetVertices, targetMesh, gridCenter, targetObjectPosition, minX, minZ, maxX, maxZ);
+            ApplyCircularTransformation(targetVertices, targetMesh, targetObjectPosition);
         }
         else if (mode == 2)
         {
-            ApplyStretchTransformation(targetVertices, targetMesh, gridCenter, targetObjectPosition, minX, minZ, maxX, maxZ);
+            ApplyStretchTransformation(targetVertices, targetMesh, targetObjectPosition);
         }
 
         UpdateMesh();
     }
 
-    void ApplyCircularTransformation(Vector3[] targetVertices, Mesh targetMesh, Vector3 gridCenter, Vector3 targetObjectPosition, float minX, float minZ, float maxX, float maxZ)
+    void ApplyCircularTransformation(Vector3[] targetVertices, Mesh targetMesh, Vector3 targetObjectPosition)
     {
         vertices = new Vector3[targetVertices.Length];
 
@@ -85,8 +103,10 @@ public class CircularExtension : MonoBehaviour
             targetX += (targetObjectPosition.x);
             targetZ += (targetObjectPosition.z);
 
-            float normalizedX = (targetX - minX) / (maxX - minX);
-            float normalizedZ = (targetZ - minZ) / (maxZ - minZ);
+            float gridMin = -gridSize / 2;
+
+            float normalizedX = (targetX - gridMin) / gridSize;
+            float normalizedZ = (targetZ - gridMin) / gridSize;
 
             float angle = normalizedX * Mathf.PI * 2;
 
@@ -116,7 +136,7 @@ public class CircularExtension : MonoBehaviour
         }
     }
 
-    void ApplyStretchTransformation(Vector3[] targetVertices, Mesh targetMesh, Vector3 gridCenter, Vector3 targetObjectPosition, float minX, float minZ, float maxX, float maxZ)
+    void ApplyStretchTransformation(Vector3[] targetVertices, Mesh targetMesh, Vector3 targetObjectPosition)
     {
         float stretchFactor = 2.0f;
         vertices = new Vector3[targetVertices.Length];
@@ -128,8 +148,10 @@ public class CircularExtension : MonoBehaviour
             targetX += (targetObjectPosition.x);
             targetZ += (targetObjectPosition.z);
 
-            float normalizedX = (targetX - minX) / (maxX - minX);
-            float normalizedZ = (targetZ - minZ) / (maxZ - minZ);
+            float gridMin = -gridSize / 2;
+
+            float normalizedX = (targetX - gridMin) / gridSize;
+            float normalizedZ = (targetZ - gridMin) / gridSize;
 
             normalizedX += 0.5f;
             normalizedZ -= 0.5f;
@@ -139,8 +161,6 @@ public class CircularExtension : MonoBehaviour
 
             vertices[i] = new Vector3(targetX * stretchFactor + 4, targetVertices[i].y, targetZ);
         }
-
-        // Debug.Log(targetVertices[1]);
 
         triangles = targetMesh.triangles;
     }
@@ -153,6 +173,7 @@ public class CircularExtension : MonoBehaviour
         mesh.triangles = triangles;
 
         mesh.RecalculateNormals();
+        mesh.RecalculateBounds();
     }
 
     private bool TargetVerticesChanged()

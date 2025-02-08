@@ -1,35 +1,59 @@
-using Unity.VisualScripting;
 using UnityEngine;
 
+[RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
+[RequireComponent(typeof(BoxCollider))]
+[RequireComponent(typeof(MoveAboveGrid))]
 public class GridSnap : MonoBehaviour
 {
-    [Tooltip("Size of the grid squares")]
-    public float gridSize = 0.5f;
-
     [Tooltip("The grid object for reference")]
     public Grid grid;
 
+    private float gridSize;
     private Camera mainCamera;
     private bool isDragging = false;
+    private float halfSize;
+    private Vector3 gridPosotion;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    private MoveAboveGrid moveAboveGrid;
+
     void Start()
     {
+        if (grid == null)
+        {
+            Debug.LogError("Grid object is missing!");
+            return;
+        }
+
+        moveAboveGrid = GetComponent<MoveAboveGrid>();
+        if (moveAboveGrid == null)
+        {
+            Debug.LogError("MoveAboveGrid component is missing!");
+            return;
+        }
+
         mainCamera = Camera.main;
+        gridSize = grid.squareSize / 2.0f;
+        halfSize = grid.size * grid.squareSize / 2.0f;
+        gridPosotion = grid.transform.position;
+
+        MoveToCenter();
     }
 
-    // Update is called once per frame
     void Update()
     {
-        float halfSize = grid.size * grid.squareSize / 2.0f;
-        Vector3 checkerboardPosition = grid.transform.position;
+        if (grid == null) return;
 
-        // Check if the object is being dragged
+        moveAboveGrid.AdjustHeightAboveGrid(grid.transform.position.y, grid.heightOffset);
+        HandleDragging();
+        KeepWithinBounds();
+    }
+
+    private void HandleDragging()
+    {
         if (Input.GetMouseButtonDown(0))
         {
             Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            if (Physics.Raycast(ray, out hit) && hit.transform == transform)
+            if (Physics.Raycast(ray, out RaycastHit hit) && hit.transform == transform)
             {
                 isDragging = true;
             }
@@ -43,32 +67,38 @@ public class GridSnap : MonoBehaviour
         if (isDragging)
         {
             Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
-            Plane plane = new Plane(Vector3.up, Vector3.zero);
-            float distance;
-            if (plane.Raycast(ray, out distance))
+            Plane plane = new(Vector3.up, Vector3.zero);
+            if (plane.Raycast(ray, out float distance))
             {
                 Vector3 point = ray.GetPoint(distance);
-                Vector3 gridPoint = new Vector3(
+                Vector3 gridPoint = new(
                     Mathf.Round(point.x / gridSize) * gridSize,
                     transform.position.y,
                     Mathf.Round(point.z / gridSize) * gridSize
                 );
 
-                // Limit the gridPoint to the dimensions of the checkerboard
-                gridPoint.x = Mathf.Clamp(gridPoint.x, checkerboardPosition.x - halfSize, checkerboardPosition.x + halfSize);
-                gridPoint.z = Mathf.Clamp(gridPoint.z, checkerboardPosition.z - halfSize, checkerboardPosition.z + halfSize);
+                // Limit the gridPoint to the dimensions of the grid bounds
+                gridPoint.x = Mathf.Clamp(gridPoint.x, gridPosotion.x - halfSize, gridPosotion.x + halfSize);
+                gridPoint.z = Mathf.Clamp(gridPoint.z, gridPosotion.z - halfSize, gridPosotion.z + halfSize);
 
                 transform.position = gridPoint;
             }
         }
+    }
 
-        float halfHeight = GetComponent<Renderer>().bounds.size.y / 2.0f;
+    private void MoveToCenter()
+    {
+        transform.position = gridPosotion + new Vector3(0, transform.position.y, 0);
+    }
 
-        // Check if the object is outside the grid and move it to the center if it is
-        if (transform.position.x < checkerboardPosition.x - halfSize || transform.position.x > checkerboardPosition.x + halfSize ||
-            transform.position.z < checkerboardPosition.z - halfSize || transform.position.z > checkerboardPosition.z + halfSize)
+    private void KeepWithinBounds()
+    {
+        Vector3 position = transform.position;
+
+        if (position.x < gridPosotion.x - halfSize || position.x > gridPosotion.x + halfSize ||
+            position.z < gridPosotion.z - halfSize || position.z > gridPosotion.z + halfSize)
         {
-            transform.position = checkerboardPosition + new Vector3(0, halfHeight, 0);
+            MoveToCenter();
         }
     }
 

@@ -1,6 +1,6 @@
-using Unity.VisualScripting;
 using UnityEngine;
 
+[RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class Grid : MonoBehaviour
 {
     [Tooltip("Number of squares along one side of the grid")]
