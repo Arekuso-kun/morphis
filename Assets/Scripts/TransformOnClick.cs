@@ -17,7 +17,6 @@ public class TransformOnClick : MonoBehaviour
         }
 
         meshTransformer = generatedObject.GetComponent<MeshTransformer>();
-
         if (meshTransformer == null)
         {
             Debug.LogError("MeshTransformer component is missing on Generated Object!");
@@ -43,15 +42,13 @@ public class TransformOnClick : MonoBehaviour
     {
         Mesh generatedMesh = meshTransformer.GetMesh();
         ObjectManager objectManager = GetComponentInParent<ObjectManager>();
-
-        if (objectManager == null || objectManager.mainObject == null)
+        if (objectManager == null)
         {
-            Debug.LogError("ObjectManager or mainObject is missing!");
+            Debug.LogError("ObjectManager is missing!");
             return;
         }
 
-        GameObject targetObject = objectManager.mainObject.transform.Find("Object")?.gameObject;
-
+        GameObject targetObject = objectManager.GetObject();
         if (targetObject == null)
         {
             Debug.LogError("Target Object is missing!");

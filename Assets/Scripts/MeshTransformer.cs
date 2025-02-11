@@ -4,18 +4,20 @@ using UnityEngine;
 [RequireComponent(typeof(MoveAboveGrid))]
 public class MeshTransformer : MonoBehaviour
 {
-    [Tooltip("The target object to be transformed")]
-    public GameObject targetObject;
-
     [Tooltip("The grid object for reference")]
     public GameObject grid;
+
+    private GameObject targetObject;
+    private GameObject targetGrid;
 
     private int mode;
     private float gridSize;
     private float gridHeightOffset;
-    private Mesh mesh;
-    private Vector3[] vertices;
-    private int[] triangles;
+
+    private Mesh newMesh;
+    private Vector3[] newVertices;
+    private int[] newTriangles;
+
     private Vector3[] previousVertices;
     private Vector3 previousPosition;
 
@@ -24,6 +26,8 @@ public class MeshTransformer : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        moveAboveGrid = GetComponent<MoveAboveGrid>();
+
         ObjectManager objectManager = GetComponentInParent<ObjectManager>();
         if (objectManager == null)
         {
@@ -32,23 +36,30 @@ public class MeshTransformer : MonoBehaviour
         }
 
         mode = objectManager.mode;
-        GameObject targetGrid = objectManager.GetGrid();
-        gridSize = targetGrid.GetComponent<Grid>().size * targetGrid.GetComponent<Grid>().squareSize;
-        gridHeightOffset = targetGrid.GetComponent<Grid>().heightOffset;
-
-        moveAboveGrid = GetComponent<MoveAboveGrid>();
-        if (moveAboveGrid == null)
+        targetObject = grid ? objectManager.GetObject() : objectManager.GetGrid();
+        targetGrid = objectManager.GetGrid();
+        if (targetObject == null || targetGrid == null)
         {
-            Debug.LogError("MoveAboveGrid component is missing!");
+            Debug.LogError("Target Object or Target Grid is missing!");
             return;
         }
 
-        mesh = new Mesh();
+        Grid gridComponent = targetGrid.GetComponent<Grid>();
+        if (gridComponent == null)
+        {
+            Debug.LogError("Grid component is missing!");
+            return;
+        }
+
+        gridSize = gridComponent.size * gridComponent.squareSize;
+        gridHeightOffset = gridComponent.heightOffset;
+
+        newMesh = new Mesh();
 
         UpdateShape();
         previousPosition = targetObject.transform.position;
 
-        GetComponent<MeshFilter>().mesh = mesh;
+        GetComponent<MeshFilter>().mesh = newMesh;
     }
 
     // Update is called once per frame
@@ -62,16 +73,13 @@ public class MeshTransformer : MonoBehaviour
 
     public Mesh GetMesh()
     {
-        return mesh;
+        return newMesh;
     }
 
     void UpdateShape()
     {
         MeshFilter targetMeshFilter = targetObject.GetComponent<MeshFilter>();
-
-        Mesh targetMesh = targetMeshFilter.mesh;
-        Vector3[] targetVertices = targetMesh.vertices;
-        previousVertices = targetVertices;
+        previousVertices = targetMeshFilter.mesh.vertices;
 
         if (grid)
         {
@@ -79,101 +87,109 @@ public class MeshTransformer : MonoBehaviour
         }
 
         Vector3 targetObjectPosition = targetObject.transform.position;
+        Vector3 targetGridPosition = targetGrid.transform.position;
 
         if (mode == 1)
         {
-            ApplyCircularTransformation(targetVertices, targetMesh, targetObjectPosition);
+            ApplyCircularTransformation(targetMeshFilter.mesh, targetObjectPosition, targetGridPosition);
         }
         else if (mode == 2)
         {
-            ApplyStretchTransformation(targetVertices, targetMesh, targetObjectPosition);
+            ApplyStretchTransformation(targetMeshFilter.mesh, targetObjectPosition, targetGridPosition, 2.0f);
+        }
+        else if (mode == 3)
+        {
+            ApplyStretchTransformation(targetMeshFilter.mesh, targetObjectPosition, targetGridPosition, 0.5f);
+        }
+        else if (mode == 4)
+        {
+            ApplyWavyTransformation(targetMeshFilter.mesh, targetObjectPosition, targetGridPosition);
         }
 
         UpdateMesh();
     }
 
-    void ApplyCircularTransformation(Vector3[] targetVertices, Mesh targetMesh, Vector3 targetObjectPosition)
+    void ApplyCircularTransformation(Mesh targetMesh, Vector3 targetObjectPosition, Vector3 targetGridPosition)
     {
-        vertices = new Vector3[targetVertices.Length];
-
+        Vector3[] targetVertices = targetMesh.vertices;
+        newVertices = new Vector3[targetVertices.Length];
         for (int i = 0; i < targetVertices.Length; i++)
         {
-            float targetX = targetVertices[i].x;
-            float targetZ = targetVertices[i].z;
-            targetX += (targetObjectPosition.x);
-            targetZ += (targetObjectPosition.z);
+            Vector3 offsetVertex = targetObjectPosition - targetGridPosition;
+            Vector3 adjustedVertex = targetVertices[i] + offsetVertex;
 
             float gridMin = -gridSize / 2;
-
-            float normalizedX = (targetX - gridMin) / gridSize;
-            float normalizedZ = (targetZ - gridMin) / gridSize;
+            float normalizedX = (adjustedVertex.x - gridMin) / gridSize;
+            float normalizedZ = (adjustedVertex.z - gridMin) / gridSize;
 
             float angle = normalizedX * Mathf.PI * 2;
-
             float x = Mathf.Cos(angle) * normalizedZ * 8;
             float z = Mathf.Sin(angle) * normalizedZ * 8;
 
-            vertices[i] = new Vector3(x, targetVertices[i].y, z);
+            newVertices[i] = new Vector3(x, targetVertices[i].y, z);
         }
 
-        triangles = targetMesh.triangles;
-        for (int i = 0; i < triangles.Length; i += 3)
+        newTriangles = targetMesh.triangles;
+        for (int i = 0; i < newTriangles.Length; i += 3)
         {
-            float targetZ1 = targetVertices[triangles[i]].z;
-            float targetZ2 = targetVertices[triangles[i + 1]].z;
-            float targetZ3 = targetVertices[triangles[i + 2]].z;
-
-            targetZ1 += (targetObjectPosition.z);
-            targetZ2 += (targetObjectPosition.z);
-            targetZ3 += (targetObjectPosition.z);
+            float targetZ1 = targetVertices[newTriangles[i]].z + targetObjectPosition.z;
+            float targetZ2 = targetVertices[newTriangles[i + 1]].z + targetObjectPosition.z;
+            float targetZ3 = targetVertices[newTriangles[i + 2]].z + targetObjectPosition.z;
 
             float targetZcenter = (targetZ1 + targetZ2 + targetZ3) / 3;
 
-            if (targetZcenter > -4.5f)
+            if (targetZcenter > -4f)
             {
-                (triangles[i + 1], triangles[i]) = (triangles[i], triangles[i + 1]);
+                (newTriangles[i + 1], newTriangles[i]) = (newTriangles[i], newTriangles[i + 1]);
             }
         }
     }
 
-    void ApplyStretchTransformation(Vector3[] targetVertices, Mesh targetMesh, Vector3 targetObjectPosition)
+    void ApplyStretchTransformation(Mesh targetMesh, Vector3 targetObjectPosition, Vector3 targetGridPosition, float stretchFactor)
     {
-        float stretchFactor = 2.0f;
-        vertices = new Vector3[targetVertices.Length];
+        Vector3[] targetVertices = targetMesh.vertices;
+        newVertices = new Vector3[targetVertices.Length];
+        for (int i = 0; i < targetVertices.Length; i++)
+        {
+            Vector3 offsetVertex = targetObjectPosition - targetGridPosition;
+            Vector3 adjustedVertex = targetVertices[i] + offsetVertex;
+
+            newVertices[i] = new Vector3(adjustedVertex.x * stretchFactor, targetVertices[i].y, adjustedVertex.z);
+        }
+
+        newTriangles = targetMesh.triangles;
+    }
+
+    void ApplyWavyTransformation(Mesh targetMesh, Vector3 targetObjectPosition, Vector3 targetGridPosition)
+    {
+        Vector3[] targetVertices = targetMesh.vertices;
+        newVertices = new Vector3[targetVertices.Length];
 
         for (int i = 0; i < targetVertices.Length; i++)
         {
-            float targetX = targetVertices[i].x;
-            float targetZ = targetVertices[i].z;
-            targetX += (targetObjectPosition.x);
-            targetZ += (targetObjectPosition.z);
+            Vector3 offsetVertex = targetObjectPosition - targetGridPosition;
+            Vector3 adjustedVertex = targetVertices[i] + offsetVertex;
 
             float gridMin = -gridSize / 2;
+            float normalizedX = (adjustedVertex.x - gridMin) / gridSize;
 
-            float normalizedX = (targetX - gridMin) / gridSize;
-            float normalizedZ = (targetZ - gridMin) / gridSize;
+            float waveHeight = Mathf.Sin(normalizedX * Mathf.PI * 2) * 0.5f;
 
-            normalizedX += 0.5f;
-            normalizedZ -= 0.5f;
-
-            targetX = normalizedX * 8;
-            targetZ = normalizedZ * 8;
-
-            vertices[i] = new Vector3(targetX * stretchFactor + 4, targetVertices[i].y, targetZ);
+            newVertices[i] = new Vector3(adjustedVertex.x, targetVertices[i].y, adjustedVertex.z + waveHeight);
         }
 
-        triangles = targetMesh.triangles;
+        newTriangles = targetMesh.triangles;
     }
 
     void UpdateMesh()
     {
-        mesh.Clear();
+        newMesh.Clear();
 
-        mesh.vertices = vertices;
-        mesh.triangles = triangles;
+        newMesh.vertices = newVertices;
+        newMesh.triangles = newTriangles;
 
-        mesh.RecalculateNormals();
-        mesh.RecalculateBounds();
+        newMesh.RecalculateNormals();
+        newMesh.RecalculateBounds();
     }
 
     private bool TargetVerticesChanged()

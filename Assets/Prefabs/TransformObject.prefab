@@ -276,7 +276,7 @@ GameObject:
   - component: {fileID: 1238748369219100162}
   - component: {fileID: 3364278337587430350}
   m_Layer: 0
-  m_Name: Secondary Object
+  m_Name: TransformObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

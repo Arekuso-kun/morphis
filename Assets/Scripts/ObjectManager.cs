@@ -5,11 +5,8 @@ public class ObjectManager : MonoBehaviour
     [Tooltip("The main object to be transformed")]
     public GameObject mainObject;
 
-    [Tooltip("The mode of transformation (1 = circular, 2 = stretch)")]
+    [Tooltip("The mode of transformation")]
     public int mode;
-
-    private GameObject targetObject;
-    private GameObject targetGrid;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -20,24 +17,17 @@ public class ObjectManager : MonoBehaviour
             return;
         }
 
-        targetObject = mainObject.transform.Find("Object")?.gameObject;
-        if (targetObject == null)
-        {
-            Debug.LogError("Target Object is missing!");
-            return;
-        }
-
-        targetGrid = mainObject.transform.Find("Grid")?.gameObject;
-        if (targetGrid == null)
-        {
-            Debug.LogError("Target Grid is missing!");
-            return;
-        }
+        Debug.Log("ObjectManager initialized successfully.");
     }
 
     public GameObject GetGrid()
     {
-        return targetGrid;
+        return mainObject.transform.Find("Grid")?.gameObject;
+    }
+
+    public GameObject GetObject()
+    {
+        return mainObject.transform.Find("Object")?.gameObject;
     }
 
     // Update is called once per frame
