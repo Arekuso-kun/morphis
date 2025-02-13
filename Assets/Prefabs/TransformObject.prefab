@@ -124,10 +124,10 @@ GameObject:
   - component: {fileID: 7935229912962713902}
   - component: {fileID: 673573703783228324}
   - component: {fileID: 1318122216911452530}
-  - component: {fileID: 7785390940218477545}
   - component: {fileID: 8107279654154384815}
   - component: {fileID: 2178790351977878885}
   - component: {fileID: 8064643189829315807}
+  - component: {fileID: 2563330366193769803}
   m_Layer: 0
   m_Name: Grid
   m_TagString: Untagged
@@ -203,28 +203,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &7785390940218477545
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6021022702415473218}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!114 &8107279654154384815
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -251,7 +229,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   generatedObject: {fileID: 4663665466285102535}
-  hoverColor: {r: 0, g: 0.46226418, b: 0, a: 1}
 --- !u!114 &8064643189829315807
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -264,6 +241,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b89fa2162f5fad4bbab15a6b82fa7b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!65 &2563330366193769803
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6021022702415473218}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &6650236025078029414
 GameObject:
   m_ObjectHideFlags: 0

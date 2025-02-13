@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class TransformOnClick : MonoBehaviour
 {
@@ -6,6 +7,7 @@ public class TransformOnClick : MonoBehaviour
     public GameObject generatedObject;
 
     private MeshTransformer meshTransformer;
+    private Stack<Mesh> undoStack = new Stack<Mesh>();
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -31,11 +33,12 @@ public class TransformOnClick : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
-            if (hit.transform == transform)
+            if (hit.transform == transform || hit.transform == generatedObject.transform)
             {
                 ApplyHoverEffect(true);
                 if (Input.GetMouseButtonDown(0)) // Left click
                 {
+                    SaveMeshState();
                     ApplyTransformation();
                 }
             }
@@ -47,6 +50,11 @@ public class TransformOnClick : MonoBehaviour
         else
         {
             ApplyHoverEffect(false);
+        }
+
+        if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.Z)) // Ctrl+Z
+        {
+            UndoTransformation();
         }
     }
 
@@ -96,4 +104,36 @@ public class TransformOnClick : MonoBehaviour
         }
     }
 
+    private void SaveMeshState()
+    {
+        ObjectManager objectManager = GetComponentInParent<ObjectManager>();
+        if (objectManager == null) return;
+
+        GameObject targetObject = objectManager.GetObject();
+        if (targetObject == null) return;
+
+        Mesh currentMesh = targetObject.GetComponent<MeshFilter>().mesh;
+        if (currentMesh == null) return;
+
+        Mesh savedMesh = Instantiate(currentMesh);
+        undoStack.Push(savedMesh);
+    }
+
+    private void UndoTransformation()
+    {
+        if (undoStack.Count == 0)
+        {
+            Debug.Log("No previous transformations to undo.");
+            return;
+        }
+
+        ObjectManager objectManager = GetComponentInParent<ObjectManager>();
+        if (objectManager == null) return;
+
+        GameObject targetObject = objectManager.GetObject();
+        if (targetObject == null) return;
+
+        Mesh previousMesh = undoStack.Pop();
+        targetObject.GetComponent<MeshFilter>().mesh = previousMesh;
+    }
 }

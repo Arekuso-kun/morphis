@@ -1,6 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
+[RequireComponent(typeof(BoxCollider))]
 [RequireComponent(typeof(MoveAboveGrid))]
 public class MeshTransformer : MonoBehaviour
 {
@@ -20,6 +21,7 @@ public class MeshTransformer : MonoBehaviour
 
     private Vector3[] previousVertices;
     private Vector3 previousPosition;
+    private Vector3 previousBounds;
 
     private MoveAboveGrid moveAboveGrid;
 
@@ -55,11 +57,11 @@ public class MeshTransformer : MonoBehaviour
         gridHeightOffset = gridComponent.heightOffset;
 
         newMesh = new Mesh();
+        GetComponent<MeshFilter>().mesh = newMesh;
 
-        UpdateShape();
         previousPosition = targetObject.transform.position;
 
-        GetComponent<MeshFilter>().mesh = newMesh;
+        UpdateShape();
     }
 
     // Update is called once per frame
@@ -69,11 +71,30 @@ public class MeshTransformer : MonoBehaviour
         {
             UpdateShape();
         }
+
+        if (BoundsChanged())
+        {
+            UpdateCollider();
+        }
     }
 
     public Mesh GetMesh()
     {
         return newMesh;
+    }
+
+    void UpdateCollider()
+    {
+        BoxCollider boxCollider = GetComponent<BoxCollider>();
+
+        Vector3 boundsSize = GetComponent<Renderer>().bounds.size;
+        boundsSize.y = Mathf.Max(boundsSize.y, 0.1f);
+        boxCollider.size = boundsSize;
+
+        Vector3 boundsCenter = GetComponent<Renderer>().bounds.center;
+        boundsCenter.y = 0;
+        Vector3 parentPosition = transform.parent.position;
+        boxCollider.center = boundsCenter - parentPosition;
     }
 
     void UpdateShape()
@@ -107,6 +128,7 @@ public class MeshTransformer : MonoBehaviour
         }
 
         UpdateMesh();
+        UpdateCollider();
     }
 
     void ApplyCircularTransformation(Mesh targetMesh, Vector3 targetObjectPosition, Vector3 targetGridPosition)
@@ -226,6 +248,19 @@ public class MeshTransformer : MonoBehaviour
         if (currentPosition != previousPosition)
         {
             previousPosition = currentPosition;
+            return true;
+        }
+        return false;
+    }
+
+    private bool BoundsChanged()
+    {
+        if (targetObject == null) return false;
+
+        Vector3 currentBounds = targetObject.GetComponent<Renderer>().bounds.size;
+        if (currentBounds != previousBounds)
+        {
+            previousBounds = currentBounds;
             return true;
         }
         return false;
