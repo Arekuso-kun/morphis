@@ -40,27 +40,6 @@ public class TransformObjectGenerator : MonoBehaviour
         GenerateTransformObjects();
     }
 
-    // private void GenerateTransformObjects()
-    // {
-    //     foreach (int mode in availableModes)
-    //     {
-    //         GameObject newObject = Instantiate(transformObjectPrefab, transformContainer);
-    //         ObjectManager objManager = newObject.GetComponent<ObjectManager>();
-
-    //         if (objManager != null)
-    //         {
-    //             objManager.mode = mode;
-    //             objManager.mainObject = this.gameObject;
-
-    //             Debug.Log($"Generated Transform Object with mode: {mode}");
-    //         }
-    //         else
-    //         {
-    //             Debug.LogError("ObjectManager script is missing on the prefab!");
-    //         }
-    //     }
-    // }
-
     // Update is called once per frame
     private void GenerateTransformObjects()
     {
@@ -90,7 +69,6 @@ public class TransformObjectGenerator : MonoBehaviour
 
             objManager.mode = availableModes[i];
             objManager.mainObject = this.gameObject;
-            Debug.Log($"Generated Transform Object with mode: {availableModes[i]} at position {position}");
         }
     }
 

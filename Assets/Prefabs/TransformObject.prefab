@@ -100,7 +100,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd691818dc97cb04caccd9291018e9f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetObject: {fileID: 0}
   grid: {fileID: 6021022702415473218}
 --- !u!114 &3001530351847053328
 MonoBehaviour:
@@ -238,7 +237,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd691818dc97cb04caccd9291018e9f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetObject: {fileID: 0}
   grid: {fileID: 0}
 --- !u!114 &2178790351977878885
 MonoBehaviour:
@@ -253,6 +251,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   generatedObject: {fileID: 4663665466285102535}
+  hoverColor: {r: 0, g: 0.46226418, b: 0, a: 1}
 --- !u!114 &8064643189829315807
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -28,13 +28,25 @@ public class TransformOnClick : MonoBehaviour
     {
         if (generatedObject == null || meshTransformer == null) return;
 
-        if (Input.GetMouseButtonDown(0)) // Left click
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(ray, out RaycastHit hit))
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out RaycastHit hit) && hit.transform == transform)
+            if (hit.transform == transform)
             {
-                ApplyTransformation();
+                ApplyHoverEffect(true);
+                if (Input.GetMouseButtonDown(0)) // Left click
+                {
+                    ApplyTransformation();
+                }
             }
+            else
+            {
+                ApplyHoverEffect(false);
+            }
+        }
+        else
+        {
+            ApplyHoverEffect(false);
         }
     }
 
@@ -71,4 +83,17 @@ public class TransformOnClick : MonoBehaviour
         Vector3 boundsSize = generatedObject.GetComponent<Renderer>().bounds.size;
         targetObject.GetComponent<BoxCollider>().size = boundsSize;
     }
+
+    private void ApplyHoverEffect(bool isHovering)
+    {
+        if (isHovering)
+        {
+            generatedObject.GetComponent<Renderer>().material.EnableKeyword("_EMISSION");
+        }
+        else
+        {
+            generatedObject.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
+        }
+    }
+
 }
