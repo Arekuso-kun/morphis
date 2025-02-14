@@ -2,7 +2,6 @@ using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 [RequireComponent(typeof(BoxCollider))]
-[RequireComponent(typeof(MoveAboveGrid))]
 public class GridSnap : MonoBehaviour
 {
     [Tooltip("The grid object for reference")]
@@ -14,20 +13,11 @@ public class GridSnap : MonoBehaviour
     private float halfSize;
     private Vector3 gridPosotion;
 
-    private MoveAboveGrid moveAboveGrid;
-
     void Start()
     {
         if (grid == null)
         {
             Debug.LogError("Grid object is missing!");
-            return;
-        }
-
-        moveAboveGrid = GetComponent<MoveAboveGrid>();
-        if (moveAboveGrid == null)
-        {
-            Debug.LogError("MoveAboveGrid component is missing!");
             return;
         }
 
@@ -43,7 +33,7 @@ public class GridSnap : MonoBehaviour
     {
         if (grid == null) return;
 
-        moveAboveGrid.AdjustHeightAboveGrid(grid.transform.position.y, grid.heightOffset);
+        MoveUtility.AdjustHeightAboveGrid(this.gameObject, grid.transform.position.y, grid.heightOffset);
         HandleDragging();
         KeepWithinBounds();
     }

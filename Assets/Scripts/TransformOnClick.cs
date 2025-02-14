@@ -52,7 +52,7 @@ public class TransformOnClick : MonoBehaviour
             ApplyHoverEffect(false);
         }
 
-        if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.Z)) // Ctrl+Z
+        if (Input.GetKeyDown(KeyCode.Z))
         {
             UndoTransformation();
         }
@@ -119,6 +119,7 @@ public class TransformOnClick : MonoBehaviour
         undoStack.Push(savedMesh);
     }
 
+    // this is broken, fix it
     private void UndoTransformation()
     {
         if (undoStack.Count == 0)

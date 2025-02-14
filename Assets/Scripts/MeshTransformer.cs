@@ -2,7 +2,6 @@ using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 [RequireComponent(typeof(BoxCollider))]
-[RequireComponent(typeof(MoveAboveGrid))]
 public class MeshTransformer : MonoBehaviour
 {
     [Tooltip("The grid object for reference")]
@@ -23,13 +22,9 @@ public class MeshTransformer : MonoBehaviour
     private Vector3 previousPosition;
     private Vector3 previousBounds;
 
-    private MoveAboveGrid moveAboveGrid;
-
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        moveAboveGrid = GetComponent<MoveAboveGrid>();
-
         ObjectManager objectManager = GetComponentInParent<ObjectManager>();
         if (objectManager == null)
         {
@@ -104,7 +99,7 @@ public class MeshTransformer : MonoBehaviour
 
         if (grid)
         {
-            moveAboveGrid.AdjustHeightAboveGrid(grid.transform.position.y, gridHeightOffset);
+            MoveUtility.AdjustHeightAboveGrid(this.gameObject, grid.transform.position.y, gridHeightOffset);
         }
 
         Vector3 targetObjectPosition = targetObject.transform.position;
