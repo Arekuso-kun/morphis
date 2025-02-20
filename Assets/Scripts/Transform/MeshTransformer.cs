@@ -19,6 +19,7 @@ public class MeshTransformer : MonoBehaviour
 
     private Vector3[] previousVertices;
     private Vector3 previousPosition;
+    private Quaternion previousRotation;
     private Vector3 previousBounds;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -54,6 +55,7 @@ public class MeshTransformer : MonoBehaviour
         GetComponent<MeshFilter>().mesh = newMesh;
 
         previousPosition = targetObject.transform.position;
+        previousRotation = targetObject.transform.rotation;
 
         UpdateShape();
     }
@@ -61,7 +63,7 @@ public class MeshTransformer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (TargetVerticesChanged() || TargetPositionChanged())
+        if (TargetVerticesChanged() || TargetTransformChanged())
         {
             UpdateShape();
         }
@@ -288,14 +290,17 @@ public class MeshTransformer : MonoBehaviour
         return false;
     }
 
-    private bool TargetPositionChanged()
+    private bool TargetTransformChanged()
     {
         if (targetObject == null) return false;
 
         Vector3 currentPosition = targetObject.transform.position;
-        if (currentPosition != previousPosition)
+        Quaternion currentRotation = targetObject.transform.rotation;
+
+        if (currentPosition != previousPosition || currentRotation != previousRotation)
         {
             previousPosition = currentPosition;
+            previousRotation = currentRotation;
             return true;
         }
         return false;

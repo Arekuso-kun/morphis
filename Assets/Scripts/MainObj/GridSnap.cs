@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 [RequireComponent(typeof(BoxCollider))]
@@ -12,6 +13,7 @@ public class GridSnap : MonoBehaviour
     private bool isDragging = false;
     private float halfSize;
     private Vector3 gridPosotion;
+    private bool isRotating = false;
 
     void Start()
     {
@@ -78,24 +80,43 @@ public class GridSnap : MonoBehaviour
 
     private void HandleRotation()
     {
-        // TO DO: Animate the rotation
+        if (isRotating) return;
 
         if (Input.GetKeyDown(KeyCode.W))
         {
-            transform.Rotate(Vector3.right, -90f, Space.Self);
+            StartCoroutine(RotateSmooth(Vector3.right, -90f));
         }
         if (Input.GetKeyDown(KeyCode.S))
         {
-            transform.Rotate(Vector3.right, 90f, Space.Self);
+            StartCoroutine(RotateSmooth(Vector3.right, 90f));
         }
         if (Input.GetKeyDown(KeyCode.A))
         {
-            transform.Rotate(Vector3.up, -90f, Space.Self);
+            StartCoroutine(RotateSmooth(Vector3.up, -90f));
         }
         if (Input.GetKeyDown(KeyCode.D))
         {
-            transform.Rotate(Vector3.up, 90f, Space.Self);
+            StartCoroutine(RotateSmooth(Vector3.up, 90f));
         }
+    }
+
+    private IEnumerator RotateSmooth(Vector3 axis, float angle)
+    {
+        isRotating = true;
+        Quaternion startRotation = transform.rotation;
+        Quaternion endRotation = Quaternion.Euler(axis * angle) * startRotation;
+        float duration = 0.3f;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            transform.rotation = Quaternion.Lerp(startRotation, endRotation, elapsed / duration);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        transform.rotation = endRotation;
+        isRotating = false;
     }
 
     private void MoveToCenter()
