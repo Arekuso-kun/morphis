@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class TransformOnClick : MonoBehaviour
+public class InteractionManager : MonoBehaviour
 {
     [Tooltip("The generated object to be assigned to the main object")]
     public GameObject generatedObject;

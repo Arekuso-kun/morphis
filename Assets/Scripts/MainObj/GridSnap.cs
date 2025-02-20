@@ -5,7 +5,7 @@ using UnityEngine;
 public class GridSnap : MonoBehaviour
 {
     [Tooltip("The grid object for reference")]
-    public Grid grid;
+    public GenerateGrid grid;
 
     private float gridSize;
     private Camera mainCamera;

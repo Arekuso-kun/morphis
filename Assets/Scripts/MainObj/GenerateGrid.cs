@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
-public class Grid : MonoBehaviour
+public class GenerateGrid : MonoBehaviour
 {
     [Tooltip("Number of squares along one side of the grid")]
     public int size = 8;

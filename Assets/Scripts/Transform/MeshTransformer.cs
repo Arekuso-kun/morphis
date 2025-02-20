@@ -41,7 +41,7 @@ public class MeshTransformer : MonoBehaviour
             return;
         }
 
-        Grid gridComponent = targetGrid.GetComponent<Grid>();
+        GenerateGrid gridComponent = targetGrid.GetComponent<GenerateGrid>();
         if (gridComponent == null)
         {
             Debug.LogError("Grid component is missing!");

@@ -2,7 +2,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 [RequireComponent(typeof(BoxCollider))]
-public class ProceduralCube : MonoBehaviour
+public class GenerateCube : MonoBehaviour
 {
     [Tooltip("Number of squares along one side of the cube")]
     public int divisions = 96;
