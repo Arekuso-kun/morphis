@@ -3,8 +3,6 @@ using System.IO;
 
 public class MeshSaver : MonoBehaviour
 {
-    private string meshSavePath;
-
     void Start()
     {
 
