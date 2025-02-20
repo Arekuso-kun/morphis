@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections.Generic;
 
 public class TransformOnClick : MonoBehaviour
 {
@@ -7,7 +6,6 @@ public class TransformOnClick : MonoBehaviour
     public GameObject generatedObject;
 
     private MeshTransformer meshTransformer;
-    private Stack<Mesh> undoStack = new Stack<Mesh>();
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -38,7 +36,7 @@ public class TransformOnClick : MonoBehaviour
                 ApplyHoverEffect(true);
                 if (Input.GetMouseButtonDown(0)) // Left click
                 {
-                    SaveMeshState();
+                    SaveObjectState();
                     ApplyTransformation();
                 }
             }
@@ -51,11 +49,27 @@ public class TransformOnClick : MonoBehaviour
         {
             ApplyHoverEffect(false);
         }
+    }
 
-        if (Input.GetKeyDown(KeyCode.Z))
+    private void SaveObjectState()
+    {
+        ObjectManager objectManager = GetComponentInParent<ObjectManager>();
+        if (objectManager == null)
         {
-            UndoTransformation();
+            Debug.LogError("ObjectManager is missing!");
+            return;
         }
+
+        GameObject targetObject = objectManager.GetObject();
+
+        MeshFilter meshFilter = targetObject.GetComponent<MeshFilter>();
+        Mesh currentMesh = meshFilter.mesh;
+
+        BoxCollider boxCollider = targetObject.GetComponent<BoxCollider>();
+        Vector3 colliderSize = boxCollider.size;
+
+        UndoManager undoManager = targetObject.GetComponent<UndoManager>();
+        undoManager.SaveObjectState(currentMesh, colliderSize);
     }
 
     private void ApplyTransformation()
@@ -106,39 +120,5 @@ public class TransformOnClick : MonoBehaviour
         {
             generatedObject.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
         }
-    }
-
-    private void SaveMeshState()
-    {
-        ObjectManager objectManager = GetComponentInParent<ObjectManager>();
-        if (objectManager == null) return;
-
-        GameObject targetObject = objectManager.GetObject();
-        if (targetObject == null) return;
-
-        Mesh currentMesh = targetObject.GetComponent<MeshFilter>().mesh;
-        if (currentMesh == null) return;
-
-        Mesh savedMesh = Instantiate(currentMesh);
-        undoStack.Push(savedMesh);
-    }
-
-    // TO DO: this is broken, fix it
-    private void UndoTransformation()
-    {
-        if (undoStack.Count == 0)
-        {
-            Debug.Log("No previous transformations to undo.");
-            return;
-        }
-
-        ObjectManager objectManager = GetComponentInParent<ObjectManager>();
-        if (objectManager == null) return;
-
-        GameObject targetObject = objectManager.GetObject();
-        if (targetObject == null) return;
-
-        Mesh previousMesh = undoStack.Pop();
-        targetObject.GetComponent<MeshFilter>().mesh = previousMesh;
     }
 }

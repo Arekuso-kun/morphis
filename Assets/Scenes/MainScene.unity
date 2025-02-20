@@ -885,6 +885,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0bd33d9ff57e6ab46a3ee0d8af17719f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &504212628 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7939125892292456534, guid: 16e65034566b5a54f9a86b0049f66c06, type: 3}
+  m_PrefabInstance: {fileID: 3019365986458616313}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 504212605}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7654581526727f44abae030624cef188, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &556350599
 GameObject:
   m_ObjectHideFlags: 0
@@ -1103,7 +1114,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 570957219}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 504212628}
+        m_TargetAssemblyTypeName: UndoManager, Assembly-CSharp
+        m_MethodName: UndoTransformation
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &570957219
 MonoBehaviour:
   m_ObjectHideFlags: 0
