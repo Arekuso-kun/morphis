@@ -7,18 +7,16 @@ public class MeshSaver : MonoBehaviour
 
     void Start()
     {
-        // TO DO
-        meshSavePath = Path.Combine(Application.persistentDataPath, "savedMesh.json");
-        Debug.Log("Mesh save path: " + meshSavePath);
+
     }
 
     public void SaveMesh()
     {
-        MeshUtility.SaveMeshToFile(meshSavePath, GetComponent<MeshFilter>());
+        MeshUtility.SaveMeshToFile("test", GetComponent<MeshFilter>());
     }
 
     public void LoadMesh()
     {
-        MeshUtility.LoadMeshFromFile(meshSavePath, GetComponent<MeshFilter>());
+        MeshUtility.LoadMeshFromFile("test", GetComponent<MeshFilter>());
     }
 }

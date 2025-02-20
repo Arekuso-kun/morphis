@@ -10,9 +10,8 @@ public class GoalManager : MonoBehaviour
 
     void Start()
     {
-        // TO DO
-        string meshSavePath = Path.Combine(Application.persistentDataPath, "savedMesh.json");
-        MeshUtility.LoadMeshFromFile(meshSavePath, GetComponent<MeshFilter>());
+        // TO DO: mesh load system
+        MeshUtility.LoadMeshFromFile("test", GetComponent<MeshFilter>());
 
         if (currentObject == null)
         {

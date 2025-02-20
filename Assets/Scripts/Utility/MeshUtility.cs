@@ -1,47 +1,45 @@
 using UnityEngine;
-using System.IO;
+using UnityEditor;
 
 public static class MeshUtility
 {
-    public static void SaveMeshToFile(string filePath, MeshFilter meshFilter)
+    public static void SaveMeshToFile(string fileName, MeshFilter meshFilter)
     {
-        if (meshFilter == null || meshFilter.mesh == null)
+        if (meshFilter == null || meshFilter.sharedMesh == null)
         {
-            Debug.LogError("No MeshFilter or Mesh found on this object!");
+            Debug.LogError("MeshFilter is null or has no mesh.");
             return;
         }
 
-        Mesh mesh = meshFilter.mesh;
-        MeshData meshData = new MeshData(mesh);
+        Mesh mesh = meshFilter.sharedMesh;
 
-        string json = JsonUtility.ToJson(meshData);
-        File.WriteAllText(filePath, json);
+        string assetPath = $"Assets/Meshes/{fileName}.asset";
 
-        Debug.Log("Mesh saved to " + filePath);
+        AssetDatabase.CreateAsset(Object.Instantiate(mesh), assetPath);
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+
+        Debug.Log($"Mesh saved to: {assetPath}");
     }
 
-    public static void LoadMeshFromFile(string filePath, MeshFilter targetMeshFilter)
+    public static void LoadMeshFromFile(string fileName, MeshFilter targetMeshFilter)
     {
-        if (!File.Exists(filePath))
+        if (targetMeshFilter == null)
         {
-            Debug.LogError("Saved mesh file not found at: " + filePath);
+            Debug.LogError("Target MeshFilter is null.");
             return;
         }
 
-        string json = File.ReadAllText(filePath);
-        MeshData meshData = JsonUtility.FromJson<MeshData>(json);
+        string assetPath = $"Assets/Meshes/{fileName}.asset";
+        Mesh loadedMesh = AssetDatabase.LoadAssetAtPath<Mesh>(assetPath);
 
-        Mesh mesh = new Mesh
+        if (loadedMesh == null)
         {
-            vertices = meshData.vertices,
-            triangles = meshData.triangles,
-            uv = meshData.uv
-        };
+            Debug.LogError($"Failed to load mesh from {assetPath}");
+            return;
+        }
 
-        mesh.RecalculateNormals();
-        mesh.RecalculateBounds();
-
-        targetMeshFilter.mesh = mesh;
-        Debug.Log("Mesh loaded from " + filePath);
+        targetMeshFilter.mesh = loadedMesh;
+        Debug.Log($"Mesh loaded from: {assetPath}");
     }
 }
