@@ -33,8 +33,8 @@ public class GridSnap : MonoBehaviour
     {
         if (grid == null) return;
 
-        MoveUtility.AdjustHeightAboveGrid(this.gameObject, grid.transform.position.y, grid.heightOffset);
         HandleDragging();
+        HandleRotation();
         KeepWithinBounds();
     }
 
@@ -76,6 +76,28 @@ public class GridSnap : MonoBehaviour
         }
     }
 
+    private void HandleRotation()
+    {
+        // TO DO: Animate the rotation
+
+        if (Input.GetKeyDown(KeyCode.W))
+        {
+            transform.Rotate(Vector3.right, -90f, Space.Self);
+        }
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            transform.Rotate(Vector3.right, 90f, Space.Self);
+        }
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            transform.Rotate(Vector3.up, -90f, Space.Self);
+        }
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+            transform.Rotate(Vector3.up, 90f, Space.Self);
+        }
+    }
+
     private void MoveToCenter()
     {
         transform.position = gridPosotion + new Vector3(0, transform.position.y, 0);
@@ -90,10 +112,5 @@ public class GridSnap : MonoBehaviour
         {
             MoveToCenter();
         }
-    }
-
-    public bool IsDragging()
-    {
-        return isDragging;
     }
 }

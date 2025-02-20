@@ -86,10 +86,14 @@ public class TransformOnClick : MonoBehaviour
 
         Mesh newMesh = Instantiate(generatedMesh);
         newMesh.vertices = vertices;
+        newMesh.RecalculateNormals();
+        newMesh.RecalculateBounds();
         targetObject.GetComponent<MeshFilter>().mesh = newMesh;
 
         Vector3 boundsSize = generatedObject.GetComponent<Renderer>().bounds.size;
         targetObject.GetComponent<BoxCollider>().size = boundsSize;
+
+        targetObject.transform.rotation = Quaternion.identity;
     }
 
     private void ApplyHoverEffect(bool isHovering)
@@ -119,7 +123,7 @@ public class TransformOnClick : MonoBehaviour
         undoStack.Push(savedMesh);
     }
 
-    // this is broken, fix it
+    // TO DO: this is broken, fix it
     private void UndoTransformation()
     {
         if (undoStack.Count == 0)
