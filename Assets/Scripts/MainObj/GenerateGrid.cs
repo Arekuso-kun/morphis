@@ -10,7 +10,7 @@ public class GenerateGrid : MonoBehaviour
     public float squareSize = 1.0f;
 
     [Tooltip("Height offset for the grid vertices")]
-    public float heightOffset = 0.01f;
+    public float heightOffset = 0.0625f;
 
     [Tooltip("Number of subdivisions for each square")]
     public int subdivisions = 16;
@@ -54,7 +54,7 @@ public class GenerateGrid : MonoBehaviour
             {
                 int vertexIndex = y * verticesPerRow + x;
 
-                if ((x / subdivisions) % 2 == (y / subdivisions) % 2)
+                if (x / subdivisions % 2 == y / subdivisions % 2)
                 {
                     triangles[triangleIndex] = vertexIndex;
                     triangles[triangleIndex + 1] = vertexIndex + verticesPerRow;

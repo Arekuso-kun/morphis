@@ -102,7 +102,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   size: 8
   squareSize: 1
-  heightOffset: 0.01
+  heightOffset: 0.0625
   subdivisions: 16
 --- !u!65 &2616460615069264972
 BoxCollider:

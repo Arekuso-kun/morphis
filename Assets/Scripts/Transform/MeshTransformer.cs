@@ -12,7 +12,6 @@ public class MeshTransformer : MonoBehaviour
 
     private int mode;
     private float gridSize;
-    private float gridHeightOffset;
 
     private Mesh newMesh;
     private Vector3[] newVertices;
@@ -49,7 +48,6 @@ public class MeshTransformer : MonoBehaviour
         }
 
         gridSize = gridComponent.size * gridComponent.squareSize;
-        gridHeightOffset = gridComponent.heightOffset;
 
         newMesh = new Mesh();
         newMesh.name = "Mesh";
