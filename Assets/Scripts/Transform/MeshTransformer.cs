@@ -84,7 +84,7 @@ public class MeshTransformer : MonoBehaviour
         BoxCollider boxCollider = GetComponent<BoxCollider>();
 
         Vector3 boundsSize = GetComponent<Renderer>().bounds.size;
-        boundsSize.y = Mathf.Max(boundsSize.y, 0.0625f);
+        boundsSize.y = Mathf.Max(boundsSize.y, 0.01f);
         boxCollider.size = boundsSize;
 
         Vector3 boundsCenter = GetComponent<Renderer>().bounds.center;
@@ -101,21 +101,33 @@ public class MeshTransformer : MonoBehaviour
         Transform targetObjectTransform = targetObject.transform;
         Transform targetGridTransform = targetGrid.transform;
 
-        if (mode == 1)
+        if (mode == 1) // Circular
         {
             ApplyCircularTransformation(targetMeshFilter.mesh, targetObjectTransform, targetGridTransform, false);
         }
-        else if (mode == 2)
+        else if (mode == 2) // Circular Squared
+        {
+            ApplyCircularTransformation(targetMeshFilter.mesh, targetObjectTransform, targetGridTransform, true);
+        }
+        else if (mode == 3) // Stretch
         {
             ApplyStretchTransformation(targetMeshFilter.mesh, targetObjectTransform, targetGridTransform, 2.0f);
         }
-        else if (mode == 3)
+        else if (mode == 4) // Shrink
         {
             ApplyStretchTransformation(targetMeshFilter.mesh, targetObjectTransform, targetGridTransform, 0.5f);
         }
-        else if (mode == 4)
+        else if (mode == 5) // Wavy
         {
             ApplyWavyTransformation(targetMeshFilter.mesh, targetObjectTransform, targetGridTransform, false, 4);
+        }
+        else if (mode == 6) // Wavy Sharp
+        {
+            ApplyWavyTransformation(targetMeshFilter.mesh, targetObjectTransform, targetGridTransform, true, 4);
+        }
+        else if (mode == 7) // Shear
+        {
+            ApplyShearTransformation(targetMeshFilter.mesh, targetObjectTransform, targetGridTransform, 0.5f);
         }
 
         UpdateMesh();
@@ -243,6 +255,27 @@ public class MeshTransformer : MonoBehaviour
         newTriangles = targetMesh.triangles;
     }
 
+    void ApplyShearTransformation(Mesh targetMesh, Transform targetObjectTransform, Transform targetGridTransform, float shear)
+    {
+        Vector3 targetObjectPosition = targetObjectTransform.position;
+        Vector3 targetGridPosition = targetGridTransform.position;
+
+        Vector3[] targetVertices = targetMesh.vertices;
+        newVertices = new Vector3[targetVertices.Length];
+
+        Vector3[] transformedPoints = new Vector3[targetVertices.Length];
+        targetObject.transform.TransformPoints(targetVertices, transformedPoints);
+
+        for (int i = 0; i < targetVertices.Length; i++)
+        {
+            Vector3 offsetVertex = new(targetGridPosition.x, targetObjectPosition.y, targetGridPosition.z);
+            Vector3 adjustedVertex = transformedPoints[i] - offsetVertex;
+
+            newVertices[i] = new Vector3(adjustedVertex.x + shear * adjustedVertex.z, adjustedVertex.y, adjustedVertex.z);
+        }
+
+        newTriangles = targetMesh.triangles;
+    }
     float SharpSin(float x)
     {
         return Mathf.Abs(Mod(x, 2 * Mathf.PI) - Mathf.PI) - (Mathf.PI / 2);

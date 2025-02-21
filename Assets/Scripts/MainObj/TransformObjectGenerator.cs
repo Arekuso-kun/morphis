@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class TransformObjectGenerator : MonoBehaviour
 {
-    [Tooltip("List of available transformation modes:\n1 = Circular\n2 = Stretch\n3 = Shrink\n4 = Wavy")]
-    public List<int> availableModes = new List<int> { 1, 2, 3, 4 };
+    [Tooltip("List of available transformation modes:\n1 = Circular\n2 = Circular Squared\n3 = Stretch\n4 = Shrink\n5 = Wavy\n6 = Wavy Sharp\n7 = Shear")]
+    public List<int> availableModes = new List<int> { 1, 3, 4, 5 };
 
     [Tooltip("Prefab for the Transform Object")]
     public GameObject transformObjectPrefab;

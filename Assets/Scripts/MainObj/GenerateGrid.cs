@@ -10,7 +10,7 @@ public class GenerateGrid : MonoBehaviour
     public float squareSize = 1.0f;
 
     [Tooltip("Height offset for the grid vertices")]
-    public float heightOffset = 0.0625f;
+    public float heightOffset = 0.01f;
 
     [Tooltip("Number of subdivisions for each square")]
     public int subdivisions = 16;

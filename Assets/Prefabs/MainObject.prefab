@@ -102,7 +102,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   size: 8
   squareSize: 1
-  heightOffset: 0.0625
+  heightOffset: 0.01
   subdivisions: 16
 --- !u!65 &2616460615069264972
 BoxCollider:
@@ -171,7 +171,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 771d7380abcd58d48a20ff0d5fddebb2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  availableModes: 01000000020000000300000004000000
+  availableModes: 01000000030000000400000005000000
   transformObjectPrefab: {fileID: 6650236025078029414, guid: 1efc86856e4adb14bb36e87c5d4baf38, type: 3}
   transformContainer: {fileID: 0}
   containerPosition: {x: 10, y: 0, z: 0}
