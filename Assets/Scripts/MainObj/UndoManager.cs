@@ -9,19 +9,7 @@ public class UndoManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        ObjectManager objectManager = GetComponentInParent<ObjectManager>();
-        if (objectManager == null)
-        {
-            Debug.LogError("ObjectManager is missing!");
-            return;
-        }
 
-        GameObject targetObject = objectManager.GetObject();
-        if (targetObject == null)
-        {
-            Debug.LogError("Target object is missing!");
-            return;
-        }
     }
 
     // Update is called once per frame

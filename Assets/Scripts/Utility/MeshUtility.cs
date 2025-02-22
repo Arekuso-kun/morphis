@@ -1,10 +1,14 @@
 using UnityEngine;
+
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 
 public static class MeshUtility
 {
     public static void SaveMeshToFile(string fileName, MeshFilter meshFilter)
     {
+#if UNITY_EDITOR
         if (meshFilter == null || meshFilter.sharedMesh == null)
         {
             Debug.LogError("MeshFilter is null or has no mesh.");
@@ -20,26 +24,6 @@ public static class MeshUtility
         AssetDatabase.Refresh();
 
         Debug.Log($"Mesh saved to: {assetPath}");
-    }
-
-    public static void LoadMeshFromFile(string fileName, MeshFilter targetMeshFilter)
-    {
-        if (targetMeshFilter == null)
-        {
-            Debug.LogError("Target MeshFilter is null.");
-            return;
-        }
-
-        string assetPath = $"Assets/Meshes/{fileName}.asset";
-        Mesh loadedMesh = AssetDatabase.LoadAssetAtPath<Mesh>(assetPath);
-
-        if (loadedMesh == null)
-        {
-            Debug.LogError($"Failed to load mesh from {assetPath}");
-            return;
-        }
-
-        targetMeshFilter.mesh = loadedMesh;
-        Debug.Log($"Mesh loaded from: {assetPath}");
+#endif
     }
 }

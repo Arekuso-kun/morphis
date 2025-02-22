@@ -1,4 +1,3 @@
-using System.IO;
 using UnityEngine;
 
 public class GoalManager : MonoBehaviour
@@ -10,9 +9,6 @@ public class GoalManager : MonoBehaviour
 
     void Start()
     {
-        // TO DO: mesh load system
-        MeshUtility.LoadMeshFromFile("test", GetComponent<MeshFilter>());
-
         if (currentObject == null)
         {
             Debug.LogError("Current object is missing!");

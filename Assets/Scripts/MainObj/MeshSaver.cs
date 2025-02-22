@@ -9,11 +9,6 @@ public class MeshSaver : MonoBehaviour
 
     public void SaveMesh()
     {
-        MeshUtility.SaveMeshToFile("test", GetComponent<MeshFilter>());
-    }
-
-    public void LoadMesh()
-    {
-        MeshUtility.LoadMeshFromFile("test", GetComponent<MeshFilter>());
+        MeshUtility.SaveMeshToFile("savedmesh", GetComponent<MeshFilter>());
     }
 }
