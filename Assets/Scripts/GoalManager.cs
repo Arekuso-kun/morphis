@@ -9,6 +9,9 @@ public class GoalManager : MonoBehaviour
     [Tooltip("The current object being manipulated")]
     public GameObject currentObject;
 
+    [Tooltip("The tolerance for comparing vertices")]
+    public float tolerance = 0.75f;
+
     private Vector3[] previousMeshVertices;
     private bool isComparing = false;
 
@@ -67,8 +70,6 @@ public class GoalManager : MonoBehaviour
     bool MeshesAreEqual(Vector3[] meshA, Vector3[] meshB)
     {
         if (meshA.Length != meshB.Length) return false;
-
-        float tolerance = 0.75f;
 
         var sortedA = meshA.OrderBy(v => v.x).ThenBy(v => v.y).ThenBy(v => v.z).ToArray();
         var sortedB = meshB.OrderBy(v => v.x).ThenBy(v => v.y).ThenBy(v => v.z).ToArray();
