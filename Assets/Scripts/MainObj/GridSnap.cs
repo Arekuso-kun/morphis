@@ -2,7 +2,6 @@ using UnityEngine;
 using System.Collections;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
-[RequireComponent(typeof(BoxCollider))]
 public class GridSnap : MonoBehaviour
 {
     [Tooltip("The grid object for reference")]
