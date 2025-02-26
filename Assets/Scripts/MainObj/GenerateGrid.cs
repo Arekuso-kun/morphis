@@ -19,8 +19,8 @@ public class GenerateGrid : MonoBehaviour
     private Mesh mesh;
     private Vector3[] vertices;
     private int[] triangles;
+    private Vector2[] uvs;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         mesh = new Mesh();
@@ -34,13 +34,15 @@ public class GenerateGrid : MonoBehaviour
         offset = size / 2.0f;
         int verticesPerRow = (size * subdivisions) + 1;
         vertices = new Vector3[verticesPerRow * verticesPerRow];
+        uvs = new Vector2[vertices.Length];
 
-        // Generate vertices
+        // Generate vertices and uvs
         for (int index = 0, y = 0; y <= size * subdivisions; y++)
         {
             for (int x = 0; x <= size * subdivisions; x++, index++)
             {
                 vertices[index] = new Vector3((x - offset * subdivisions) * squareSize / subdivisions, heightOffset, (y - offset * subdivisions) * squareSize / subdivisions);
+                uvs[index] = new Vector2((float)x / (size * subdivisions), (float)y / (size * subdivisions));
             }
         }
 
@@ -74,10 +76,9 @@ public class GenerateGrid : MonoBehaviour
     void UpdateMesh()
     {
         mesh.Clear();
-
         mesh.vertices = vertices;
         mesh.triangles = triangles;
-
+        mesh.uv = uvs;
         mesh.RecalculateNormals();
     }
 
@@ -86,9 +87,7 @@ public class GenerateGrid : MonoBehaviour
         return new Vector2(size * squareSize, size * squareSize);
     }
 
-    // Update is called once per frame
     void Update()
     {
-
     }
 }

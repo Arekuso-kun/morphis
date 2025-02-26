@@ -16,6 +16,7 @@ public class MeshTransformer : MonoBehaviour
     private Mesh newMesh;
     private Vector3[] newVertices;
     private int[] newTriangles;
+    private Vector2[] newUVs;
 
     private Vector3[] previousVertices;
     private Vector3 previousPosition;
@@ -143,7 +144,7 @@ public class MeshTransformer : MonoBehaviour
         newVertices = new Vector3[targetVertices.Length];
 
         Vector3[] transformedVertices = new Vector3[targetVertices.Length];
-        targetObject.transform.TransformPoints(targetVertices, transformedVertices);
+        targetObjectTransform.TransformPoints(targetVertices, transformedVertices);
 
         Vector3 offsetVertex = new(targetGridPosition.x, targetObjectPosition.y, targetGridPosition.z);
         float gridMin = -gridSize / 2;
@@ -202,6 +203,8 @@ public class MeshTransformer : MonoBehaviour
 
             // TO DO: Fix vertices near the center of the circle
         }
+
+        newUVs = targetMesh.uv;
     }
 
     void ApplyStretchTransformation(Mesh targetMesh, Transform targetObjectTransform, Transform targetGridTransform, float stretchFactor)
@@ -213,7 +216,7 @@ public class MeshTransformer : MonoBehaviour
         newVertices = new Vector3[targetVertices.Length];
 
         Vector3[] transformedPoints = new Vector3[targetVertices.Length];
-        targetObject.transform.TransformPoints(targetVertices, transformedPoints);
+        targetObjectTransform.TransformPoints(targetVertices, transformedPoints);
 
         for (int i = 0; i < targetVertices.Length; i++)
         {
@@ -224,6 +227,7 @@ public class MeshTransformer : MonoBehaviour
         }
 
         newTriangles = targetMesh.triangles;
+        newUVs = targetMesh.uv;
     }
 
     void ApplyWavyTransformation(Mesh targetMesh, Transform targetObjectTransform, Transform targetGridTransform, bool sharp, int waveCount)
@@ -235,7 +239,7 @@ public class MeshTransformer : MonoBehaviour
         newVertices = new Vector3[targetVertices.Length];
 
         Vector3[] transformedPoints = new Vector3[targetVertices.Length];
-        targetObject.transform.TransformPoints(targetVertices, transformedPoints);
+        targetObjectTransform.TransformPoints(targetVertices, transformedPoints);
 
         float gridMin = -gridSize / 2;
 
@@ -253,6 +257,7 @@ public class MeshTransformer : MonoBehaviour
         }
 
         newTriangles = targetMesh.triangles;
+        newUVs = targetMesh.uv;
     }
 
     void ApplyShearTransformation(Mesh targetMesh, Transform targetObjectTransform, Transform targetGridTransform, float shear)
@@ -264,7 +269,7 @@ public class MeshTransformer : MonoBehaviour
         newVertices = new Vector3[targetVertices.Length];
 
         Vector3[] transformedPoints = new Vector3[targetVertices.Length];
-        targetObject.transform.TransformPoints(targetVertices, transformedPoints);
+        targetObjectTransform.TransformPoints(targetVertices, transformedPoints);
 
         for (int i = 0; i < targetVertices.Length; i++)
         {
@@ -275,6 +280,7 @@ public class MeshTransformer : MonoBehaviour
         }
 
         newTriangles = targetMesh.triangles;
+        newUVs = targetMesh.uv;
     }
     float SharpSin(float x)
     {
@@ -292,6 +298,7 @@ public class MeshTransformer : MonoBehaviour
 
         newMesh.vertices = newVertices;
         newMesh.triangles = newTriangles;
+        newMesh.uv = newUVs;
 
         newMesh.RecalculateNormals();
         newMesh.RecalculateBounds();
