@@ -4,8 +4,15 @@ public class InteractionManager : MonoBehaviour
 {
     [Tooltip("The generated object to be assigned to the main object")]
     public GameObject generatedObject;
+    public readonly float pulseSpeed = 5f;
+    public readonly float minAlpha = 0.85f;
+    public readonly float maxAlpha = 0.95f;
 
     private MeshTransformer meshTransformer;
+    private GameObject previewObject;
+    private GameObject mainObject;
+    private bool isHovering = false;
+    private Material previewMaterial;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -22,32 +29,74 @@ public class InteractionManager : MonoBehaviour
             Debug.LogError("MeshTransformer component is missing on Generated Object!");
             return;
         }
+
+        ObjectManager objectManager = GetComponentInParent<ObjectManager>();
+        if (objectManager == null)
+        {
+            Debug.LogError("ObjectManager is missing!");
+            return;
+        }
+
+        mainObject = objectManager.GetObject();
+        if (mainObject == null)
+        {
+            Debug.LogError("Main object is missing!");
+            return;
+        }
+
+        previewObject = objectManager.GetPreview();
+        if (previewObject == null)
+        {
+            Debug.LogError("Preview object is missing!");
+        }
+        else
+        {
+            previewObject.GetComponent<MeshRenderer>().enabled = false;
+            previewMaterial = previewObject.GetComponent<MeshRenderer>().material;
+        }
     }
 
     void Update()
     {
-        if (generatedObject == null || meshTransformer == null) return;
+        if (generatedObject == null || meshTransformer == null || previewObject == null || mainObject == null) return;
 
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
             if (hit.transform == transform || hit.transform == generatedObject.transform)
             {
-                ApplyHoverEffect(true);
+                if (!isHovering)
+                {
+                    ApplyHoverEffect(true);
+                    ShowPreviewObject();
+                }
+
                 if (Input.GetMouseButtonDown(0)) // Left click
                 {
                     SaveObjectState();
                     ApplyTransformation();
+                    HidePreviewObject();
                 }
             }
-            else
+            else if (isHovering)
             {
                 ApplyHoverEffect(false);
+                HidePreviewObject();
             }
         }
-        else
+        else if (isHovering)
         {
             ApplyHoverEffect(false);
+            HidePreviewObject();
+        }
+
+        if (isHovering && previewMaterial != null)
+        {
+            // float alpha = (Mathf.Sin(Time.time * pulseSpeed) * 0.5f + 0.5f) * pulseAlpha;
+            float alpha = Mathf.Lerp(minAlpha, maxAlpha, Mathf.Sin(Time.time * pulseSpeed) * 0.5f + 0.5f);
+            Color color = previewMaterial.color;
+            color.a = alpha;
+            previewMaterial.color = color;
         }
     }
 
@@ -61,7 +110,6 @@ public class InteractionManager : MonoBehaviour
         }
 
         GameObject targetObject = objectManager.GetObject();
-
         MeshFilter meshFilter = targetObject.GetComponent<MeshFilter>();
         Mesh currentMesh = meshFilter.mesh;
 
@@ -72,42 +120,37 @@ public class InteractionManager : MonoBehaviour
         undoManager.SaveObjectState(currentMesh, colliderSize);
     }
 
+    private Mesh OffsetVertices(Mesh initialMesh)
+    {
+        Mesh newMesh = Instantiate(initialMesh);
+
+        Vector3 centerOffset = generatedObject.GetComponent<Renderer>().bounds.center - transform.position;
+        centerOffset.y = 0;
+
+        Vector3[] newVertices = initialMesh.vertices;
+        for (int i = 0; i < newVertices.Length; i++)
+        {
+            newVertices[i] -= centerOffset;
+        }
+
+        newMesh.vertices = newVertices;
+        newMesh.RecalculateNormals();
+        newMesh.RecalculateBounds();
+
+        return newMesh;
+    }
+
     private void ApplyTransformation()
     {
         Mesh generatedMesh = meshTransformer.GetMesh();
-        ObjectManager objectManager = GetComponentInParent<ObjectManager>();
-        if (objectManager == null)
-        {
-            Debug.LogError("ObjectManager is missing!");
-            return;
-        }
 
-        GameObject targetObject = objectManager.GetObject();
-        if (targetObject == null)
-        {
-            Debug.LogError("Target Object is missing!");
-            return;
-        }
-
-        Vector3[] vertices = generatedMesh.vertices;
-        Vector3 center = generatedObject.GetComponent<Renderer>().bounds.center - transform.position;
-        center.y = 0;
-
-        for (int i = 0; i < vertices.Length; i++)
-        {
-            vertices[i] -= center;
-        }
-
-        Mesh newMesh = Instantiate(generatedMesh);
-        newMesh.vertices = vertices;
-        newMesh.RecalculateNormals();
-        newMesh.RecalculateBounds();
-        targetObject.GetComponent<MeshFilter>().mesh = newMesh;
+        Mesh newMesh = OffsetVertices(generatedMesh);
+        mainObject.GetComponent<MeshFilter>().mesh = newMesh;
 
         Vector3 boundsSize = generatedObject.GetComponent<Renderer>().bounds.size;
-        targetObject.GetComponent<BoxCollider>().size = boundsSize;
+        mainObject.GetComponent<BoxCollider>().size = boundsSize;
 
-        targetObject.transform.rotation = Quaternion.identity;
+        mainObject.transform.rotation = Quaternion.identity;
     }
 
     private void ApplyHoverEffect(bool isHovering)
@@ -120,5 +163,26 @@ public class InteractionManager : MonoBehaviour
         {
             generatedObject.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
         }
+        this.isHovering = isHovering;
+    }
+
+    private void ShowPreviewObject()
+    {
+        previewObject.GetComponent<MeshRenderer>().enabled = true;
+        mainObject.GetComponent<MeshRenderer>().enabled = false;
+
+        MeshFilter previewMeshFilter = previewObject.GetComponent<MeshFilter>();
+
+        Mesh generatedMesh = meshTransformer.GetMesh();
+        Mesh newMesh = OffsetVertices(generatedMesh);
+        previewMeshFilter.mesh = Instantiate(newMesh);
+
+
+    }
+
+    private void HidePreviewObject()
+    {
+        previewObject.GetComponent<MeshRenderer>().enabled = false;
+        mainObject.GetComponent<MeshRenderer>().enabled = true;
     }
 }

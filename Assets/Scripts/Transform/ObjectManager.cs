@@ -30,6 +30,11 @@ public class ObjectManager : MonoBehaviour
         return mainObject.transform.Find("Object")?.gameObject;
     }
 
+    public GameObject GetPreview()
+    {
+        return mainObject.transform.Find("Preview")?.gameObject;
+    }
+
     // Update is called once per frame
     void Update()
     {
