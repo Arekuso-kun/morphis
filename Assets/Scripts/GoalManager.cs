@@ -10,7 +10,7 @@ public class GoalManager : MonoBehaviour
     public GameObject currentObject;
 
     [Tooltip("The tolerance for comparing vertices")]
-    public float tolerance = 0.75f;
+    public float tolerance = 0.5f;
 
     private Vector3[] previousMeshVertices;
     private bool isComparing = false;

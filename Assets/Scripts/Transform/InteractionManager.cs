@@ -4,6 +4,13 @@ public class InteractionManager : MonoBehaviour
 {
     [Tooltip("The generated object to be assigned to the main object")]
     public GameObject generatedObject;
+
+    [Tooltip("Default material without emission")]
+    public Material defaultMaterial;
+
+    [Tooltip("Material with emission for hover effect")]
+    public Material emissionMaterial;
+
     public readonly float pulseSpeed = 5f;
     public readonly float minAlpha = 0.85f;
     public readonly float maxAlpha = 0.95f;
@@ -157,14 +164,17 @@ public class InteractionManager : MonoBehaviour
 
     private void ApplyHoverEffect(bool isHovering)
     {
+        Renderer renderer = generatedObject.GetComponent<Renderer>();
+
         if (isHovering)
         {
-            generatedObject.GetComponent<Renderer>().material.EnableKeyword("_EMISSION");
+            renderer.material = emissionMaterial;
         }
         else
         {
-            generatedObject.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
+            renderer.material = defaultMaterial;
         }
+
         this.isHovering = isHovering;
     }
 

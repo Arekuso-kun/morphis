@@ -46,14 +46,14 @@ public class TransformObjectGenerator : MonoBehaviour
         {
             positions.Add(new Vector3(7.5f, 0, 15));
             positions.Add(new Vector3(-7.5f, 0, 15));
-            positions.Add(new Vector3(20, 0, 0));
-            positions.Add(new Vector3(-20, 0, 0));
+            positions.Add(new Vector3(17.5f, 0, 0));
+            positions.Add(new Vector3(-17.5f, 0, 0));
         }
         else
         {
             positions.Add(new Vector3(0, 0, 15));
-            positions.Add(new Vector3(20, 0, 0));
-            positions.Add(new Vector3(-20, 0, 0));
+            positions.Add(new Vector3(17.5f, 0, 0));
+            positions.Add(new Vector3(-17.5f, 0, 0));
         }
 
         positions = positions.GetRange(0, availableModes.Count);

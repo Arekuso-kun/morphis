@@ -265,6 +265,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   generatedObject: {fileID: 4663665466285102535}
+  defaultMaterial: {fileID: 2100000, guid: 9b46972d6d77ef9428a71f3e21867763, type: 2}
+  emissionMaterial: {fileID: 2100000, guid: 37a83d2425853364cbea1a7770df6e07, type: 2}
 --- !u!65 &2563330366193769803
 BoxCollider:
   m_ObjectHideFlags: 0
