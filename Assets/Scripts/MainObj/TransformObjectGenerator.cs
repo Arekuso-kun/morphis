@@ -12,14 +12,13 @@ public class TransformObjectGenerator : MonoBehaviour
     [Tooltip("Parent container for generated objects")]
     public Transform transformContainer;
 
-    [Tooltip("Center point for the grid layout")]
+    [Tooltip("Custom positions for placing objects (Max 5)")]
+    public List<Vector3> customPositions = new List<Vector3>();
+
+    [Tooltip("Center point offset applied to custom positions")]
     public Vector3 containerPosition = Vector3.zero;
 
-    [Tooltip("Maximum columns in the grid layout")]
-    public int maxColumns = 2;
-
-    [Tooltip("Spacing between objects")]
-    public float spacing = 20.0f;
+    private List<Vector3> positions = new List<Vector3>();
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -37,28 +36,39 @@ public class TransformObjectGenerator : MonoBehaviour
             transformContainer = containerObj.transform;
         }
 
+        GeneratePositions();
         GenerateTransformObjects();
     }
 
-    // Update is called once per frame
+    private void GeneratePositions()
+    {
+        if (availableModes.Count % 2 == 0)
+        {
+            positions.Add(new Vector3(7.5f, 0, 15));
+            positions.Add(new Vector3(-7.5f, 0, 15));
+            positions.Add(new Vector3(20, 0, 0));
+            positions.Add(new Vector3(-20, 0, 0));
+        }
+        else
+        {
+            positions.Add(new Vector3(0, 0, 15));
+            positions.Add(new Vector3(20, 0, 0));
+            positions.Add(new Vector3(-20, 0, 0));
+        }
+
+        positions = positions.GetRange(0, availableModes.Count);
+
+        if (customPositions.Count > 0)
+            for (int i = 0; i < positions.Count; i++)
+                positions[i] = customPositions[i];
+    }
+
     private void GenerateTransformObjects()
     {
-        int totalObjects = availableModes.Count;
-        int columns = Mathf.Min(maxColumns, totalObjects);
-        int rows = Mathf.CeilToInt((float)totalObjects / columns);
-
-        float totalWidth = (columns - 1) * spacing;
-        float totalHeight = (rows - 1) * spacing;
-        Vector3 startPosition = new Vector3(-totalWidth / 2, 0, totalHeight / 2);
-
-        for (int i = 0; i < totalObjects; i++)
+        for (int i = 0; i < positions.Count; i++)
         {
-            float positionX = i % columns * spacing;
-            float positionZ = i / columns * spacing;
-
-            Vector3 position = startPosition + new Vector3(positionX, 0, -positionZ);
-
-            GameObject newObject = Instantiate(transformObjectPrefab, containerPosition + position, Quaternion.identity, transformContainer);
+            Vector3 finalPosition = containerPosition + positions[i];
+            GameObject newObject = Instantiate(transformObjectPrefab, finalPosition, Quaternion.identity, transformContainer);
 
             ObjectManager objManager = newObject.GetComponent<ObjectManager>();
             if (objManager == null)

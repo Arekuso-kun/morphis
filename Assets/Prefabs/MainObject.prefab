@@ -29,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 4414315517445673426}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.01, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -102,7 +102,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   size: 8
   squareSize: 1
-  heightOffset: 0.01
   subdivisions: 16
 --- !u!65 &2616460615069264972
 BoxCollider:
@@ -353,9 +352,8 @@ MonoBehaviour:
   availableModes: 01000000030000000400000005000000
   transformObjectPrefab: {fileID: 6650236025078029414, guid: 1efc86856e4adb14bb36e87c5d4baf38, type: 3}
   transformContainer: {fileID: 0}
+  customPositions: []
   containerPosition: {x: 10, y: 0, z: 0}
-  maxColumns: 2
-  spacing: 20
 --- !u!1 &8552759203489020052
 GameObject:
   m_ObjectHideFlags: 0

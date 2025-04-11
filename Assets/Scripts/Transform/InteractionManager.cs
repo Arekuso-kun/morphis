@@ -54,6 +54,8 @@ public class InteractionManager : MonoBehaviour
             previewObject.GetComponent<MeshRenderer>().enabled = false;
             previewMaterial = previewObject.GetComponent<MeshRenderer>().material;
         }
+
+        ApplyHoverEffect(false);
     }
 
     void Update()
@@ -169,20 +171,25 @@ public class InteractionManager : MonoBehaviour
     private void ShowPreviewObject()
     {
         previewObject.GetComponent<MeshRenderer>().enabled = true;
+        previewObject.GetComponent<BoxCollider>().enabled = true;
         mainObject.GetComponent<MeshRenderer>().enabled = false;
 
-        MeshFilter previewMeshFilter = previewObject.GetComponent<MeshFilter>();
-
         Mesh generatedMesh = meshTransformer.GetMesh();
+
         Mesh newMesh = OffsetVertices(generatedMesh);
-        previewMeshFilter.mesh = Instantiate(newMesh);
+        previewObject.GetComponent<MeshFilter>().mesh = Instantiate(newMesh);
 
+        Vector3 boundsSize = generatedObject.GetComponent<Renderer>().bounds.size;
+        previewObject.GetComponent<BoxCollider>().size = boundsSize;
 
+        previewObject.transform.rotation = Quaternion.identity;
+        previewObject.transform.position = mainObject.transform.position;
     }
 
     private void HidePreviewObject()
     {
         previewObject.GetComponent<MeshRenderer>().enabled = false;
+        previewObject.GetComponent<BoxCollider>().enabled = false;
         mainObject.GetComponent<MeshRenderer>().enabled = true;
     }
 }

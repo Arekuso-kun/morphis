@@ -9,9 +9,6 @@ public class GenerateGrid : MonoBehaviour
     [Tooltip("Size of each square in the grid")]
     public float squareSize = 1.0f;
 
-    [Tooltip("Height offset for the grid vertices")]
-    public float heightOffset = 0.01f;
-
     [Tooltip("Number of subdivisions for each square")]
     public int subdivisions = 16;
 
@@ -41,7 +38,7 @@ public class GenerateGrid : MonoBehaviour
         {
             for (int x = 0; x <= size * subdivisions; x++, index++)
             {
-                vertices[index] = new Vector3((x - offset * subdivisions) * squareSize / subdivisions, heightOffset, (y - offset * subdivisions) * squareSize / subdivisions);
+                vertices[index] = new Vector3((x - offset * subdivisions) * squareSize / subdivisions, 0, (y - offset * subdivisions) * squareSize / subdivisions);
                 uvs[index] = new Vector2((float)x / (size * subdivisions), (float)y / (size * subdivisions));
             }
         }
