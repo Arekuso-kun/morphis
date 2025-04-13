@@ -353,7 +353,7 @@ MonoBehaviour:
   transformObjectPrefab: {fileID: 6650236025078029414, guid: 1efc86856e4adb14bb36e87c5d4baf38, type: 3}
   transformContainer: {fileID: 0}
   customPositions: []
-  containerPosition: {x: 10, y: 0, z: 0}
+  containerPosition: {x: 0, y: 0, z: 0}
 --- !u!1 &8552759203489020052
 GameObject:
   m_ObjectHideFlags: 0
