@@ -104,8 +104,6 @@ public class GoalManager : MonoBehaviour
         StartCoroutine(EmissionPulse());
     }
 
-
-
     IEnumerator EmissionPulse()
     {
         float startEmission = baseEmission;
@@ -139,8 +137,6 @@ public class GoalManager : MonoBehaviour
         material.SetFloat("_Emission", baseEmission);
     }
 
-
-
     bool MeshChanged(Vector3[] currentMesh)
     {
         return !currentMesh.SequenceEqual(previousMeshVertices);
@@ -158,48 +154,92 @@ public class GoalManager : MonoBehaviour
         var sortedA = meshA.OrderBy(v => v.x).ThenBy(v => v.y).ThenBy(v => v.z).ToArray();
         var sortedB = meshB.OrderBy(v => v.x).ThenBy(v => v.y).ThenBy(v => v.z).ToArray();
 
+        int[] steps = { 1000, 100, 10 };
+
+        foreach (int step in steps)
+        {
+            if (!MatchVerticesEveryN(sortedA, sortedB, step, $"Quick check (step {step})"))
+                return false;
+        }
+
+        if (!MatchRemainingVertices(sortedA, sortedB, steps, "Full check"))
+            return false;
+
+        return true;
+    }
+
+    bool MatchVerticesEveryN(Vector3[] sortedA, Vector3[] sortedB, int step, string debugLabel)
+    {
+        for (int i = 0; i < sortedA.Length; i += step)
+        {
+            if (!MatchSingleVertex(sortedA[i], i, sortedB, debugLabel))
+                return false;
+        }
+        return true;
+    }
+
+    bool MatchRemainingVertices(Vector3[] sortedA, Vector3[] sortedB, int[] steps, string debugLabel)
+    {
         for (int i = 0; i < sortedA.Length; i++)
         {
-            bool foundMatch = false;
-            Vector3 pointA = sortedA[i];
+            bool alreadyChecked = steps.Any(step => i % step == 0);
+            if (alreadyChecked) continue;
 
-            for (int offset = 0; ; offset++)
+            if (!MatchSingleVertex(sortedA[i], i, sortedB, debugLabel))
+                return false;
+        }
+        return true;
+    }
+
+    bool MatchSingleVertex(Vector3 pointA, int index, Vector3[] sortedB, string debugLabel)
+    {
+        bool foundMatch = false;
+        int offset = 0;
+
+        while (true)
+        {
+            int forwardIndex = index + offset;
+            int backwardIndex = index - offset;
+
+            if (forwardIndex >= sortedB.Length && backwardIndex < 0)
+                break;
+
+            if (forwardIndex < sortedB.Length)
             {
-                int forwardIndex = i + offset;
-                int backwardIndex = i - offset;
-
-                if (forwardIndex >= sortedB.Length && backwardIndex < 0)
+                Vector3 pointB = sortedB[forwardIndex];
+                if (WithinTolerance(pointA, pointB))
+                {
+                    foundMatch = true;
                     break;
-
-                if (forwardIndex < sortedB.Length)
-                {
-                    Vector3 pointB = sortedB[forwardIndex];
-                    if (Mathf.Abs(pointA.x - pointB.x) <= tolerance
-                        && Mathf.Abs(pointA.y - pointB.y) <= tolerance
-                        && Mathf.Abs(pointA.z - pointB.z) <= tolerance)
-                    {
-                        foundMatch = true;
-                        break;
-                    }
-                }
-
-                if (backwardIndex >= 0)
-                {
-                    Vector3 pointB = sortedB[backwardIndex];
-                    if (Mathf.Abs(pointA.x - pointB.x) <= tolerance
-                        && Mathf.Abs(pointA.y - pointB.y) <= tolerance
-                        && Mathf.Abs(pointA.z - pointB.z) <= tolerance)
-                    {
-                        foundMatch = true;
-                        break;
-                    }
                 }
             }
 
-            if (!foundMatch) return false;
+            if (backwardIndex >= 0)
+            {
+                Vector3 pointB = sortedB[backwardIndex];
+                if (WithinTolerance(pointA, pointB))
+                {
+                    foundMatch = true;
+                    break;
+                }
+            }
+
+            offset++;
         }
 
-        return true;
+        if (!foundMatch)
+        {
+            Debug.Log($"{debugLabel}: No match found for vertex {index}: {pointA}, offset: {offset}, forwardIndex: {index + offset}, backwardIndex: {index - offset}");
+        }
+
+        return foundMatch;
+    }
+
+    bool WithinTolerance(Vector3 a, Vector3 b)
+    {
+        return Mathf.Abs(a.x - b.x) <= tolerance
+            && Mathf.Abs(a.y - b.y) <= tolerance
+            && Mathf.Abs(a.z - b.z) <= tolerance;
     }
 
     void UpdateCollider()
