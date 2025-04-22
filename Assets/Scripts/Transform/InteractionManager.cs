@@ -164,15 +164,13 @@ public class InteractionManager : MonoBehaviour
 
     private void ApplyHoverEffect(bool isHovering)
     {
-        Renderer renderer = generatedObject.GetComponent<Renderer>();
-
         if (isHovering)
         {
-            renderer.material = emissionMaterial;
+            generatedObject.layer = LayerMask.NameToLayer("Hover");
         }
         else
         {
-            renderer.material = defaultMaterial;
+            generatedObject.layer = LayerMask.NameToLayer("Objects");
         }
 
         this.isHovering = isHovering;

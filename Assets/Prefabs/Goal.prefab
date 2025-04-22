@@ -103,6 +103,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentObject: {fileID: 0}
   tolerance: 0.5
+  heightDuration: 2
+  pulseDuration: 0.3
+  peakEmission: 2
+  baseEmission: 0
 --- !u!65 &4781448674382371774
 BoxCollider:
   m_ObjectHideFlags: 0

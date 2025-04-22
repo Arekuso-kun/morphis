@@ -6,22 +6,30 @@ public class ColorManager : MonoBehaviour
     [SerializeField] private Material[] saturatedTransparentMaterials;
     [SerializeField] private Material[] reversedHueMaterials;
     [SerializeField] private Material[] gradientMaterials;
-    [SerializeField] private Material[] reversedgradientMaterials;
+    [SerializeField] private Material[] reversedGradientMaterials;
+    [SerializeField] private Material[] outlineMaterials;
 
     private Color currentColor;
 
     private readonly float baseSaturation = 0.55f;
     private readonly float baseValue = 1.0f;
+    private readonly float baseAlpha = 1.0f;
 
-    private readonly float transparentSaturation = 0.81f;
+    private readonly float transparentSaturation = 0.8f;
     private readonly float transparentValue = 1.0f;
     private readonly float transparentAlpha = 0.8f;
 
     private readonly float fogSaturation = 0.65f;
-    private readonly float fogValue = 0.90f;
+    private readonly float fogValue = 0.9f;
+    private readonly float fogAlpha = 1.0f;
 
     private readonly float gradientSaturation = 0.8f;
     private readonly float gradientValue = 0.3f;
+    private readonly float gradientAlpha = 1.0f;
+
+    private readonly float outlineSaturation = 0.6f;
+    private readonly float outlineValue = 0.9f;
+    private readonly float outlineAlpha = 1.0f;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -36,29 +44,35 @@ public class ColorManager : MonoBehaviour
         float reversedHue = (hue + 0.5f) % 1.0f;
 
         Color baseColor = Color.HSVToRGB(hue, baseSaturation, baseValue);
-        baseColor.a = 1.0f;
+        baseColor.a = baseAlpha;
 
         Color saturatedTransparentColor = Color.HSVToRGB(reversedHue, transparentSaturation, transparentValue);
         saturatedTransparentColor.a = transparentAlpha;
 
         Color reversedColor = Color.HSVToRGB(reversedHue, baseSaturation, baseValue);
-        reversedColor.a = 1.0f;
+        reversedColor.a = baseAlpha;
 
         Color gradientColor = Color.HSVToRGB(hue, gradientSaturation, gradientValue);
-        gradientColor.a = 1.0f;
+        gradientColor.a = gradientAlpha;
 
         Color reversedGradientColor = Color.HSVToRGB(reversedHue, gradientSaturation, gradientValue);
-        reversedGradientColor.a = 1.0f;
+        reversedGradientColor.a = gradientAlpha;
+
+        Color outlineColor = Color.HSVToRGB(reversedHue, outlineSaturation, outlineValue);
+        outlineColor.a = outlineAlpha;
 
         ApplyColorToMaterials(baseHueMaterials, baseColor);
         ApplyColorToMaterials(saturatedTransparentMaterials, saturatedTransparentColor);
         ApplyColorToMaterials(reversedHueMaterials, reversedColor);
         ApplyColorToMaterials(gradientMaterials, gradientColor);
-        ApplyColorToMaterials(reversedgradientMaterials, reversedGradientColor);
+        ApplyColorToMaterials(reversedGradientMaterials, reversedGradientColor);
+        ApplyColorToMaterials(outlineMaterials, outlineColor);
 
         currentColor = baseColor;
 
         Color fogColor = Color.HSVToRGB(hue, fogSaturation, fogValue);
+        fogColor.a = fogAlpha;
+
         RenderSettings.fogColor = fogColor;
     }
 
@@ -87,6 +101,10 @@ public class ColorManager : MonoBehaviour
 
                 mat.SetColor("_EmissionColor", emissionColor * 12.0f);
             }
+
+            if (mat.HasProperty("_Outline_Color")) mat.SetColor("_Outline_Color", color);
+
+            if (mat.HasProperty("_Changed_Color")) mat.SetColor("_Changed_Color", color);
         }
     }
 

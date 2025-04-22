@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -14,6 +15,17 @@ public class GoalManager : MonoBehaviour
 
     private Vector3[] previousMeshVertices;
     private bool isComparing = false;
+    private Material material;
+
+    [Header("Height Animation Settings")]
+    public float heightDuration = 2f;
+    private float currentHeight = 0f;
+    private float targetHeight = 10f;
+
+    [Header("Emission Pulse Settings")]
+    public float pulseDuration = 0.3f;
+    public float peakEmission = 2f;
+    public float baseEmission = 0f;
 
     void Start()
     {
@@ -31,6 +43,17 @@ public class GoalManager : MonoBehaviour
         }
 
         previousMeshVertices = (Vector3[])meshFilter.mesh.vertices.Clone();
+
+        Renderer rend = GetComponent<Renderer>();
+        if (rend == null)
+        {
+            Debug.LogError("Renderer component is missing!");
+            return;
+        }
+
+        material = rend.material;
+        material.SetFloat("_Height", currentHeight);
+        material.SetFloat("_Emission", baseEmission);
 
         UpdateCollider();
     }
@@ -53,9 +76,70 @@ public class GoalManager : MonoBehaviour
             bool areEqual = await CompareMeshesAsync(currentMesh, savedMesh);
             isComparing = false;
 
-            GetComponent<Renderer>().material.color = areEqual ? Color.green : Color.red;
+            if (areEqual)
+            {
+                Debug.Log("Meshes are equal, starting animation...");
+                StartCoroutine(AnimateHeight());
+            }
         }
     }
+
+    IEnumerator AnimateHeight()
+    {
+        float startHeight = currentHeight;
+        float elapsed = 0f;
+
+        while (elapsed < heightDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / heightDuration);
+            currentHeight = Mathf.Lerp(startHeight, targetHeight, t);
+            material.SetFloat("_Height", currentHeight);
+            yield return null;
+        }
+
+        currentHeight = targetHeight;
+        material.SetFloat("_Height", currentHeight);
+
+        StartCoroutine(EmissionPulse());
+    }
+
+
+
+    IEnumerator EmissionPulse()
+    {
+        float startEmission = baseEmission;
+        float targetEmission = peakEmission;
+        float halfDuration = pulseDuration / 2f;
+
+        // up
+        float elapsed = 0f;
+        while (elapsed < halfDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / halfDuration);
+            float emission = Mathf.Lerp(startEmission, targetEmission, t);
+            material.SetFloat("_Emission", emission);
+            yield return null;
+        }
+
+        // down
+        startEmission = peakEmission;
+        targetEmission = baseEmission;
+        elapsed = 0f;
+        while (elapsed < halfDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / halfDuration);
+            float emission = Mathf.Lerp(startEmission, targetEmission, t);
+            material.SetFloat("_Emission", emission);
+            yield return null;
+        }
+
+        material.SetFloat("_Emission", baseEmission);
+    }
+
+
 
     bool MeshChanged(Vector3[] currentMesh)
     {
