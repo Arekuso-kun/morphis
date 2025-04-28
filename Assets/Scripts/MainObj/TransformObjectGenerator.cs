@@ -69,6 +69,7 @@ public class TransformObjectGenerator : MonoBehaviour
         {
             Vector3 finalPosition = containerPosition + positions[i];
             GameObject newObject = Instantiate(transformObjectPrefab, finalPosition, Quaternion.identity, transformContainer);
+            newObject.name = "TransformObject_" + availableModes[i];
 
             ObjectManager objManager = newObject.GetComponent<ObjectManager>();
             if (objManager == null)

@@ -19,8 +19,7 @@ public class GoalManager : MonoBehaviour
 
     [Header("Height Animation Settings")]
     public float heightDuration = 2f;
-    private float currentHeight = 0f;
-    private float targetHeight = 10f;
+    private float startHeight = -1f;
 
     [Header("Emission Pulse Settings")]
     public float pulseDuration = 0.3f;
@@ -52,7 +51,7 @@ public class GoalManager : MonoBehaviour
         }
 
         material = rend.material;
-        material.SetFloat("_Height", currentHeight);
+        material.SetFloat("_Height", startHeight);
         material.SetFloat("_Emission", baseEmission);
 
         UpdateCollider();
@@ -86,8 +85,11 @@ public class GoalManager : MonoBehaviour
 
     IEnumerator AnimateHeight()
     {
-        float startHeight = currentHeight;
+        float currentHeight;
         float elapsed = 0f;
+
+        Vector3 boundsSize = GetComponent<Renderer>().bounds.size;
+        float targetHeight = boundsSize.y + 1f;
 
         while (elapsed < heightDuration)
         {

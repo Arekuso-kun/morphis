@@ -125,8 +125,12 @@ public class InteractionManager : MonoBehaviour
         BoxCollider boxCollider = targetObject.GetComponent<BoxCollider>();
         Vector3 colliderSize = boxCollider.size;
 
+        Vector3 localPosition = targetObject.transform.localPosition;
+        Quaternion rotation = targetObject.transform.rotation;
+        int mode = objectManager.mode;
+
         UndoManager undoManager = targetObject.GetComponent<UndoManager>();
-        undoManager.SaveObjectState(currentMesh, colliderSize);
+        undoManager.SaveObjectState(currentMesh, localPosition, rotation, colliderSize, mode);
     }
 
     private Mesh OffsetVertices(Mesh initialMesh)
@@ -180,6 +184,7 @@ public class InteractionManager : MonoBehaviour
     {
         previewObject.GetComponent<MeshRenderer>().enabled = true;
         previewObject.GetComponent<BoxCollider>().enabled = true;
+        previewObject.GetComponent<Rigidbody>().isKinematic = false;
         mainObject.GetComponent<MeshRenderer>().enabled = false;
 
         Mesh generatedMesh = meshTransformer.GetMesh();
@@ -198,6 +203,7 @@ public class InteractionManager : MonoBehaviour
     {
         previewObject.GetComponent<MeshRenderer>().enabled = false;
         previewObject.GetComponent<BoxCollider>().enabled = false;
+        previewObject.GetComponent<Rigidbody>().isKinematic = true;
         mainObject.GetComponent<MeshRenderer>().enabled = true;
     }
 }

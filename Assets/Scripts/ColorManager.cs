@@ -105,6 +105,8 @@ public class ColorManager : MonoBehaviour
             if (mat.HasProperty("_Outline_Color")) mat.SetColor("_Outline_Color", color);
 
             if (mat.HasProperty("_Changed_Color")) mat.SetColor("_Changed_Color", color);
+
+            if (mat.HasProperty("_FaceColor")) mat.SetColor("_FaceColor", color);
         }
     }
 
