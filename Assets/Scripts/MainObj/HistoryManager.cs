@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class UndoManager : MonoBehaviour
+public class HistoryManager : MonoBehaviour
 {
     private Stack<Mesh> undoMeshStack = new Stack<Mesh>();
     private Stack<ObjectState> undoStateStack = new Stack<ObjectState>();
@@ -167,7 +167,7 @@ public class UndoManager : MonoBehaviour
         currentMesh = null;
         currentState = null;
 
-        transform.localPosition = Vector3.zero;
+        transform.localPosition = new Vector3(0, 1, 0);
         transform.rotation = Quaternion.identity;
     }
 

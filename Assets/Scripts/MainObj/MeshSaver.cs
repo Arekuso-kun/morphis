@@ -6,7 +6,7 @@ public class MeshSaver : MonoBehaviour
 
     private MeshFilter meshFilter;
     private BoxCollider boxCollider;
-    private UndoManager undoManager;
+    private HistoryManager historyManager;
 
     void Awake()
     {
@@ -26,8 +26,8 @@ public class MeshSaver : MonoBehaviour
             return;
         }
 
-        undoManager = GetComponent<UndoManager>();
-        if (undoManager == null)
+        historyManager = GetComponent<HistoryManager>();
+        if (historyManager == null)
         {
             Debug.LogError("UndoManager component is missing!");
             enabled = false;
@@ -42,8 +42,8 @@ public class MeshSaver : MonoBehaviour
         Vector3 localPosition = transform.localPosition;
         Quaternion rotation = transform.rotation;
 
-        undoManager.SaveObjectState(currentMesh, localPosition, rotation, colliderSize, -1);
+        historyManager.SaveObjectState(currentMesh, localPosition, rotation, colliderSize, -1);
 
-        MeshUtility.SaveLevel(levelName, undoManager.GetUndoStates(), undoManager.GetUndoMeshes());
+        MeshUtility.SaveLevel(levelName, historyManager.GetUndoStates(), historyManager.GetUndoMeshes());
     }
 }

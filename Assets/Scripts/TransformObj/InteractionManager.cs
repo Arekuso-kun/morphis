@@ -129,8 +129,8 @@ public class InteractionManager : MonoBehaviour
         Quaternion rotation = targetObject.transform.rotation;
         int mode = objectManager.mode;
 
-        UndoManager undoManager = targetObject.GetComponent<UndoManager>();
-        undoManager.SaveObjectState(currentMesh, localPosition, rotation, colliderSize, mode);
+        HistoryManager historyManager = targetObject.GetComponent<HistoryManager>();
+        historyManager.SaveObjectState(currentMesh, localPosition, rotation, colliderSize, mode);
     }
 
     private Mesh OffsetVertices(Mesh initialMesh)
