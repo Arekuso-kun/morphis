@@ -11,8 +11,11 @@ public class GridSnap : MonoBehaviour
     private Camera mainCamera;
     private bool isDragging = false;
     private float halfSize;
-    private Vector3 gridPosotion;
+    private Vector3 gridPosition;
     private bool isRotating = false;
+
+    private Vector3 targetPosition;
+    public float moveSmoothSpeed = 20f;
 
     void Start()
     {
@@ -25,9 +28,10 @@ public class GridSnap : MonoBehaviour
         mainCamera = Camera.main;
         gridSize = grid.squareSize / 2.0f;
         halfSize = grid.size * grid.squareSize / 2.0f;
-        gridPosotion = grid.transform.position;
+        gridPosition = grid.transform.position;
 
         MoveToCenter();
+        targetPosition = transform.position;
     }
 
     void Update()
@@ -37,6 +41,8 @@ public class GridSnap : MonoBehaviour
         HandleDragging();
         HandleRotation();
         KeepWithinBounds();
+
+        transform.position = Vector3.Lerp(transform.position, targetPosition, moveSmoothSpeed * Time.deltaTime);
     }
 
     private void HandleDragging()
@@ -69,10 +75,10 @@ public class GridSnap : MonoBehaviour
                 );
 
                 // Limit the gridPoint to the dimensions of the grid bounds
-                gridPoint.x = Mathf.Clamp(gridPoint.x, gridPosotion.x - halfSize, gridPosotion.x + halfSize);
-                gridPoint.z = Mathf.Clamp(gridPoint.z, gridPosotion.z - halfSize, gridPosotion.z + halfSize);
+                gridPoint.x = Mathf.Clamp(gridPoint.x, gridPosition.x - halfSize, gridPosition.x + halfSize);
+                gridPoint.z = Mathf.Clamp(gridPoint.z, gridPosition.z - halfSize, gridPosition.z + halfSize);
 
-                transform.position = gridPoint;
+                targetPosition = gridPoint;
             }
         }
     }
@@ -120,17 +126,17 @@ public class GridSnap : MonoBehaviour
 
     private void MoveToCenter()
     {
-        transform.position = gridPosotion + new Vector3(0, transform.position.y, 0);
+        transform.position = gridPosition + new Vector3(0, transform.position.y, 0);
+        targetPosition = transform.position;
     }
 
     private void KeepWithinBounds()
     {
-        Vector3 position = transform.position;
+        Vector3 clampedPosition = targetPosition;
 
-        if (position.x < gridPosotion.x - halfSize || position.x > gridPosotion.x + halfSize ||
-            position.z < gridPosotion.z - halfSize || position.z > gridPosotion.z + halfSize)
-        {
-            MoveToCenter();
-        }
+        clampedPosition.x = Mathf.Clamp(clampedPosition.x, gridPosition.x - halfSize, gridPosition.x + halfSize);
+        clampedPosition.z = Mathf.Clamp(clampedPosition.z, gridPosition.z - halfSize, gridPosition.z + halfSize);
+
+        targetPosition = clampedPosition;
     }
 }
