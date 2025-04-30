@@ -20,7 +20,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: MainGrid
+  m_Name: GridTransform
   m_Shader: {fileID: -6465566751694194690, guid: d6dcf50e404a21b4cb6927dc8618fa5a, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -129,8 +129,8 @@ Material:
     - _ZWrite: 1
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
-    - _Bottom: {r: 0.3, g: 0.2044394, b: 0.06, a: 1}
-    - _Color: {r: 0.06, g: 0.21951811, b: 0.3, a: 1}
+    - _Bottom: {r: 0.13156895, g: 0.06, b: 0.3, a: 1}
+    - _Color: {r: 0.3, g: 0.1404819, b: 0.06, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _Top: {r: 0, g: 0, b: 0, a: 0}
