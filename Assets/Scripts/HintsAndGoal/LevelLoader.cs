@@ -130,7 +130,6 @@ public class LevelLoader : MonoBehaviour
         boxCollider.size = state.colliderSize;
         boxCollider.center = Vector3.zero;
 
-        // _transformObject.GetComponent<ObjectManager>().SetMode(state.mode);
-        _transformObject.GetComponent<ObjectManager>().mode = state.mode;
+        _transformObject.GetComponent<ObjectManager>().Mode = state.mode;
     }
 }

@@ -3,19 +3,29 @@ using UnityEngine.SceneManagement;
 
 public class MainMenuManager : MonoBehaviour
 {
-    public GameObject mainMenu;
-    public GameObject settingsMenu;
+    [SerializeField] private GameObject _mainMenu;
+    [SerializeField] private GameObject _settingsMenu;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    void Awake()
     {
+        if (_mainMenu == null)
+        {
+            Debug.LogError("Main menu is not assigned!");
+            enabled = false;
+            return;
+        }
 
+        if (_settingsMenu == null)
+        {
+            Debug.LogError("Settings menu is not assigned!");
+            enabled = false;
+            return;
+        }
     }
 
-    // Update is called once per frame
     void Update()
     {
-        if (settingsMenu.activeSelf && Input.GetKeyDown(KeyCode.Escape))
+        if (_settingsMenu.activeSelf && Input.GetKeyDown(KeyCode.Escape))
         {
             CloseSettings();
         }
@@ -28,14 +38,14 @@ public class MainMenuManager : MonoBehaviour
 
     public void OpenSettings()
     {
-        mainMenu.SetActive(false);
-        settingsMenu.SetActive(true);
+        _mainMenu.SetActive(false);
+        _settingsMenu.SetActive(true);
     }
 
     public void CloseSettings()
     {
-        settingsMenu.SetActive(false);
-        mainMenu.SetActive(true);
+        _settingsMenu.SetActive(false);
+        _mainMenu.SetActive(true);
     }
 
     public void QuitGame()

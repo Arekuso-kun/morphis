@@ -3,30 +3,30 @@ using System.Collections.Generic;
 
 public class HistoryManager : MonoBehaviour
 {
-    private Stack<Mesh> undoMeshStack = new Stack<Mesh>();
-    private Stack<ObjectState> undoStateStack = new Stack<ObjectState>();
+    private Stack<Mesh> _undoMeshStack = new();
+    private Stack<ObjectState> _undoStateStack = new();
 
-    private Stack<Mesh> redoMeshStack = new Stack<Mesh>();
-    private Stack<ObjectState> redoStateStack = new Stack<ObjectState>();
+    private Stack<Mesh> _redoMeshStack = new();
+    private Stack<ObjectState> _redoStateStack = new();
 
-    private Mesh currentMesh = null;
-    private ObjectState currentState = null;
+    private Mesh _currentMesh = null;
+    private ObjectState _currentState = null;
 
-    private MeshFilter meshFilter;
-    private BoxCollider boxCollider;
+    private MeshFilter _meshFilter;
+    private BoxCollider _boxCollider;
 
     void Awake()
     {
-        meshFilter = GetComponent<MeshFilter>();
-        if (meshFilter == null)
+        _meshFilter = GetComponent<MeshFilter>();
+        if (_meshFilter == null)
         {
             Debug.LogError("MeshFilter component is missing!");
             enabled = false;
             return;
         }
 
-        boxCollider = GetComponent<BoxCollider>();
-        if (boxCollider == null)
+        _boxCollider = GetComponent<BoxCollider>();
+        if (_boxCollider == null)
         {
             Debug.LogError("BoxCollider component is missing!");
             enabled = false;
@@ -34,13 +34,6 @@ public class HistoryManager : MonoBehaviour
         }
     }
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Z))
@@ -56,7 +49,7 @@ public class HistoryManager : MonoBehaviour
 
     public void SaveObjectState(Mesh mesh, Vector3 localPosition, Quaternion rotation, Vector3 colliderSize, int mode)
     {
-        if (meshFilter == null || boxCollider == null) return;
+        if (_meshFilter == null || _boxCollider == null) return;
 
         Mesh lastMesh = Instantiate(mesh);
         ObjectState lastState = new ObjectState
@@ -67,105 +60,105 @@ public class HistoryManager : MonoBehaviour
             mode = mode
         };
 
-        undoMeshStack.Push(lastMesh);
-        undoStateStack.Push(lastState);
+        _undoMeshStack.Push(lastMesh);
+        _undoStateStack.Push(lastState);
 
-        currentMesh = null;
-        currentState = null;
-        redoMeshStack.Clear();
-        redoMeshStack.Clear();
+        _currentMesh = null;
+        _currentState = null;
+        _redoMeshStack.Clear();
+        _redoMeshStack.Clear();
     }
 
     public void UndoTransformation()
     {
-        if (undoStateStack.Count == 0)
+        if (_undoStateStack.Count == 0)
         {
             Debug.LogWarning("No transformations to undo.");
             return;
         }
 
-        if (currentMesh != null && currentState != null)
+        if (_currentMesh != null && _currentState != null)
         {
-            redoMeshStack.Push(Instantiate(currentMesh));
-            redoStateStack.Push(currentState);
+            _redoMeshStack.Push(Instantiate(_currentMesh));
+            _redoStateStack.Push(_currentState);
         }
         else
         {
-            redoMeshStack.Push(Instantiate(meshFilter.mesh));
-            redoStateStack.Push(new ObjectState
+            _redoMeshStack.Push(Instantiate(_meshFilter.mesh));
+            _redoStateStack.Push(new ObjectState
             {
                 position = transform.localPosition,
                 rotation = transform.rotation,
-                colliderSize = boxCollider.size,
-                mode = -1
+                colliderSize = _boxCollider.size,
+                mode = 0
             });
         }
 
-        currentMesh = undoMeshStack.Pop();
-        currentState = undoStateStack.Pop();
+        _currentMesh = _undoMeshStack.Pop();
+        _currentState = _undoStateStack.Pop();
         ApplyChanges();
     }
 
     public void RedoTransformation()
     {
-        if (redoStateStack.Count == 0)
+        if (_redoStateStack.Count == 0)
         {
             Debug.LogWarning("No transformations to redo.");
             return;
         }
 
-        if (currentMesh != null && currentState != null)
+        if (_currentMesh != null && _currentState != null)
         {
-            undoMeshStack.Push(Instantiate(currentMesh));
-            undoStateStack.Push(currentState);
+            _undoMeshStack.Push(Instantiate(_currentMesh));
+            _undoStateStack.Push(_currentState);
         }
         else
         {
-            undoMeshStack.Push(Instantiate(meshFilter.mesh));
-            undoStateStack.Push(new ObjectState
+            _undoMeshStack.Push(Instantiate(_meshFilter.mesh));
+            _undoStateStack.Push(new ObjectState
             {
                 position = transform.localPosition,
                 rotation = transform.rotation,
-                colliderSize = boxCollider.size,
-                mode = -1
+                colliderSize = _boxCollider.size,
+                mode = 0
             });
         }
 
-        currentMesh = redoMeshStack.Pop();
-        currentState = redoStateStack.Pop();
+        _currentMesh = _redoMeshStack.Pop();
+        _currentState = _redoStateStack.Pop();
         ApplyChanges();
     }
 
     private void ApplyChanges()
     {
-        meshFilter.mesh = currentMesh;
-        boxCollider.size = currentState.colliderSize;
-        transform.localPosition = currentState.position;
-        transform.rotation = currentState.rotation;
+        _meshFilter.mesh = _currentMesh;
+        _boxCollider.size = _currentState.colliderSize;
+        transform.localPosition = _currentState.position;
+        transform.rotation = _currentState.rotation;
     }
 
     public void ResetTransformations()
     {
-        if (undoStateStack.Count == 0 || undoMeshStack.Count == 0)
+        if (_undoStateStack.Count == 0 || _undoMeshStack.Count == 0)
         {
             Debug.LogWarning("No transformations to reset.");
             return;
         }
 
-        Mesh[] meshesArray = undoMeshStack.ToArray();
-        ObjectState[] statesArray = undoStateStack.ToArray();
+        Mesh[] meshesArray = _undoMeshStack.ToArray();
+        ObjectState[] statesArray = _undoStateStack.ToArray();
 
-        currentMesh = meshesArray[meshesArray.Length - 1];
-        currentState = statesArray[statesArray.Length - 1];
+        _currentMesh = meshesArray[meshesArray.Length - 1];
+        _currentState = statesArray[statesArray.Length - 1];
         ApplyChanges();
 
-        undoMeshStack.Clear();
-        undoStateStack.Clear();
-        redoMeshStack.Clear();
-        redoStateStack.Clear();
+        _undoMeshStack.Clear();
+        _undoStateStack.Clear();
+        _redoMeshStack.Clear();
+        _redoStateStack.Clear();
 
-        currentMesh = null;
-        currentState = null;
+        _currentMesh = null;
+        _currentState = null;
 
         transform.localPosition = new Vector3(0, 1, 0);
         transform.rotation = Quaternion.identity;
@@ -173,11 +166,11 @@ public class HistoryManager : MonoBehaviour
 
     public Stack<ObjectState> GetUndoStates()
     {
-        return new Stack<ObjectState>(undoStateStack);
+        return new Stack<ObjectState>(_undoStateStack);
     }
 
     public Stack<Mesh> GetUndoMeshes()
     {
-        return new Stack<Mesh>(undoMeshStack);
+        return new Stack<Mesh>(_undoMeshStack);
     }
 }

@@ -21,6 +21,7 @@ public class PauseMenuManager : MonoBehaviour
         {
             Debug.LogError("PauseMenuAnimation script not found on the pause menu GameObject.");
             enabled = false;
+            return;
         }
     }
 

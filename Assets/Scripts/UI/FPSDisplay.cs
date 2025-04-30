@@ -11,7 +11,7 @@ public class FPSDisplay : MonoBehaviour
         _fpsText = GetComponent<TMP_Text>();
         if (_fpsText == null)
         {
-            Debug.LogError("FPS Text component is missing!");
+            Debug.LogError("FPS Text component not assigned!");
             enabled = false;
             return;
         }

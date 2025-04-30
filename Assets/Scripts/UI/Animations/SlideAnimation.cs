@@ -7,7 +7,7 @@ public class SlideAnimation : MonoBehaviour
     private Vector2 _offScreenPosition;
     private Vector2 _onScreenPosition;
 
-    private void Awake()
+    void Awake()
     {
         _rectTransform = GetComponent<RectTransform>();
         _onScreenPosition = _rectTransform.anchoredPosition;

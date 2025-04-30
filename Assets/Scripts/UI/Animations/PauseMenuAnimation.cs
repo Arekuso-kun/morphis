@@ -11,6 +11,20 @@ public class PauseMenuAnimation : MonoBehaviour
 
     void Awake()
     {
+        if (_window == null)
+        {
+            Debug.LogError("Window RectTransform is not assigned!");
+            enabled = false;
+            return;
+        }
+
+        if (_background == null)
+        {
+            Debug.LogError("Background CanvasGroup is not assigned!");
+            enabled = false;
+            return;
+        }
+
         _onScreenPosition = _window.anchoredPosition;
         _offScreenPosition = new Vector2(0, -(Screen.height / 2 + _window.rect.height));
     }

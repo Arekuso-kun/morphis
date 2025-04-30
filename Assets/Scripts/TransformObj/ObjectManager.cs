@@ -3,41 +3,43 @@ using UnityEngine;
 public class ObjectManager : MonoBehaviour
 {
     [Tooltip("The main object to be transformed")]
-    public GameObject mainObject;
+    public GameObject MainObject;
 
     [Tooltip("The mode of transformation")]
-    public int mode;
+    public int Mode;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    private ObjectAssigner _objectAssigner;
+
     void Start()
     {
-        if (mainObject == null)
+        if (MainObject == null)
         {
             Debug.LogError("Main object is missing!");
+            enabled = false;
             return;
         }
 
-        Debug.Log("ObjectManager initialized successfully.");
+        _objectAssigner = MainObject.GetComponent<ObjectAssigner>();
+        if (_objectAssigner == null)
+        {
+            Debug.LogError("ObjectAssigner component is missing on Main Object!");
+            enabled = false;
+            return;
+        }
     }
 
     public GameObject GetGrid()
     {
-        return mainObject.transform.Find("Grid")?.gameObject;
+        return _objectAssigner.Grid;
     }
 
     public GameObject GetObject()
     {
-        return mainObject.transform.Find("Object")?.gameObject;
+        return _objectAssigner.Object;
     }
 
     public GameObject GetPreview()
     {
-        return mainObject.transform.Find("Preview")?.gameObject;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
+        return _objectAssigner.Preview;
     }
 }

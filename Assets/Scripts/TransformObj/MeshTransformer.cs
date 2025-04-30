@@ -5,70 +5,93 @@ using UnityEngine;
 public class MeshTransformer : MonoBehaviour
 {
     [Tooltip("The grid object for reference")]
-    public GameObject grid;
+    [SerializeField] private GameObject _grid;
 
-    private GameObject targetObject;
-    private GameObject targetGrid;
+    private GameObject _targetObject;
+    private GameObject _targetGrid;
 
-    private int mode;
-    private float gridSize;
+    private int _mode;
+    private float _gridSize;
 
-    private Mesh newMesh;
-    private Vector3[] newVertices;
-    private int[] newTriangles;
-    private Vector2[] newUVs;
+    private Mesh _newMesh;
+    private Vector3[] _newVertices;
+    private int[] _newTriangles;
+    private Vector2[] _newUVs;
 
-    private Vector3[] previousVertices;
-    private Vector3 previousPosition;
-    private Quaternion previousRotation;
-    private Vector3 previousBounds;
+    private Vector3[] _previousVertices;
+    private Vector3 _previousPosition;
+    private Quaternion _previousRotation;
+    private Vector3 _previousBounds;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    private ObjectManager _objectManager;
+
     void Start()
     {
-        ObjectManager objectManager = GetComponentInParent<ObjectManager>();
-        if (objectManager == null)
+        _objectManager = GetComponentInParent<ObjectManager>();
+        if (_objectManager == null)
         {
-            Debug.LogError("ObjectManager component is missing!");
+            Debug.LogError("ObjectManager component not found in parent!");
+            enabled = false;
             return;
         }
 
-        mode = objectManager.mode;
-        targetObject = grid ? objectManager.GetObject() : objectManager.GetGrid();
-        targetGrid = objectManager.GetGrid();
-        if (targetObject == null || targetGrid == null)
+        _mode = _objectManager.Mode;
+        _targetObject = _grid ? _objectManager.GetObject() : _objectManager.GetGrid();
+        if (_targetObject == null)
         {
-            Debug.LogError("Target Object or Target Grid is missing!");
+            Debug.LogError("Target Object is missing!");
+            enabled = false;
             return;
         }
 
-        GenerateGrid gridComponent = targetGrid.GetComponent<GenerateGrid>();
+        if (_targetObject.GetComponent<MeshFilter>() == null)
+        {
+            Debug.LogError("MeshFilter component not found on target object!");
+            enabled = false;
+            return;
+        }
+
+        if (_targetObject.GetComponent<Renderer>() == null)
+        {
+            Debug.LogError("Renderer component not found on target object!");
+            enabled = false;
+            return;
+        }
+
+        _targetGrid = _objectManager.GetGrid();
+        if (_targetGrid == null)
+        {
+            Debug.LogError("Target Grid is missing!");
+            enabled = false;
+            return;
+        }
+
+        GenerateGrid gridComponent = _targetGrid.GetComponent<GenerateGrid>();
         if (gridComponent == null)
         {
-            Debug.LogError("Grid component is missing!");
+            Debug.LogError("GenerateGrid component not found on target grid!");
+            enabled = false;
             return;
         }
 
-        gridSize = gridComponent.size * gridComponent.squareSize;
+        _gridSize = gridComponent.Size * gridComponent.SquareSize;
 
-        newMesh = new Mesh();
-        newMesh.name = "Mesh";
-        GetComponent<MeshFilter>().mesh = newMesh;
+        _newMesh = new Mesh { name = "Mesh" };
+        GetComponent<MeshFilter>().mesh = _newMesh;
 
-        previousPosition = targetObject.transform.position;
-        previousRotation = targetObject.transform.rotation;
+        _previousPosition = _targetObject.transform.position;
+        _previousRotation = _targetObject.transform.rotation;
 
         UpdateShape();
     }
 
-    // Update is called once per frame
     void Update()
     {
-        ObjectManager objectManager = GetComponentInParent<ObjectManager>();
-        if (mode != objectManager.mode)
+        if (_mode != _objectManager.Mode)
         {
-            mode = objectManager.mode;
-            UpdateShape(); UpdateCollider();
+            _mode = _objectManager.Mode;
+            UpdateShape();
+            UpdateCollider();
         }
 
         if (TargetVerticesChanged() || TargetTransformChanged())
@@ -84,7 +107,7 @@ public class MeshTransformer : MonoBehaviour
 
     public Mesh GetMesh()
     {
-        return newMesh;
+        return _newMesh;
     }
 
     void UpdateCollider()
@@ -103,37 +126,37 @@ public class MeshTransformer : MonoBehaviour
 
     void UpdateShape()
     {
-        MeshFilter targetMeshFilter = targetObject.GetComponent<MeshFilter>();
-        previousVertices = targetMeshFilter.mesh.vertices;
+        MeshFilter targetMeshFilter = _targetObject.GetComponent<MeshFilter>();
+        _previousVertices = targetMeshFilter.mesh.vertices;
 
-        Transform targetObjectTransform = targetObject.transform;
-        Transform targetGridTransform = targetGrid.transform;
+        Transform targetObjectTransform = _targetObject.transform;
+        Transform targetGridTransform = _targetGrid.transform;
 
-        if (mode == 1) // Circular
+        if (_mode == 1) // Circular
         {
             ApplyCircularTransformation(targetMeshFilter.mesh, targetObjectTransform, targetGridTransform, false);
         }
-        else if (mode == 2) // Circular Squared
+        else if (_mode == 2) // Circular Squared
         {
             ApplyCircularTransformation(targetMeshFilter.mesh, targetObjectTransform, targetGridTransform, true);
         }
-        else if (mode == 3) // Stretch
+        else if (_mode == 3) // Stretch
         {
             ApplyStretchTransformation(targetMeshFilter.mesh, targetObjectTransform, targetGridTransform, 2.0f);
         }
-        else if (mode == 4) // Shrink
+        else if (_mode == 4) // Shrink
         {
             ApplyStretchTransformation(targetMeshFilter.mesh, targetObjectTransform, targetGridTransform, 0.5f);
         }
-        else if (mode == 5) // Wavy
+        else if (_mode == 5) // Wavy
         {
             ApplyWavyTransformation(targetMeshFilter.mesh, targetObjectTransform, targetGridTransform, false, 4);
         }
-        else if (mode == 6) // Wavy Sharp
+        else if (_mode == 6) // Wavy Sharp
         {
             ApplyWavyTransformation(targetMeshFilter.mesh, targetObjectTransform, targetGridTransform, true, 4);
         }
-        else if (mode == 7) // Shear
+        else if (_mode == 7) // Shear
         {
             ApplyShearTransformation(targetMeshFilter.mesh, targetObjectTransform, targetGridTransform, 0.5f);
         }
@@ -148,20 +171,20 @@ public class MeshTransformer : MonoBehaviour
         Vector3 targetGridPosition = targetGridTransform.position;
 
         Vector3[] targetVertices = targetMesh.vertices;
-        newVertices = new Vector3[targetVertices.Length];
+        _newVertices = new Vector3[targetVertices.Length];
 
         Vector3[] transformedVertices = new Vector3[targetVertices.Length];
         targetObjectTransform.TransformPoints(targetVertices, transformedVertices);
 
         Vector3 offsetVertex = new(targetGridPosition.x, targetObjectPosition.y, targetGridPosition.z);
-        float gridMin = -gridSize / 2;
+        float gridMin = -_gridSize / 2;
 
         for (int i = 0; i < targetVertices.Length; i++)
         {
             Vector3 adjustedVertex = transformedVertices[i] - offsetVertex;
 
-            float normalizedX = (adjustedVertex.x - gridMin) / gridSize;
-            float normalizedZ = (adjustedVertex.z - gridMin) / gridSize;
+            float normalizedX = (adjustedVertex.x - gridMin) / _gridSize;
+            float normalizedZ = (adjustedVertex.z - gridMin) / _gridSize;
 
             float angle = normalizedX * Mathf.PI * 2;
             float x = Mathf.Cos(angle);
@@ -187,31 +210,31 @@ public class MeshTransformer : MonoBehaviour
                 z = squareZ;
             }
 
-            x *= normalizedZ * gridSize;
-            z *= normalizedZ * gridSize;
+            x *= normalizedZ * _gridSize;
+            z *= normalizedZ * _gridSize;
 
-            newVertices[i] = new Vector3(x, adjustedVertex.y, z);
+            _newVertices[i] = new Vector3(x, adjustedVertex.y, z);
         }
 
-        newTriangles = targetMesh.triangles;
+        _newTriangles = targetMesh.triangles;
 
-        for (int i = 0; i < newTriangles.Length; i += 3)
+        for (int i = 0; i < _newTriangles.Length; i += 3)
         {
-            Vector3 adjustedVertex1 = transformedVertices[newTriangles[i]] - offsetVertex;
-            Vector3 adjustedVertex2 = transformedVertices[newTriangles[i + 1]] - offsetVertex;
-            Vector3 adjustedVertex3 = transformedVertices[newTriangles[i + 2]] - offsetVertex;
+            Vector3 adjustedVertex1 = transformedVertices[_newTriangles[i]] - offsetVertex;
+            Vector3 adjustedVertex2 = transformedVertices[_newTriangles[i + 1]] - offsetVertex;
+            Vector3 adjustedVertex3 = transformedVertices[_newTriangles[i + 2]] - offsetVertex;
 
             float triangleCenterZ = (adjustedVertex1.z + adjustedVertex2.z + adjustedVertex3.z) / 3;
 
-            if (triangleCenterZ > -gridSize / 2)
+            if (triangleCenterZ > -_gridSize / 2)
             {
-                (newTriangles[i + 1], newTriangles[i]) = (newTriangles[i], newTriangles[i + 1]);
+                (_newTriangles[i + 1], _newTriangles[i]) = (_newTriangles[i], _newTriangles[i + 1]);
             }
 
             // TO DO: Fix vertices near the center of the circle
         }
 
-        newUVs = targetMesh.uv;
+        _newUVs = targetMesh.uv;
     }
 
     void ApplyStretchTransformation(Mesh targetMesh, Transform targetObjectTransform, Transform targetGridTransform, float stretchFactor)
@@ -220,7 +243,7 @@ public class MeshTransformer : MonoBehaviour
         Vector3 targetGridPosition = targetGridTransform.position;
 
         Vector3[] targetVertices = targetMesh.vertices;
-        newVertices = new Vector3[targetVertices.Length];
+        _newVertices = new Vector3[targetVertices.Length];
 
         Vector3[] transformedPoints = new Vector3[targetVertices.Length];
         targetObjectTransform.TransformPoints(targetVertices, transformedPoints);
@@ -230,11 +253,11 @@ public class MeshTransformer : MonoBehaviour
             Vector3 offsetVertex = new(targetGridPosition.x, targetObjectPosition.y, targetGridPosition.z);
             Vector3 adjustedVertex = transformedPoints[i] - offsetVertex;
 
-            newVertices[i] = new Vector3(adjustedVertex.x * stretchFactor, adjustedVertex.y, adjustedVertex.z);
+            _newVertices[i] = new Vector3(adjustedVertex.x * stretchFactor, adjustedVertex.y, adjustedVertex.z);
         }
 
-        newTriangles = targetMesh.triangles;
-        newUVs = targetMesh.uv;
+        _newTriangles = targetMesh.triangles;
+        _newUVs = targetMesh.uv;
     }
 
     void ApplyWavyTransformation(Mesh targetMesh, Transform targetObjectTransform, Transform targetGridTransform, bool sharp, int waveCount)
@@ -243,28 +266,28 @@ public class MeshTransformer : MonoBehaviour
         Vector3 targetGridPosition = targetGridTransform.position;
 
         Vector3[] targetVertices = targetMesh.vertices;
-        newVertices = new Vector3[targetVertices.Length];
+        _newVertices = new Vector3[targetVertices.Length];
 
         Vector3[] transformedPoints = new Vector3[targetVertices.Length];
         targetObjectTransform.TransformPoints(targetVertices, transformedPoints);
 
-        float gridMin = -gridSize / 2;
+        float gridMin = -_gridSize / 2;
 
         for (int i = 0; i < targetVertices.Length; i++)
         {
             Vector3 offsetVertex = new(targetGridPosition.x, targetObjectPosition.y, targetGridPosition.z);
             Vector3 adjustedVertex = transformedPoints[i] - offsetVertex;
 
-            float normalizedX = (adjustedVertex.x - gridMin) / gridSize;
+            float normalizedX = (adjustedVertex.x - gridMin) / _gridSize;
 
             float waveFactor = normalizedX * Mathf.PI * waveCount;
             float waveHeight = (sharp ? SharpSin(waveFactor) : Mathf.Sin(waveFactor)) / waveCount;
 
-            newVertices[i] = new Vector3(adjustedVertex.x, adjustedVertex.y, adjustedVertex.z + waveHeight);
+            _newVertices[i] = new Vector3(adjustedVertex.x, adjustedVertex.y, adjustedVertex.z + waveHeight);
         }
 
-        newTriangles = targetMesh.triangles;
-        newUVs = targetMesh.uv;
+        _newTriangles = targetMesh.triangles;
+        _newUVs = targetMesh.uv;
     }
 
     void ApplyShearTransformation(Mesh targetMesh, Transform targetObjectTransform, Transform targetGridTransform, float shear)
@@ -273,7 +296,7 @@ public class MeshTransformer : MonoBehaviour
         Vector3 targetGridPosition = targetGridTransform.position;
 
         Vector3[] targetVertices = targetMesh.vertices;
-        newVertices = new Vector3[targetVertices.Length];
+        _newVertices = new Vector3[targetVertices.Length];
 
         Vector3[] transformedPoints = new Vector3[targetVertices.Length];
         targetObjectTransform.TransformPoints(targetVertices, transformedPoints);
@@ -283,11 +306,11 @@ public class MeshTransformer : MonoBehaviour
             Vector3 offsetVertex = new(targetGridPosition.x, targetObjectPosition.y, targetGridPosition.z);
             Vector3 adjustedVertex = transformedPoints[i] - offsetVertex;
 
-            newVertices[i] = new Vector3(adjustedVertex.x + shear * adjustedVertex.z, adjustedVertex.y, adjustedVertex.z);
+            _newVertices[i] = new Vector3(adjustedVertex.x + shear * adjustedVertex.z, adjustedVertex.y, adjustedVertex.z);
         }
 
-        newTriangles = targetMesh.triangles;
-        newUVs = targetMesh.uv;
+        _newTriangles = targetMesh.triangles;
+        _newUVs = targetMesh.uv;
     }
     float SharpSin(float x)
     {
@@ -301,34 +324,34 @@ public class MeshTransformer : MonoBehaviour
 
     void UpdateMesh()
     {
-        newMesh.Clear();
+        _newMesh.Clear();
 
-        newMesh.vertices = newVertices;
-        newMesh.triangles = newTriangles;
-        newMesh.uv = newUVs;
+        _newMesh.vertices = _newVertices;
+        _newMesh.triangles = _newTriangles;
+        _newMesh.uv = _newUVs;
 
-        newMesh.RecalculateNormals();
-        newMesh.RecalculateBounds();
+        _newMesh.RecalculateNormals();
+        _newMesh.RecalculateBounds();
     }
 
     private bool TargetVerticesChanged()
     {
-        if (targetObject == null) return false;
+        if (_targetObject == null) return false;
 
-        MeshFilter targetMeshFilter = targetObject.GetComponent<MeshFilter>();
+        MeshFilter targetMeshFilter = _targetObject.GetComponent<MeshFilter>();
         if (targetMeshFilter == null) return false;
 
         Mesh targetMesh = targetMeshFilter.mesh;
         Vector3[] currentVertices = targetMesh.vertices;
 
-        if (previousVertices == null || previousVertices.Length != currentVertices.Length)
+        if (_previousVertices == null || _previousVertices.Length != currentVertices.Length)
         {
             return true;
         }
 
         for (int i = 0; i < currentVertices.Length; i++)
         {
-            if (previousVertices[i] != currentVertices[i])
+            if (_previousVertices[i] != currentVertices[i])
             {
                 return true;
             }
@@ -339,15 +362,15 @@ public class MeshTransformer : MonoBehaviour
 
     private bool TargetTransformChanged()
     {
-        if (targetObject == null) return false;
+        if (_targetObject == null) return false;
 
-        Vector3 currentPosition = targetObject.transform.position;
-        Quaternion currentRotation = targetObject.transform.rotation;
+        Vector3 currentPosition = _targetObject.transform.position;
+        Quaternion currentRotation = _targetObject.transform.rotation;
 
-        if (currentPosition != previousPosition || currentRotation != previousRotation)
+        if (currentPosition != _previousPosition || currentRotation != _previousRotation)
         {
-            previousPosition = currentPosition;
-            previousRotation = currentRotation;
+            _previousPosition = currentPosition;
+            _previousRotation = currentRotation;
             return true;
         }
         return false;
@@ -355,12 +378,12 @@ public class MeshTransformer : MonoBehaviour
 
     private bool BoundsChanged()
     {
-        if (targetObject == null) return false;
+        if (_targetObject == null) return false;
 
-        Vector3 currentBounds = targetObject.GetComponent<Renderer>().bounds.size;
-        if (currentBounds != previousBounds)
+        Vector3 currentBounds = _targetObject.GetComponent<Renderer>().bounds.size;
+        if (currentBounds != _previousBounds)
         {
-            previousBounds = currentBounds;
+            _previousBounds = currentBounds;
             return true;
         }
         return false;

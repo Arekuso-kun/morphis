@@ -6,6 +6,8 @@ public class HintManager : MonoBehaviour
     [SerializeField] private GameObject _hintsContainer;
     [SerializeField] private GameObject _hintNavigator;
 
+    private HintNavigatorAnimation _hintNavigatorAnimation;
+
     void Awake()
     {
         if (_objectsContainer == null)
@@ -28,13 +30,21 @@ public class HintManager : MonoBehaviour
             enabled = false;
             return;
         }
+
+        _hintNavigatorAnimation = _hintNavigator.GetComponent<HintNavigatorAnimation>();
+        if (_hintNavigatorAnimation == null)
+        {
+            Debug.LogError("HintNavigatorAnimation script not found on the hint navigator GameObject.");
+            enabled = false;
+            return;
+        }
     }
 
     public void ShowMainObjects()
     {
         _objectsContainer.SetActive(true);
         _hintsContainer.SetActive(false);
-        _hintNavigator.GetComponent<HintNavigatorAnimation>().CloseNavigator();
+        _hintNavigatorAnimation.CloseNavigator();
     }
 
     public void ShowHints()

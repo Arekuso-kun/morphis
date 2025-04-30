@@ -5,30 +5,34 @@ using System.Collections;
 public class GridSnap : MonoBehaviour
 {
     [Tooltip("The grid object for reference")]
-    public GenerateGrid grid;
+    [SerializeField] private GenerateGrid _grid;
+    [SerializeField] private float _moveSmoothSpeed = 20f;
 
-    private float gridSize;
-    private Camera mainCamera;
-    private bool isDragging = false;
-    private float halfSize;
-    private Vector3 gridPosition;
-    private bool isRotating = false;
+    private float _gridSize;
+    private Camera _mainCamera;
+    private bool _isDragging = false;
+    private float _halfSize;
+    private Vector3 _gridPosition;
+    private bool _isRotating = false;
 
     private Vector3 targetPosition;
-    public float moveSmoothSpeed = 20f;
+
+    void Awake()
+    {
+        if (_grid == null)
+        {
+            Debug.LogError("Grid object not assigned!");
+            enabled = false;
+            return;
+        }
+    }
 
     void Start()
     {
-        if (grid == null)
-        {
-            Debug.LogError("Grid object is missing!");
-            return;
-        }
-
-        mainCamera = Camera.main;
-        gridSize = grid.squareSize / 2.0f;
-        halfSize = grid.size * grid.squareSize / 2.0f;
-        gridPosition = grid.transform.position;
+        _mainCamera = Camera.main;
+        _gridSize = _grid.SquareSize / 2.0f;
+        _halfSize = _grid.Size * _grid.SquareSize / 2.0f;
+        _gridPosition = _grid.transform.position;
 
         MoveToCenter();
         targetPosition = transform.position;
@@ -36,47 +40,45 @@ public class GridSnap : MonoBehaviour
 
     void Update()
     {
-        if (grid == null) return;
-
         HandleDragging();
         HandleRotation();
         KeepWithinBounds();
 
-        transform.position = Vector3.Lerp(transform.position, targetPosition, moveSmoothSpeed * Time.deltaTime);
+        transform.position = Vector3.Lerp(transform.position, targetPosition, _moveSmoothSpeed * Time.deltaTime);
     }
 
     private void HandleDragging()
     {
         if (Input.GetMouseButtonDown(0))
         {
-            Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+            Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit) && hit.transform == transform)
             {
-                isDragging = true;
+                _isDragging = true;
             }
         }
 
         if (Input.GetMouseButtonUp(0))
         {
-            isDragging = false;
+            _isDragging = false;
         }
 
-        if (isDragging)
+        if (_isDragging)
         {
-            Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+            Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
             Plane plane = new(Vector3.up, Vector3.zero);
             if (plane.Raycast(ray, out float distance))
             {
                 Vector3 point = ray.GetPoint(distance);
                 Vector3 gridPoint = new(
-                    Mathf.Round(point.x / gridSize) * gridSize,
+                    Mathf.Round(point.x / _gridSize) * _gridSize,
                     transform.position.y,
-                    Mathf.Round(point.z / gridSize) * gridSize
+                    Mathf.Round(point.z / _gridSize) * _gridSize
                 );
 
                 // Limit the gridPoint to the dimensions of the grid bounds
-                gridPoint.x = Mathf.Clamp(gridPoint.x, gridPosition.x - halfSize, gridPosition.x + halfSize);
-                gridPoint.z = Mathf.Clamp(gridPoint.z, gridPosition.z - halfSize, gridPosition.z + halfSize);
+                gridPoint.x = Mathf.Clamp(gridPoint.x, _gridPosition.x - _halfSize, _gridPosition.x + _halfSize);
+                gridPoint.z = Mathf.Clamp(gridPoint.z, _gridPosition.z - _halfSize, _gridPosition.z + _halfSize);
 
                 targetPosition = gridPoint;
             }
@@ -85,7 +87,7 @@ public class GridSnap : MonoBehaviour
 
     private void HandleRotation()
     {
-        if (isRotating) return;
+        if (_isRotating) return;
 
         if (Input.GetKeyDown(KeyCode.W))
         {
@@ -107,7 +109,7 @@ public class GridSnap : MonoBehaviour
 
     private IEnumerator RotateSmooth(Vector3 axis, float angle)
     {
-        isRotating = true;
+        _isRotating = true;
         Quaternion startRotation = transform.rotation;
         Quaternion endRotation = Quaternion.Euler(axis * angle) * startRotation;
         float duration = 0.3f;
@@ -121,12 +123,12 @@ public class GridSnap : MonoBehaviour
         }
 
         transform.rotation = endRotation;
-        isRotating = false;
+        _isRotating = false;
     }
 
     private void MoveToCenter()
     {
-        transform.position = gridPosition + new Vector3(0, transform.position.y, 0);
+        transform.position = _gridPosition + new Vector3(0, transform.position.y, 0);
         targetPosition = transform.position;
     }
 
@@ -134,8 +136,8 @@ public class GridSnap : MonoBehaviour
     {
         Vector3 clampedPosition = targetPosition;
 
-        clampedPosition.x = Mathf.Clamp(clampedPosition.x, gridPosition.x - halfSize, gridPosition.x + halfSize);
-        clampedPosition.z = Mathf.Clamp(clampedPosition.z, gridPosition.z - halfSize, gridPosition.z + halfSize);
+        clampedPosition.x = Mathf.Clamp(clampedPosition.x, _gridPosition.x - _halfSize, _gridPosition.x + _halfSize);
+        clampedPosition.z = Mathf.Clamp(clampedPosition.z, _gridPosition.z - _halfSize, _gridPosition.z + _halfSize);
 
         targetPosition = clampedPosition;
     }

@@ -101,7 +101,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd691818dc97cb04caccd9291018e9f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  grid: {fileID: 6021022702415473218}
+  _grid: {fileID: 6021022702415473218}
 --- !u!65 &5493171293161436274
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -251,7 +251,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd691818dc97cb04caccd9291018e9f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  grid: {fileID: 0}
+  _grid: {fileID: 0}
 --- !u!114 &2178790351977878885
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -264,9 +264,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2086d3aa610f0248a8ef9835192f5fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  generatedObject: {fileID: 4663665466285102535}
-  defaultMaterial: {fileID: 2100000, guid: 9b46972d6d77ef9428a71f3e21867763, type: 2}
-  emissionMaterial: {fileID: 2100000, guid: 37a83d2425853364cbea1a7770df6e07, type: 2}
+  _generatedObject: {fileID: 4663665466285102535}
+  PulseSpeed: 5
+  MinAlpha: 0.85
+  MaxAlpha: 0.95
 --- !u!65 &2563330366193769803
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -334,5 +335,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c2d4b9fde5848249aee61a3059d6a8f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainObject: {fileID: 0}
-  mode: 1
+  MainObject: {fileID: 0}
+  Mode: 0

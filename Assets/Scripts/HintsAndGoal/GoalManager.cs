@@ -8,72 +8,74 @@ using UnityEngine;
 public class GoalManager : MonoBehaviour
 {
     [Tooltip("The current object being manipulated")]
-    public GameObject currentObject;
+    [SerializeField] private GameObject _mainObject;
 
     [Tooltip("The tolerance for comparing vertices")]
-    public float tolerance = 0.5f;
-
-    private Vector3[] previousMeshVertices;
-    private bool isComparing = false;
-    private Material material;
+    [SerializeField] private float _tolerance = 0.5f;
 
     [Header("Height Animation Settings")]
-    public float heightDuration = 2f;
-    private float startHeight = -1f;
+    [SerializeField] private float _heightDuration = 2f;
+    [SerializeField] private float _startHeight = -1f;
 
     [Header("Emission Pulse Settings")]
-    public float pulseDuration = 0.3f;
-    public float peakEmission = 2f;
-    public float baseEmission = 0f;
+    [SerializeField] private float _pulseDuration = 0.3f;
+    [SerializeField] private float _peakEmission = 2f;
+    [SerializeField] private float _baseEmission = 0f;
+
+    private MeshFilter _mainMeshFilter;
+    private MeshFilter _meshFilter;
+    private Renderer _renderer;
+    private BoxCollider _boxCollider;
+
+    private Vector3[] _previousMeshVertices;
+    private bool _isComparing = false;
+
+    void Awake()
+    {
+        if (_mainObject == null)
+        {
+            Debug.LogError("Current object is not assigned!");
+            enabled = false;
+            return;
+        }
+
+        _mainMeshFilter = _mainObject.GetComponent<MeshFilter>();
+        if (_mainMeshFilter == null)
+        {
+            Debug.LogError("MeshFilter component not found on the main object!");
+            enabled = false;
+            return;
+        }
+        _previousMeshVertices = (Vector3[])_mainMeshFilter.mesh.vertices.Clone();
+
+        _meshFilter = GetComponent<MeshFilter>();
+        _renderer = GetComponent<Renderer>();
+        _boxCollider = GetComponent<BoxCollider>();
+    }
 
     void Start()
     {
-        if (currentObject == null)
-        {
-            Debug.LogError("Current object is missing!");
-            return;
-        }
 
-        MeshFilter meshFilter = currentObject.GetComponent<MeshFilter>();
-        if (meshFilter == null)
-        {
-            Debug.LogError("MeshFilter component is missing!");
-            return;
-        }
-
-        previousMeshVertices = (Vector3[])meshFilter.mesh.vertices.Clone();
-
-        Renderer rend = GetComponent<Renderer>();
-        if (rend == null)
-        {
-            Debug.LogError("Renderer component is missing!");
-            return;
-        }
-
-        material = rend.material;
-        material.SetFloat("_Height", startHeight);
-        material.SetFloat("_Emission", baseEmission);
+        _renderer.material.SetFloat("_Height", _startHeight);
+        _renderer.material.SetFloat("_Emission", _baseEmission);
 
         UpdateCollider();
     }
 
     async void Update()
     {
-        if (currentObject == null || isComparing) return;
+        if (_mainObject == null || _isComparing) return;
 
-        MeshFilter meshFilter = currentObject.GetComponent<MeshFilter>();
-        if (meshFilter == null) return;
+        Vector3[] currentMesh = _mainMeshFilter.mesh.vertices;
+        Vector3[] savedMesh = _meshFilter.mesh.vertices;
 
-        Vector3[] currentMesh = meshFilter.mesh.vertices;
-        Vector3[] savedMesh = GetComponent<MeshFilter>().mesh.vertices;
-
-        if (previousMeshVertices == null || MeshChanged(currentMesh))
+        if (_previousMeshVertices == null || MeshChanged(currentMesh))
         {
-            previousMeshVertices = (Vector3[])currentMesh.Clone();
+            _previousMeshVertices = (Vector3[])currentMesh.Clone();
 
-            isComparing = true;
+            _isComparing = true;
             bool areEqual = await CompareMeshesAsync(currentMesh, savedMesh);
-            isComparing = false;
+            _isComparing = false;
 
             if (areEqual)
             {
@@ -88,29 +90,29 @@ public class GoalManager : MonoBehaviour
         float currentHeight;
         float elapsed = 0f;
 
-        Vector3 boundsSize = GetComponent<Renderer>().bounds.size;
+        Vector3 boundsSize = _renderer.bounds.size;
         float targetHeight = boundsSize.y + 1f;
 
-        while (elapsed < heightDuration)
+        while (elapsed < _heightDuration)
         {
             elapsed += Time.deltaTime;
-            float t = Mathf.Clamp01(elapsed / heightDuration);
-            currentHeight = Mathf.Lerp(startHeight, targetHeight, t);
-            material.SetFloat("_Height", currentHeight);
+            float t = Mathf.Clamp01(elapsed / _heightDuration);
+            currentHeight = Mathf.Lerp(_startHeight, targetHeight, t);
+            _renderer.material.SetFloat("_Height", currentHeight);
             yield return null;
         }
 
         currentHeight = targetHeight;
-        material.SetFloat("_Height", currentHeight);
+        _renderer.material.SetFloat("_Height", currentHeight);
 
         StartCoroutine(EmissionPulse());
     }
 
     IEnumerator EmissionPulse()
     {
-        float startEmission = baseEmission;
-        float targetEmission = peakEmission;
-        float halfDuration = pulseDuration / 2f;
+        float startEmission = _baseEmission;
+        float targetEmission = _peakEmission;
+        float halfDuration = _pulseDuration / 2f;
 
         // up
         float elapsed = 0f;
@@ -119,29 +121,29 @@ public class GoalManager : MonoBehaviour
             elapsed += Time.deltaTime;
             float t = Mathf.Clamp01(elapsed / halfDuration);
             float emission = Mathf.Lerp(startEmission, targetEmission, t);
-            material.SetFloat("_Emission", emission);
+            _renderer.material.SetFloat("_Emission", emission);
             yield return null;
         }
 
         // down
-        startEmission = peakEmission;
-        targetEmission = baseEmission;
+        startEmission = _peakEmission;
+        targetEmission = _baseEmission;
         elapsed = 0f;
         while (elapsed < halfDuration)
         {
             elapsed += Time.deltaTime;
             float t = Mathf.Clamp01(elapsed / halfDuration);
             float emission = Mathf.Lerp(startEmission, targetEmission, t);
-            material.SetFloat("_Emission", emission);
+            _renderer.material.SetFloat("_Emission", emission);
             yield return null;
         }
 
-        material.SetFloat("_Emission", baseEmission);
+        _renderer.material.SetFloat("_Emission", _baseEmission);
     }
 
     bool MeshChanged(Vector3[] currentMesh)
     {
-        return !currentMesh.SequenceEqual(previousMeshVertices);
+        return !currentMesh.SequenceEqual(_previousMeshVertices);
     }
 
     async Task<bool> CompareMeshesAsync(Vector3[] meshA, Vector3[] meshB)
@@ -239,17 +241,15 @@ public class GoalManager : MonoBehaviour
 
     bool WithinTolerance(Vector3 a, Vector3 b)
     {
-        return Mathf.Abs(a.x - b.x) <= tolerance
-            && Mathf.Abs(a.y - b.y) <= tolerance
-            && Mathf.Abs(a.z - b.z) <= tolerance;
+        return Mathf.Abs(a.x - b.x) <= _tolerance
+            && Mathf.Abs(a.y - b.y) <= _tolerance
+            && Mathf.Abs(a.z - b.z) <= _tolerance;
     }
 
     void UpdateCollider()
     {
-        BoxCollider boxCollider = GetComponent<BoxCollider>();
-
-        Vector3 boundsSize = GetComponent<Renderer>().bounds.size;
+        Vector3 boundsSize = _renderer.bounds.size;
         boundsSize.y = Mathf.Max(boundsSize.y, 0.01f);
-        boxCollider.size = boundsSize;
+        _boxCollider.size = boundsSize;
     }
 }

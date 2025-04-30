@@ -2,32 +2,32 @@ using UnityEngine;
 
 public class MeshSaver : MonoBehaviour
 {
-    public string levelName = "Level_00";
+    [SerializeField] private string _levelName = "Level_00";
 
-    private MeshFilter meshFilter;
-    private BoxCollider boxCollider;
-    private HistoryManager historyManager;
+    private MeshFilter _meshFilter;
+    private BoxCollider _boxCollider;
+    private HistoryManager _historyManager;
 
     void Awake()
     {
-        meshFilter = GetComponent<MeshFilter>();
-        if (meshFilter == null)
+        _meshFilter = GetComponent<MeshFilter>();
+        if (_meshFilter == null)
         {
             Debug.LogError("MeshFilter component is missing!");
             enabled = false;
             return;
         }
 
-        boxCollider = GetComponent<BoxCollider>();
-        if (boxCollider == null)
+        _boxCollider = GetComponent<BoxCollider>();
+        if (_boxCollider == null)
         {
             Debug.LogError("BoxCollider component is missing!");
             enabled = false;
             return;
         }
 
-        historyManager = GetComponent<HistoryManager>();
-        if (historyManager == null)
+        _historyManager = GetComponent<HistoryManager>();
+        if (_historyManager == null)
         {
             Debug.LogError("UndoManager component is missing!");
             enabled = false;
@@ -37,13 +37,13 @@ public class MeshSaver : MonoBehaviour
 
     public void SaveMesh()
     {
-        Mesh currentMesh = meshFilter.mesh;
-        Vector3 colliderSize = boxCollider.size;
+        Mesh currentMesh = _meshFilter.mesh;
+        Vector3 colliderSize = _boxCollider.size;
         Vector3 localPosition = transform.localPosition;
         Quaternion rotation = transform.rotation;
 
-        historyManager.SaveObjectState(currentMesh, localPosition, rotation, colliderSize, -1);
+        _historyManager.SaveObjectState(currentMesh, localPosition, rotation, colliderSize, 0);
 
-        MeshUtility.SaveLevel(levelName, historyManager.GetUndoStates(), historyManager.GetUndoMeshes());
+        MeshUtility.SaveLevel(_levelName, _historyManager.GetUndoStates(), _historyManager.GetUndoMeshes());
     }
 }

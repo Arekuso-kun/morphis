@@ -5,18 +5,19 @@ using UnityEngine;
 public class HintNavigatorAnimation : MonoBehaviour
 {
     [SerializeField] private List<GameObject> _hintObjects;
-    private List<RectTransform> _rectTransforms = new List<RectTransform>();
-    private List<Vector2> _offScreenPositions = new List<Vector2>();
-    private List<Vector2> _onScreenPositions = new List<Vector2>();
+    private List<RectTransform> _rectTransforms = new();
+    private List<Vector2> _offScreenPositions = new();
+    private List<Vector2> _onScreenPositions = new();
 
-    private void Awake()
+    void Awake()
     {
         for (int i = 0; i < _hintObjects.Count; i++)
         {
-            var rectTransform = _hintObjects[i].GetComponent<RectTransform>();
+            RectTransform rectTransform = _hintObjects[i].GetComponent<RectTransform>();
             if (rectTransform == null)
             {
-                Debug.LogError($"{_hintObjects[i].name} does not have a RectTransform component!");
+                Debug.LogError($"ReactTransform not found in {_hintObjects[i].name}!");
+                enabled = false;
                 continue;
             }
 
