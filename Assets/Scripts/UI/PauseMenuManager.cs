@@ -40,14 +40,14 @@ public class PauseMenuManager : MonoBehaviour
         }
     }
 
-    private void OpenMenu()
+    public void OpenMenu()
     {
         _isPaused = true;
         _pauseMenu.SetActive(true); // will trigger OnEnable 
         Time.timeScale = 0f;
     }
 
-    private void CloseMenu()
+    public void CloseMenu()
     {
         _isPaused = false;
         _pauseMenuAnimation.CloseMenu();

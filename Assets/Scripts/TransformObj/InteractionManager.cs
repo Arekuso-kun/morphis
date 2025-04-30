@@ -14,6 +14,7 @@ public class InteractionManager : MonoBehaviour
     private GameObject _mainObject;
     private bool _isHovering = false;
     private Material _previewMaterial;
+    private GridSnap _gridSnap;
 
     void Start()
     {
@@ -28,6 +29,7 @@ public class InteractionManager : MonoBehaviour
         if (_meshTransformer == null)
         {
             Debug.LogError("MeshTransformer component is missing on Generated Object!");
+            enabled = false;
             return;
         }
 
@@ -35,6 +37,7 @@ public class InteractionManager : MonoBehaviour
         if (objectManager == null)
         {
             Debug.LogError("ObjectManager is missing!");
+            enabled = false;
             return;
         }
 
@@ -42,6 +45,15 @@ public class InteractionManager : MonoBehaviour
         if (_mainObject == null)
         {
             Debug.LogError("Main object is missing!");
+            enabled = false;
+            return;
+        }
+
+        _gridSnap = _mainObject.GetComponent<GridSnap>();
+        if (_gridSnap == null)
+        {
+            Debug.LogError("GridSnap component not found on Main Object!");
+            enabled = false;
             return;
         }
 
@@ -49,12 +61,11 @@ public class InteractionManager : MonoBehaviour
         if (_previewObject == null)
         {
             Debug.LogError("Preview object is missing!");
+            enabled = false;
+            return;
         }
-        else
-        {
-            _previewObject.GetComponent<MeshRenderer>().enabled = false;
-            _previewMaterial = _previewObject.GetComponent<MeshRenderer>().material;
-        }
+        _previewObject.GetComponent<MeshRenderer>().enabled = false;
+        _previewMaterial = _previewObject.GetComponent<MeshRenderer>().material;
 
         ApplyHoverEffect(false);
     }
@@ -74,7 +85,7 @@ public class InteractionManager : MonoBehaviour
                     ShowPreviewObject();
                 }
 
-                if (Input.GetMouseButtonDown(0)) // Left click
+                if (Input.GetMouseButtonDown(0) && !_gridSnap.IsRotating) // Left click
                 {
                     SaveObjectState();
                     ApplyTransformation();
