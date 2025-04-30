@@ -1,23 +1,30 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 public class HintManager : MonoBehaviour
 {
-    public GameObject objectsContainer;
-    public List<GameObject> hintObjects;
+    [SerializeField] private GameObject _objectsContainer;
+    [SerializeField] private GameObject _hintsContainer;
+    [SerializeField] private GameObject _hintNavigator;
 
     void Awake()
     {
-        if (objectsContainer == null)
+        if (_objectsContainer == null)
         {
             Debug.LogError("Objects container is not assigned!");
             enabled = false;
             return;
         }
 
-        if (hintObjects == null || hintObjects.Count == 0)
+        if (_hintsContainer == null)
         {
-            Debug.LogError("Hint objects are not assigned!");
+            Debug.LogError("Hints container is not assigned!");
+            enabled = false;
+            return;
+        }
+
+        if (_hintNavigator == null)
+        {
+            Debug.LogError("Hint navigator is not assigned!");
             enabled = false;
             return;
         }
@@ -25,22 +32,15 @@ public class HintManager : MonoBehaviour
 
     public void ShowMainObjects()
     {
-        objectsContainer.SetActive(true);
-        SetHintsActive(false);
+        _objectsContainer.SetActive(true);
+        _hintsContainer.SetActive(false);
+        _hintNavigator.GetComponent<HintNavigatorAnimation>().CloseNavigator();
     }
 
     public void ShowHints()
     {
-        objectsContainer.SetActive(false);
-        SetHintsActive(true);
-    }
-
-    private void SetHintsActive(bool active)
-    {
-        foreach (var obj in hintObjects)
-        {
-            if (obj != null)
-                obj.SetActive(active);
-        }
+        _objectsContainer.SetActive(false);
+        _hintsContainer.SetActive(true);
+        _hintNavigator.SetActive(true);
     }
 }

@@ -64,6 +64,13 @@ public class MeshTransformer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        ObjectManager objectManager = GetComponentInParent<ObjectManager>();
+        if (mode != objectManager.mode)
+        {
+            mode = objectManager.mode;
+            UpdateShape(); UpdateCollider();
+        }
+
         if (TargetVerticesChanged() || TargetTransformChanged())
         {
             UpdateShape();

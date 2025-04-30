@@ -2,36 +2,54 @@ using UnityEngine;
 
 public class PauseMenuManager : MonoBehaviour
 {
-    public GameObject pauseMenu;
+    [SerializeField] private GameObject _pauseMenu;
+
+    private bool _isPaused = false;
+    private PauseMenuAnimation _pauseMenuAnimation;
 
     void Awake()
     {
-        if (pauseMenu == null)
+        if (_pauseMenu == null)
         {
             Debug.LogError("Pause menu is not assigned!");
             enabled = false;
             return;
         }
+
+        _pauseMenuAnimation = _pauseMenu.GetComponent<PauseMenuAnimation>();
+        if (_pauseMenuAnimation == null)
+        {
+            Debug.LogError("PauseMenuAnimation script not found on the pause menu GameObject.");
+            enabled = false;
+        }
     }
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            TogglePauseMenu();
+            if (!_isPaused)
+            {
+                OpenMenu();
+            }
+            else
+            {
+                CloseMenu();
+            }
         }
     }
 
-    public void TogglePauseMenu()
+    private void OpenMenu()
     {
-        pauseMenu.SetActive(!pauseMenu.activeSelf);
-        Time.timeScale = pauseMenu.activeSelf ? 0 : 1;
+        _isPaused = true;
+        _pauseMenu.SetActive(true); // will trigger OnEnable 
+        Time.timeScale = 0f;
+    }
+
+    private void CloseMenu()
+    {
+        _isPaused = false;
+        _pauseMenuAnimation.CloseMenu();
+        Time.timeScale = 1f;
     }
 }

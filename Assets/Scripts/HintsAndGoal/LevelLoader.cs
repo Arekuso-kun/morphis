@@ -3,17 +3,32 @@ using UnityEngine;
 
 public class LevelLoader : MonoBehaviour
 {
-    public string levelName = "Level_00";
-    public GameObject hintObject;
-    public GameObject goalObject;
+    [SerializeField] private string _levelName = "Level_00";
+    [SerializeField] private GameObject _hintObject;
+    [SerializeField] private GameObject _goalObject;
+    [SerializeField] private GameObject _transformObject;
 
-    private List<ObjectState> hintStates = new();
-    private int currentHintIndex = -1;
+    private List<ObjectState> _hintStates = new();
+    private int _currentHintIndex = -1;
 
     void Awake()
     {
-        if (!ValidateObject(hintObject, "Hint")) return;
-        if (!ValidateObject(goalObject, "Goal")) return;
+        if (!ValidateObject(_hintObject, "Hint")) return;
+        if (!ValidateObject(_goalObject, "Goal")) return;
+
+        if (_transformObject == null)
+        {
+            Debug.LogError("Transform object is not assigned!");
+            enabled = false;
+            return;
+        }
+
+        if (_transformObject.GetComponent<ObjectManager>() == null)
+        {
+            Debug.LogError("Transform object does not have an ObjectManager component!");
+            enabled = false;
+            return;
+        }
     }
 
     private bool ValidateObject(GameObject obj, string name)
@@ -42,70 +57,63 @@ public class LevelLoader : MonoBehaviour
         return true;
     }
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         Load();
 
-        if (hintStates.Count > 0)
+        if (_hintStates.Count > 0)
         {
-            currentHintIndex = 0;
-            ApplyState(hintStates[currentHintIndex], hintObject);
+            _currentHintIndex = 0;
+            ApplyState(_hintStates[_currentHintIndex], _hintObject);
         }
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 
     private void Load()
     {
-        List<ObjectState> states = MeshUtility.LoadHints(levelName);
+        List<ObjectState> states = MeshUtility.LoadHints(_levelName);
 
         if (states == null || states.Count == 0)
         {
-            Debug.LogError($"No hint data found for level {levelName}");
+            Debug.LogError($"No hint data found for level {_levelName}");
             return;
         }
 
         foreach (var state in states)
         {
             if (state.isGoal)
-                ApplyState(state, goalObject);
+                ApplyState(state, _goalObject, false);
             else
-                hintStates.Add(state);
+                _hintStates.Add(state);
         }
     }
 
     public void ShowNextHint()
     {
-        if (hintStates.Count == 0) return;
+        if (_hintStates.Count == 0) return;
 
-        currentHintIndex++;
-        if (currentHintIndex >= hintStates.Count)
-            currentHintIndex = hintStates.Count - 1;
+        _currentHintIndex++;
+        if (_currentHintIndex >= _hintStates.Count)
+            _currentHintIndex = _hintStates.Count - 1;
 
-        ApplyState(hintStates[currentHintIndex], hintObject);
+        ApplyState(_hintStates[_currentHintIndex], _hintObject);
     }
 
     public void ShowPreviousHint()
     {
-        if (hintStates.Count == 0) return;
+        if (_hintStates.Count == 0) return;
 
-        currentHintIndex--;
-        if (currentHintIndex < 0)
-            currentHintIndex = 0;
+        _currentHintIndex--;
+        if (_currentHintIndex < 0)
+            _currentHintIndex = 0;
 
-        ApplyState(hintStates[currentHintIndex], hintObject);
+        ApplyState(_hintStates[_currentHintIndex], _hintObject);
     }
 
-    private void ApplyState(ObjectState state, GameObject target)
+    private void ApplyState(ObjectState state, GameObject target, bool applyMode = true)
     {
         if (state == null || target == null) return;
 
-        Mesh mesh = MeshUtility.LoadMesh(levelName, state.meshFileName);
+        Mesh mesh = MeshUtility.LoadMesh(_levelName, state.meshFileName);
         if (mesh == null)
         {
             Debug.LogError($"Mesh not found: {state.meshFileName}");
@@ -122,5 +130,7 @@ public class LevelLoader : MonoBehaviour
         boxCollider.size = state.colliderSize;
         boxCollider.center = Vector3.zero;
 
+        // _transformObject.GetComponent<ObjectManager>().SetMode(state.mode);
+        _transformObject.GetComponent<ObjectManager>().mode = state.mode;
     }
 }

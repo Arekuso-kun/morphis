@@ -237,8 +237,9 @@ GameObject:
   - component: {fileID: 180457472}
   - component: {fileID: 180457471}
   - component: {fileID: 180457473}
+  - component: {fileID: 180457474}
   m_Layer: 5
-  m_Name: Buttons
+  m_Name: Navigation Panel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -331,6 +332,18 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &180457474
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 180457469}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 824facf39a630a24cbdf4dc9a482a5ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &259767928 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7867571593575486115, guid: 16e65034566b5a54f9a86b0049f66c06, type: 3}
@@ -380,7 +393,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c52c0f62d4cfdf429b164e282cd7f1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pauseMenu: {fileID: 959024142}
+  _pauseMenu: {fileID: 959024142}
 --- !u!4 &428381287
 Transform:
   m_ObjectHideFlags: 0
@@ -1090,6 +1103,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 749288016}
+  - component: {fileID: 749288017}
   m_Layer: 5
   m_Name: Hint Navigator
   m_TagString: Untagged
@@ -1118,6 +1132,22 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &749288017
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 749288015}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2cacce76c43218d4c989ac647ca7a0e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _hintObjects:
+  - {fileID: 1535493831}
+  - {fileID: 709610833}
+  - {fileID: 1011236385}
 --- !u!4 &754090825 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1238748369219100162, guid: 1efc86856e4adb14bb36e87c5d4baf38, type: 3}
@@ -1412,6 +1442,7 @@ GameObject:
   m_Component:
   - component: {fileID: 959024143}
   - component: {fileID: 959024145}
+  - component: {fileID: 959024146}
   m_Layer: 5
   m_Name: Pause Menu
   m_TagString: Untagged
@@ -1448,6 +1479,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 959024142}
   m_CullTransparentMesh: 1
+--- !u!114 &959024146
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 959024142}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb63745b25b0f6040ad6726b4283ad86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _window: {fileID: 508791496}
+  _background: {fileID: 1954085918}
 --- !u!1 &1011236385
 GameObject:
   m_ObjectHideFlags: 0
@@ -1758,6 +1803,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 180457469}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
 --- !u!114 &1099409670
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1860,11 +1917,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 73db0921680f9a04d9156ab78c140566, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectsContainer: {fileID: 1627547514}
-  hintObjects:
-  - {fileID: 1899375056}
-  - {fileID: 1099409668}
-  - {fileID: 749288015}
+  _objectsContainer: {fileID: 1627547514}
+  _hintsContainer: {fileID: 1899375056}
+  _hintNavigator: {fileID: 749288015}
 --- !u!114 &1250206847
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1877,9 +1932,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e667c4134488f634d9162cf8b5eb5270, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelName: Level_01
-  hintObject: {fileID: 2098932052}
-  goalObject: {fileID: 2003110490}
+  _levelName: Level_01
+  _hintObject: {fileID: 2098932052}
+  _goalObject: {fileID: 2003110490}
+  _transformObject: {fileID: 1820229705}
 --- !u!1 &1326084321
 GameObject:
   m_ObjectHideFlags: 0
@@ -2209,7 +2265,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: If you are stuck, this may help you.
+  m_text: Are you sure you want to show the hints?
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -2243,7 +2299,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 1
+  m_HorizontalAlignment: 2
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -2306,8 +2362,9 @@ GameObject:
   - component: {fileID: 1623725590}
   - component: {fileID: 1623725592}
   - component: {fileID: 1623725593}
+  - component: {fileID: 1623725594}
   m_Layer: 5
-  m_Name: Hints
+  m_Name: Hint Window
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2394,6 +2451,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 39264000b1a44f04b97a0707d8b1c164, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1623725594
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1623725588}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 824facf39a630a24cbdf4dc9a482a5ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1627547514
@@ -2729,6 +2798,11 @@ PrefabInstance:
 Camera:
   m_CorrespondingSourceObject: {fileID: 7358175465215786617, guid: 8aecc546f9b911146b3ad6b94899564c, type: 3}
   m_PrefabInstance: {fileID: 1814596631}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1820229705 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6650236025078029414, guid: 1efc86856e4adb14bb36e87c5d4baf38, type: 3}
+  m_PrefabInstance: {fileID: 1710374352}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1899375056
 GameObject:
@@ -3226,10 +3300,22 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 1623725588}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
+      - m_Target: {fileID: 1623725594}
+        m_TargetAssemblyTypeName: SlideAnimation, Assembly-CSharp
+        m_MethodName: ClosePanel
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 180457474}
+        m_TargetAssemblyTypeName: NavigationPanelAnimation, Assembly-CSharp
+        m_MethodName: ClosePanel
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -3294,7 +3380,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2127508263
 RectTransform:
   m_ObjectHideFlags: 0
