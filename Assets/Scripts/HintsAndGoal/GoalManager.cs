@@ -5,6 +5,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 [RequireComponent(typeof(BoxCollider))]
+[RequireComponent(typeof(UpdateTrigger))]
 public class GoalManager : MonoBehaviour
 {
     [Tooltip("The current object being manipulated")]
@@ -27,7 +28,6 @@ public class GoalManager : MonoBehaviour
     private Renderer _renderer;
     private BoxCollider _boxCollider;
 
-    private Vector3[] _previousMeshVertices;
     private bool _isComparing = false;
 
     void Awake()
@@ -46,7 +46,6 @@ public class GoalManager : MonoBehaviour
             enabled = false;
             return;
         }
-        _previousMeshVertices = (Vector3[])_mainMeshFilter.mesh.vertices.Clone();
 
         _meshFilter = GetComponent<MeshFilter>();
         _renderer = GetComponent<Renderer>();
@@ -64,15 +63,13 @@ public class GoalManager : MonoBehaviour
 
     async void Update()
     {
-        if (_mainObject == null || _isComparing) return;
+        if (_isComparing) return;
 
         Vector3[] currentMesh = _mainMeshFilter.mesh.vertices;
         Vector3[] savedMesh = _meshFilter.mesh.vertices;
 
-        if (_previousMeshVertices == null || MeshChanged(currentMesh))
+        if (GetComponent<UpdateTrigger>().NeedsUpdate)
         {
-            _previousMeshVertices = (Vector3[])currentMesh.Clone();
-
             _isComparing = true;
             bool areEqual = await CompareMeshesAsync(currentMesh, savedMesh);
             _isComparing = false;
@@ -82,6 +79,8 @@ public class GoalManager : MonoBehaviour
                 Debug.Log("Meshes are equal, starting animation...");
                 StartCoroutine(AnimateHeight());
             }
+
+            GetComponent<UpdateTrigger>().NeedsUpdate = false;
         }
     }
 
@@ -139,11 +138,6 @@ public class GoalManager : MonoBehaviour
         }
 
         _renderer.material.SetFloat("_Emission", _baseEmission);
-    }
-
-    bool MeshChanged(Vector3[] currentMesh)
-    {
-        return !currentMesh.SequenceEqual(_previousMeshVertices);
     }
 
     async Task<bool> CompareMeshesAsync(Vector3[] meshA, Vector3[] meshB)

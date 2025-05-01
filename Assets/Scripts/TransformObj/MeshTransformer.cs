@@ -2,6 +2,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 [RequireComponent(typeof(BoxCollider))]
+[RequireComponent(typeof(UpdateTrigger))]
 public class MeshTransformer : MonoBehaviour
 {
     [Tooltip("The grid object for reference")]
@@ -94,14 +95,11 @@ public class MeshTransformer : MonoBehaviour
             UpdateCollider();
         }
 
-        if (TargetVerticesChanged() || TargetTransformChanged())
+        if (GetComponent<UpdateTrigger>().NeedsUpdate || TargetTransformChanged() || BoundsChanged())
         {
             UpdateShape();
-        }
-
-        if (BoundsChanged())
-        {
             UpdateCollider();
+            GetComponent<UpdateTrigger>().NeedsUpdate = false;
         }
     }
 
@@ -332,32 +330,6 @@ public class MeshTransformer : MonoBehaviour
 
         _newMesh.RecalculateNormals();
         _newMesh.RecalculateBounds();
-    }
-
-    private bool TargetVerticesChanged()
-    {
-        if (_targetObject == null) return false;
-
-        MeshFilter targetMeshFilter = _targetObject.GetComponent<MeshFilter>();
-        if (targetMeshFilter == null) return false;
-
-        Mesh targetMesh = targetMeshFilter.mesh;
-        Vector3[] currentVertices = targetMesh.vertices;
-
-        if (_previousVertices == null || _previousVertices.Length != currentVertices.Length)
-        {
-            return true;
-        }
-
-        for (int i = 0; i < currentVertices.Length; i++)
-        {
-            if (_previousVertices[i] != currentVertices[i])
-            {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     private bool TargetTransformChanged()

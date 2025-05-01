@@ -162,7 +162,6 @@ GameObject:
   - component: {fileID: 673573703783228324}
   - component: {fileID: 1318122216911452530}
   - component: {fileID: 8107279654154384815}
-  - component: {fileID: 2178790351977878885}
   - component: {fileID: 2563330366193769803}
   m_Layer: 0
   m_Name: Grid
@@ -252,22 +251,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _grid: {fileID: 0}
---- !u!114 &2178790351977878885
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6021022702415473218}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b2086d3aa610f0248a8ef9835192f5fc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _generatedObject: {fileID: 4663665466285102535}
-  PulseSpeed: 5
-  MinAlpha: 0.85
-  MaxAlpha: 0.95
 --- !u!65 &2563330366193769803
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -299,6 +282,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1238748369219100162}
   - component: {fileID: 3364278337587430350}
+  - component: {fileID: 6099737045474923768}
   m_Layer: 0
   m_Name: TransformObject
   m_TagString: Untagged
@@ -337,3 +321,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MainObject: {fileID: 0}
   Mode: 0
+--- !u!114 &6099737045474923768
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6650236025078029414}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2086d3aa610f0248a8ef9835192f5fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _generatedObject: {fileID: 4663665466285102535}
+  _grid: {fileID: 6021022702415473218}
+  PulseSpeed: 5
+  MinAlpha: 0.85
+  MaxAlpha: 0.95

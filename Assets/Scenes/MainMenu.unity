@@ -128,6 +128,14 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 218368498935000147, guid: 91242ddb80cd46a468eb718802ba6d37, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 218368498935000147, guid: 91242ddb80cd46a468eb718802ba6d37, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 218368498935000147, guid: 91242ddb80cd46a468eb718802ba6d37, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -481,7 +489,7 @@ GameObject:
   - component: {fileID: 365958833}
   - component: {fileID: 365958832}
   m_Layer: 6
-  m_Name: Object (1)
+  m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -642,7 +650,7 @@ GameObject:
   - component: {fileID: 642964959}
   - component: {fileID: 642964958}
   m_Layer: 6
-  m_Name: Object (2)
+  m_Name: Circle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1384,7 +1392,7 @@ GameObject:
   - component: {fileID: 1040497121}
   - component: {fileID: 1040497120}
   m_Layer: 6
-  m_Name: Object (3)
+  m_Name: Flower
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1686,8 +1694,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 472542078728734892}
   - {fileID: 365958831}
+  - {fileID: 472542078728734892}
   - {fileID: 642964957}
   - {fileID: 1040497119}
   m_Father: {fileID: 0}
@@ -2353,7 +2361,7 @@ GameObject:
   - component: {fileID: 6449441594535625790}
   - component: {fileID: 1721539086190578899}
   m_Layer: 6
-  m_Name: Object
+  m_Name: Crown
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

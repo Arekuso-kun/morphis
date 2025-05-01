@@ -5,7 +5,7 @@ public class CameraSync : MonoBehaviour
     [Tooltip("The camera to sync with")]
     [SerializeField] private Camera _targetCamera;
 
-    void Update()
+    void Start()
     {
         if (_targetCamera == null)
         {

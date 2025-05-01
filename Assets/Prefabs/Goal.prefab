@@ -12,8 +12,10 @@ GameObject:
   - component: {fileID: 1473890920965468742}
   - component: {fileID: 6490084690700679851}
   - component: {fileID: 5897386926949151124}
+  - component: {fileID: 4485173415810562059}
   - component: {fileID: 4781448674382371774}
   - component: {fileID: 1781237373737165286}
+  - component: {fileID: 7762821056115035252}
   m_Layer: 6
   m_Name: Goal
   m_TagString: Untagged
@@ -101,12 +103,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6cd56da13a9354a4588dbb7287de9641, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentObject: {fileID: 0}
-  tolerance: 0.5
-  heightDuration: 2
-  pulseDuration: 0.3
-  peakEmission: 2
-  baseEmission: 0
+  _mainObject: {fileID: 0}
+  _tolerance: 0.5
+  _heightDuration: 2
+  _startHeight: -1
+  _pulseDuration: 0.3
+  _peakEmission: 2
+  _baseEmission: 0
+--- !u!114 &4485173415810562059
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7239961584563602416}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46f9ecd766fb49643938ed957f4a7a5f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  NeedsUpdate: 1
 --- !u!65 &4781448674382371774
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -155,3 +171,16 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 122
   m_CollisionDetection: 0
+--- !u!114 &7762821056115035252
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7239961584563602416}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46f9ecd766fb49643938ed957f4a7a5f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  NeedsUpdate: 0

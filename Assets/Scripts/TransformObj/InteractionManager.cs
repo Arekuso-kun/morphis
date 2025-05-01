@@ -1,10 +1,18 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class InteractionManager : MonoBehaviour
 {
+    [Tooltip("The grid for the generated object")]
+    [SerializeField] private GameObject _grid;
+
     [Tooltip("The generated object to be assigned to the main object")]
     [SerializeField] private GameObject _generatedObject;
 
+    [Tooltip("List of GameObjects that need to be updated when the object is transformed")]
+    public List<GameObject> StatusUpdate = new();
+
+    [Header("Pulse Settings")]
     public float PulseSpeed = 5f;
     public float MinAlpha = 0.85f;
     public float MaxAlpha = 0.95f;
@@ -15,6 +23,8 @@ public class InteractionManager : MonoBehaviour
     private bool _isHovering = false;
     private Material _previewMaterial;
     private GridSnap _gridSnap;
+
+    private ObjectManager _objectManager;
 
     void Start()
     {
@@ -33,15 +43,15 @@ public class InteractionManager : MonoBehaviour
             return;
         }
 
-        ObjectManager objectManager = GetComponentInParent<ObjectManager>();
-        if (objectManager == null)
+        _objectManager = GetComponent<ObjectManager>();
+        if (_objectManager == null)
         {
             Debug.LogError("ObjectManager is missing!");
             enabled = false;
             return;
         }
 
-        _mainObject = objectManager.GetObject();
+        _mainObject = _objectManager.GetObject();
         if (_mainObject == null)
         {
             Debug.LogError("Main object is missing!");
@@ -57,7 +67,7 @@ public class InteractionManager : MonoBehaviour
             return;
         }
 
-        _previewObject = objectManager.GetPreview();
+        _previewObject = _objectManager.GetPreview();
         if (_previewObject == null)
         {
             Debug.LogError("Preview object is missing!");
@@ -72,8 +82,6 @@ public class InteractionManager : MonoBehaviour
 
     void Update()
     {
-        if (_generatedObject == null || _meshTransformer == null || _previewObject == null || _mainObject == null) return;
-
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
@@ -90,6 +98,9 @@ public class InteractionManager : MonoBehaviour
                     SaveObjectState();
                     ApplyTransformation();
                     HidePreviewObject();
+
+                    foreach (GameObject obj in StatusUpdate)
+                        obj.GetComponent<UpdateTrigger>().NeedsUpdate = true;
                 }
             }
             else if (_isHovering)
@@ -106,7 +117,6 @@ public class InteractionManager : MonoBehaviour
 
         if (_isHovering && _previewMaterial != null)
         {
-            // float alpha = (Mathf.Sin(Time.time * pulseSpeed) * 0.5f + 0.5f) * pulseAlpha;
             float alpha = Mathf.Lerp(MinAlpha, MaxAlpha, Mathf.Sin(Time.time * PulseSpeed) * 0.5f + 0.5f);
             Color color = _previewMaterial.color;
             color.a = alpha;

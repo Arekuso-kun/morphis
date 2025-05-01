@@ -109,10 +109,4 @@ public class ColorManager : MonoBehaviour
             if (mat.HasProperty("_FaceColor")) mat.SetColor("_FaceColor", color);
         }
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
 }

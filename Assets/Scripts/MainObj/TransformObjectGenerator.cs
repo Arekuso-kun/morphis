@@ -18,15 +18,28 @@ public class TransformObjectGenerator : MonoBehaviour
     [Tooltip("Center point offset applied to custom positions")]
     [SerializeField] private Vector3 _containerPosition = Vector3.zero;
 
+    [Tooltip("List of GameObjects that need to be updated when the object is transformed")]
+    [SerializeField] private List<GameObject> _statusUpdate = new();
+
     private List<Vector3> _positions = new();
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         if (_transformObjectPrefab == null)
         {
             Debug.LogError("Transform Object Prefab is missing!");
+            enabled = false;
             return;
+        }
+
+        foreach (GameObject obj in _statusUpdate)
+        {
+            if (obj.GetComponent<UpdateTrigger>() == null)
+            {
+                Debug.LogError("UpdateTrigger script is missing on the object to be updated!");
+                enabled = false;
+                return;
+            }
         }
 
         if (_transformContainer == null)
@@ -80,6 +93,9 @@ public class TransformObjectGenerator : MonoBehaviour
 
             objManager.Mode = _availableModes[i];
             objManager.MainObject = this.gameObject;
+
+            foreach (GameObject obj in _statusUpdate)
+                newObject.GetComponent<InteractionManager>().StatusUpdate.Add(obj);
         }
     }
 }
