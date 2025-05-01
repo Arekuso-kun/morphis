@@ -147,7 +147,11 @@ public class GoalManager : MonoBehaviour
 
     bool MeshesAreEqual(Vector3[] meshA, Vector3[] meshB)
     {
-        if (meshA.Length != meshB.Length) return false;
+        if (meshA.Length != meshB.Length)
+        {
+            Debug.Log($"Mesh lengths differ: {meshA.Length} vs {meshB.Length}");
+            return false;
+        }
 
         var sortedA = meshA.OrderBy(v => v.x).ThenBy(v => v.y).ThenBy(v => v.z).ToArray();
         var sortedB = meshB.OrderBy(v => v.x).ThenBy(v => v.y).ThenBy(v => v.z).ToArray();
