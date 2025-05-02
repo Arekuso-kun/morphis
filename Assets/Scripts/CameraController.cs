@@ -81,8 +81,7 @@ public class CameraController : MonoBehaviour
         }
         else if (!HasChanged && _buttonShown)
         {
-            _resetButtonPanel.ClosePanel();
-            _buttonShown = false;
+            _resetButtonPanel.ClosePanel(() => { _buttonShown = false; });
         }
     }
 
@@ -110,11 +109,13 @@ public class CameraController : MonoBehaviour
         }
     }
 
-
     public void ResetCamera()
     {
         _isResettingCamera = true;
+        LockUserInput = true;
         GlobalInteractionLock = true;
+
+        _resetButtonPanel.ClosePanel(() => { _buttonShown = false; });
 
         Sequence resetSequence = DOTween.Sequence();
 
@@ -126,6 +127,7 @@ public class CameraController : MonoBehaviour
         resetSequence.OnComplete(() =>
         {
             _isResettingCamera = false;
+            LockUserInput = false;
             GlobalInteractionLock = false;
         });
     }

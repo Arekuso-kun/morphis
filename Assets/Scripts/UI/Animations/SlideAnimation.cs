@@ -22,16 +22,20 @@ public class SlideAnimation : MonoBehaviour
             .SetUpdate(true);
     }
 
-    public void ClosePanel()
+    public void ClosePanel(System.Action onComplete = null)
     {
         _rectTransform.DOAnchorPos(_offScreenPosition, 0.5f)
             .SetEase(Ease.OutExpo)
             .SetUpdate(true)
-            .OnComplete(OnComplete);
+            .OnComplete(() =>
+            {
+                gameObject.SetActive(false);
+                onComplete?.Invoke();
+            });
     }
 
-    private void OnComplete()
+    public void ClosePanel()
     {
-        gameObject.SetActive(false);
+        ClosePanel(null);
     }
 }

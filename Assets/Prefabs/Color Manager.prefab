@@ -46,12 +46,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseHueMaterials:
   - {fileID: 2100000, guid: 9b46972d6d77ef9428a71f3e21867763, type: 2}
-  - {fileID: 2100000, guid: 37a83d2425853364cbea1a7770df6e07, type: 2}
   - {fileID: 2100000, guid: 5199b531c7478844185f8cf069ce6026, type: 2}
   - {fileID: 2100000, guid: af4fd7d34aa57104e9a3d6d5210ac401, type: 2}
   - {fileID: 2100000, guid: ed98e922e6d348342a96832220c05aea, type: 2}
   - {fileID: 2100000, guid: 2f7cdf476553b6e45905f3c2de301948, type: 2}
-  - {fileID: 2100000, guid: 3800d11f6c18beb44a205f2e3e9f70eb, type: 2}
   saturatedTransparentMaterials:
   - {fileID: 2100000, guid: 6224ec908654e9d48af589750bb7b8f2, type: 2}
   reversedHueMaterials:
