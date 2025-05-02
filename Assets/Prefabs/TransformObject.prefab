@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2473168761586175042}
   - component: {fileID: 8456842527308288502}
   - component: {fileID: 6371489860364033750}
+  - component: {fileID: 7989263903256635570}
   - component: {fileID: 5493171293161436274}
   - component: {fileID: 9003930076118618880}
   m_Layer: 6
@@ -102,6 +103,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _grid: {fileID: 6021022702415473218}
+--- !u!114 &7989263903256635570
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4663665466285102535}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46f9ecd766fb49643938ed957f4a7a5f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  NeedsUpdate: 1
 --- !u!65 &5493171293161436274
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -162,6 +176,7 @@ GameObject:
   - component: {fileID: 673573703783228324}
   - component: {fileID: 1318122216911452530}
   - component: {fileID: 8107279654154384815}
+  - component: {fileID: 5655971333852013326}
   - component: {fileID: 2563330366193769803}
   m_Layer: 0
   m_Name: Grid
@@ -251,6 +266,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _grid: {fileID: 0}
+--- !u!114 &5655971333852013326
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6021022702415473218}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46f9ecd766fb49643938ed957f4a7a5f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  NeedsUpdate: 1
 --- !u!65 &2563330366193769803
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -333,8 +361,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2086d3aa610f0248a8ef9835192f5fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _generatedObject: {fileID: 4663665466285102535}
   _grid: {fileID: 6021022702415473218}
+  _generatedObject: {fileID: 4663665466285102535}
+  StatusUpdate: []
   PulseSpeed: 5
   MinAlpha: 0.85
   MaxAlpha: 0.95

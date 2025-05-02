@@ -30,16 +30,16 @@ public class ObjectManager : MonoBehaviour
 
     public GameObject GetGrid()
     {
-        return _objectAssigner.Grid;
+        return MainObject.transform.Find("Grid")?.gameObject;
     }
 
     public GameObject GetObject()
     {
-        return _objectAssigner.Object;
+        return MainObject.transform.Find("Object")?.gameObject;
     }
 
     public GameObject GetPreview()
     {
-        return _objectAssigner.Preview;
+        return MainObject.transform.Find("Preview")?.gameObject;
     }
 }

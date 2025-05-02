@@ -354,8 +354,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 824facf39a630a24cbdf4dc9a482a5ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _useCustomOffset: 0
-  _customOffset: {x: 0, y: 0}
 --- !u!1 &259767928 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7867571593575486115, guid: 16e65034566b5a54f9a86b0049f66c06, type: 3}
@@ -2516,8 +2514,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 824facf39a630a24cbdf4dc9a482a5ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _useCustomOffset: 0
-  _customOffset: {x: 0, y: 0}
 --- !u!1 &1627547514
 GameObject:
   m_ObjectHideFlags: 0
@@ -2616,9 +2612,17 @@ PrefabInstance:
       propertyPath: mainObject
       value: 
       objectReference: {fileID: 259767928}
+    - target: {fileID: 6371489860364033750, guid: 1efc86856e4adb14bb36e87c5d4baf38, type: 3}
+      propertyPath: _debugText
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 6650236025078029414, guid: 1efc86856e4adb14bb36e87c5d4baf38, type: 3}
       propertyPath: m_Name
       value: TransformObject
+      objectReference: {fileID: 0}
+    - target: {fileID: 8107279654154384815, guid: 1efc86856e4adb14bb36e87c5d4baf38, type: 3}
+      propertyPath: _debugText
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 2178790351977878885, guid: 1efc86856e4adb14bb36e87c5d4baf38, type: 3}
@@ -4140,7 +4144,7 @@ PrefabInstance:
       objectReference: {fileID: 1627547515}
     - target: {fileID: 7586367313230567088, guid: 16e65034566b5a54f9a86b0049f66c06, type: 3}
       propertyPath: _statusUpdate.Array.size
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7586367313230567088, guid: 16e65034566b5a54f9a86b0049f66c06, type: 3}
       propertyPath: availableModes.Array.size
@@ -4149,7 +4153,7 @@ PrefabInstance:
     - target: {fileID: 7586367313230567088, guid: 16e65034566b5a54f9a86b0049f66c06, type: 3}
       propertyPath: '_statusUpdate.Array.data[0]'
       value: 
-      objectReference: {fileID: 504212605}
+      objectReference: {fileID: 2003110490}
     - target: {fileID: 7586367313230567088, guid: 16e65034566b5a54f9a86b0049f66c06, type: 3}
       propertyPath: '_statusUpdate.Array.data[1]'
       value: 

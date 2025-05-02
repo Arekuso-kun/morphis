@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1473890920965468742}
   - component: {fileID: 6490084690700679851}
   - component: {fileID: 5897386926949151124}
-  - component: {fileID: 4485173415810562059}
+  - component: {fileID: 4293710539569543808}
   - component: {fileID: 4781448674382371774}
   - component: {fileID: 1781237373737165286}
   - component: {fileID: 7762821056115035252}
@@ -110,7 +110,7 @@ MonoBehaviour:
   _pulseDuration: 0.3
   _peakEmission: 2
   _baseEmission: 0
---- !u!114 &4485173415810562059
+--- !u!114 &4293710539569543808
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -183,4 +183,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 46f9ecd766fb49643938ed957f4a7a5f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NeedsUpdate: 0
+  NeedsUpdate: 1
