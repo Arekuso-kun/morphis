@@ -40,6 +40,8 @@ public class GridSnap : MonoBehaviour
 
     void Update()
     {
+        if (CameraController.GlobalInteractionLock) return;
+
         HandleDragging();
         HandleRotation();
         KeepWithinBounds();

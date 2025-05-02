@@ -39,6 +39,7 @@ public class LevelStartAnimation : MonoBehaviour
 
         _cameraController.LockCameraChanges = true;
         _cameraController.LockUserInput = true;
+        CameraController.GlobalInteractionLock = true;
 
         _cameraController.Target = _startTraget;
         _cameraController.Distance = _startDistance;
@@ -73,6 +74,7 @@ public class LevelStartAnimation : MonoBehaviour
         {
             _cameraController.LockCameraChanges = false;
             _cameraController.LockUserInput = false;
+            CameraController.GlobalInteractionLock = false;
 
             foreach (GameObject obj in _toEnable)
             {

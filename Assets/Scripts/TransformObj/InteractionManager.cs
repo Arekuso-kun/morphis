@@ -82,6 +82,8 @@ public class InteractionManager : MonoBehaviour
 
     void Update()
     {
+        if (CameraController.GlobalInteractionLock) return;
+
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out RaycastHit hit))
         {

@@ -26,6 +26,7 @@ public class CameraController : MonoBehaviour
 
     [HideInInspector] public bool LockCameraChanges = false;
     [HideInInspector] public bool LockUserInput = false;
+    public static bool GlobalInteractionLock = false;
 
     private float _originalDistance;
     private Vector2 _originalRotation;
@@ -113,6 +114,7 @@ public class CameraController : MonoBehaviour
     public void ResetCamera()
     {
         _isResettingCamera = true;
+        GlobalInteractionLock = true;
 
         Sequence resetSequence = DOTween.Sequence();
 
@@ -124,6 +126,7 @@ public class CameraController : MonoBehaviour
         resetSequence.OnComplete(() =>
         {
             _isResettingCamera = false;
+            GlobalInteractionLock = false;
         });
     }
 }
