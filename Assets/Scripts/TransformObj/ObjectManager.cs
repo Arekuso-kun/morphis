@@ -8,21 +8,11 @@ public class ObjectManager : MonoBehaviour
     [Tooltip("The mode of transformation")]
     public int Mode;
 
-    private ObjectAssigner _objectAssigner;
-
     void Start()
     {
         if (MainObject == null)
         {
             Debug.LogError("Main object is missing!");
-            enabled = false;
-            return;
-        }
-
-        _objectAssigner = MainObject.GetComponent<ObjectAssigner>();
-        if (_objectAssigner == null)
-        {
-            Debug.LogError("ObjectAssigner component is missing on Main Object!");
             enabled = false;
             return;
         }
