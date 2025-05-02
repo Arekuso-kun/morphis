@@ -11,7 +11,7 @@ public class MeshTransformer : MonoBehaviour
     private GameObject _targetObject;
     private GameObject _targetGrid;
 
-    private int _mode;
+    private TransformationMode _mode;
     private float _gridSize;
 
     private Mesh _newMesh;
@@ -19,7 +19,6 @@ public class MeshTransformer : MonoBehaviour
     private int[] _newTriangles;
     private Vector2[] _newUVs;
 
-    private Vector3[] _previousVertices;
     private Vector3 _previousPosition;
     private Quaternion _previousRotation;
     private Vector3 _previousBounds;
@@ -125,38 +124,36 @@ public class MeshTransformer : MonoBehaviour
     void UpdateShape()
     {
         MeshFilter targetMeshFilter = _targetObject.GetComponent<MeshFilter>();
-        _previousVertices = targetMeshFilter.mesh.vertices;
 
         Transform targetObjectTransform = _targetObject.transform;
         Transform targetGridTransform = _targetGrid.transform;
 
-        if (_mode == 1) // Circular
+        switch (_mode)
         {
-            ApplyCircularTransformation(targetMeshFilter.mesh, targetObjectTransform, targetGridTransform, false);
-        }
-        else if (_mode == 2) // Circular Squared
-        {
-            ApplyCircularTransformation(targetMeshFilter.mesh, targetObjectTransform, targetGridTransform, true);
-        }
-        else if (_mode == 3) // Stretch
-        {
-            ApplyStretchTransformation(targetMeshFilter.mesh, targetObjectTransform, targetGridTransform, 2.0f);
-        }
-        else if (_mode == 4) // Shrink
-        {
-            ApplyStretchTransformation(targetMeshFilter.mesh, targetObjectTransform, targetGridTransform, 0.5f);
-        }
-        else if (_mode == 5) // Wavy
-        {
-            ApplyWavyTransformation(targetMeshFilter.mesh, targetObjectTransform, targetGridTransform, false, 4);
-        }
-        else if (_mode == 6) // Wavy Sharp
-        {
-            ApplyWavyTransformation(targetMeshFilter.mesh, targetObjectTransform, targetGridTransform, true, 4);
-        }
-        else if (_mode == 7) // Shear
-        {
-            ApplyShearTransformation(targetMeshFilter.mesh, targetObjectTransform, targetGridTransform, 0.5f);
+            case TransformationMode.Circular:
+                ApplyCircularTransformation(targetMeshFilter.mesh, targetObjectTransform, targetGridTransform, false);
+                break;
+            case TransformationMode.CircularSquared:
+                ApplyCircularTransformation(targetMeshFilter.mesh, targetObjectTransform, targetGridTransform, true);
+                break;
+            case TransformationMode.Stretch:
+                ApplyStretchTransformation(targetMeshFilter.mesh, targetObjectTransform, targetGridTransform, 2.0f);
+                break;
+            case TransformationMode.Shrink:
+                ApplyStretchTransformation(targetMeshFilter.mesh, targetObjectTransform, targetGridTransform, 0.5f);
+                break;
+            case TransformationMode.Wavy:
+                ApplyWavyTransformation(targetMeshFilter.mesh, targetObjectTransform, targetGridTransform, false, 4);
+                break;
+            case TransformationMode.WavySharp:
+                ApplyWavyTransformation(targetMeshFilter.mesh, targetObjectTransform, targetGridTransform, true, 4);
+                break;
+            case TransformationMode.Shear:
+                ApplyShearTransformation(targetMeshFilter.mesh, targetObjectTransform, targetGridTransform, 0.5f);
+                break;
+            default:
+                Debug.LogError("Invalid transformation mode selected!");
+                return;
         }
 
         UpdateMesh();

@@ -144,7 +144,7 @@ public class InteractionManager : MonoBehaviour
 
         Vector3 localPosition = targetObject.transform.localPosition;
         Quaternion rotation = targetObject.transform.rotation;
-        int mode = objectManager.Mode;
+        TransformationMode mode = objectManager.Mode;
 
         HistoryManager historyManager = targetObject.GetComponent<HistoryManager>();
         historyManager.SaveObjectState(currentMesh, localPosition, rotation, colliderSize, mode);

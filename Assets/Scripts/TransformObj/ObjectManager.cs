@@ -6,7 +6,7 @@ public class ObjectManager : MonoBehaviour
     public GameObject MainObject;
 
     [Tooltip("The mode of transformation")]
-    public int Mode;
+    public TransformationMode Mode;
 
     void Start()
     {

@@ -7,6 +7,6 @@ public class ObjectState
     public Vector3 position;
     public Quaternion rotation;
     public Vector3 colliderSize;
-    public int mode;
+    public TransformationMode mode;
     public bool isGoal;
 }

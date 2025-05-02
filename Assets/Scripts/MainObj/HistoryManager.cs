@@ -47,7 +47,7 @@ public class HistoryManager : MonoBehaviour
         }
     }
 
-    public void SaveObjectState(Mesh mesh, Vector3 localPosition, Quaternion rotation, Vector3 colliderSize, int mode)
+    public void SaveObjectState(Mesh mesh, Vector3 localPosition, Quaternion rotation, Vector3 colliderSize, TransformationMode mode)
     {
         if (_meshFilter == null || _boxCollider == null) return;
 

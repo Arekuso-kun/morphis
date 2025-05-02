@@ -3,8 +3,16 @@ using UnityEngine;
 
 public class TransformObjectGenerator : MonoBehaviour
 {
-    [Tooltip("List of available transformation modes:\n1 = Circular\n2 = Circular Squared\n3 = Stretch\n4 = Shrink\n5 = Wavy\n6 = Wavy Sharp\n7 = Shear")]
-    [SerializeField] private List<int> _availableModes = new() { 1, 3, 4, 5 };
+    [Tooltip("List of available transformation modes.")]
+    [SerializeField]
+    private List<TransformationMode> _availableModes = new()
+    {
+        TransformationMode.Circular,
+        TransformationMode.Stretch,
+        TransformationMode.Shrink,
+        TransformationMode.Wavy
+    };
+
 
     [Tooltip("Prefab for the Transform Object")]
     [SerializeField] private GameObject _transformObjectPrefab;
