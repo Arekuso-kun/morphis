@@ -3,13 +3,23 @@ using UnityEngine.EventSystems;
 
 public class OutsideClickDetector : MonoBehaviour
 {
+    void Awake()
+    {
+        if (gameObject.GetComponent<SlideAnimation>() == null)
+        {
+            Debug.LogError("SlideAnimation component is missing on the GameObject.");
+            enabled = false;
+            return;
+        }
+    }
+
     void Update()
     {
         if (Input.GetMouseButtonDown(0))
         {
             if (!IsPointerOverUI())
             {
-                gameObject.SetActive(false);
+                gameObject.GetComponent<SlideAnimation>().ClosePanel();
             }
         }
     }
