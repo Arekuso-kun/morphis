@@ -33,6 +33,20 @@ public class MainMenuManager : MonoBehaviour
             return;
         }
 
+        if (_settingsWindow == null)
+        {
+            Debug.LogError("Settings window is not assigned!");
+            enabled = false;
+            return;
+        }
+
+        if (_controlsWindow == null)
+        {
+            Debug.LogError("Controls window is not assigned!");
+            enabled = false;
+            return;
+        }
+
         _settingsMenuAnimation = _settingsMenu.GetComponent<MenuBackgroundAnimation>();
         if (_settingsMenuAnimation == null)
         {
@@ -56,6 +70,8 @@ public class MainMenuManager : MonoBehaviour
             enabled = false;
             return;
         }
+        _controlsWindowAnimation.Direction = MenuSlideAnimation.SlideDirection.Down;
+        _controlsWindowAnimation.Speed = MenuSlideAnimation.SlideSpeed.Fast;
 
         if (_mainCamera == null)
         {
@@ -123,8 +139,6 @@ public class MainMenuManager : MonoBehaviour
     {
         _settingsWindowAnimation.Direction = MenuSlideAnimation.SlideDirection.Up;
         _settingsWindowAnimation.Speed = MenuSlideAnimation.SlideSpeed.Fast;
-        _controlsWindowAnimation.Direction = MenuSlideAnimation.SlideDirection.Down;
-        _controlsWindowAnimation.Speed = MenuSlideAnimation.SlideSpeed.Fast;
 
         _settingsWindowAnimation.CloseMenu();
         _controlsWindow.SetActive(true);
@@ -134,8 +148,6 @@ public class MainMenuManager : MonoBehaviour
     {
         _settingsWindowAnimation.Direction = MenuSlideAnimation.SlideDirection.Up;
         _settingsWindowAnimation.Speed = MenuSlideAnimation.SlideSpeed.Fast;
-        _controlsWindowAnimation.Direction = MenuSlideAnimation.SlideDirection.Down;
-        _controlsWindowAnimation.Speed = MenuSlideAnimation.SlideSpeed.Fast;
 
         _controlsWindowAnimation.CloseMenu();
         _settingsWindow.SetActive(true);

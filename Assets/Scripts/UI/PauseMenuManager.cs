@@ -4,9 +4,11 @@ using UnityEngine.SceneManagement;
 public class PauseMenuManager : MonoBehaviour
 {
     [SerializeField] private GameObject _pauseMenu;
+    [SerializeField] private GameObject _pauseWindow;
 
     private bool _isPaused = false;
     private MenuBackgroundAnimation _pauseMenuAnimation;
+    private MenuSlideAnimation _pauseWindowAnimation;
 
     void Awake()
     {
@@ -17,10 +19,25 @@ public class PauseMenuManager : MonoBehaviour
             return;
         }
 
+        if (_pauseWindow == null)
+        {
+            Debug.LogError("Pause window is not assigned!");
+            enabled = false;
+            return;
+        }
+
         _pauseMenuAnimation = _pauseMenu.GetComponent<MenuBackgroundAnimation>();
         if (_pauseMenuAnimation == null)
         {
             Debug.LogError("PauseMenuAnimation script not found on the pause menu GameObject.");
+            enabled = false;
+            return;
+        }
+
+        _pauseWindowAnimation = _pauseWindow.GetComponent<MenuSlideAnimation>();
+        if (_pauseWindowAnimation == null)
+        {
+            Debug.LogError("PauseWindowAnimation script not found on the pause window GameObject.");
             enabled = false;
             return;
         }
@@ -45,6 +62,7 @@ public class PauseMenuManager : MonoBehaviour
     {
         _isPaused = true;
         _pauseMenu.SetActive(true); // will trigger OnEnable 
+        _pauseWindow.SetActive(true);
         Time.timeScale = 0f;
     }
 
@@ -52,6 +70,7 @@ public class PauseMenuManager : MonoBehaviour
     {
         _isPaused = false;
         _pauseMenuAnimation.CloseMenu();
+        _pauseWindowAnimation.CloseMenu();
         Time.timeScale = 1f;
     }
 

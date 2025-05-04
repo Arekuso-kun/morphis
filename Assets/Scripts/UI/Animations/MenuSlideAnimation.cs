@@ -52,8 +52,8 @@ public class MenuSlideAnimation : MonoBehaviour
         float offsetY = Screen.height / 2 + _rectTransform.rect.height + 50f;
 
         if (Direction == SlideDirection.Down)
-            return new Vector2(0, offsetY);
-        else
             return new Vector2(0, -offsetY);
+        else
+            return new Vector2(0, offsetY);
     }
 }

@@ -760,6 +760,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _pauseMenu: {fileID: 959024142}
+  _pauseWindow: {fileID: 508791495}
 --- !u!4 &428381287
 Transform:
   m_ObjectHideFlags: 0
@@ -846,6 +847,7 @@ GameObject:
   - component: {fileID: 508791498}
   - component: {fileID: 508791497}
   - component: {fileID: 508791499}
+  - component: {fileID: 508791500}
   m_Layer: 5
   m_Name: Window
   m_TagString: Untagged
@@ -939,6 +941,20 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &508791500
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 508791495}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd762a296e546834ab225bc7c8a57ebf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Direction: 1
+  Speed: 0
 --- !u!1 &556350599
 GameObject:
   m_ObjectHideFlags: 0
@@ -1897,7 +1913,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb63745b25b0f6040ad6726b4283ad86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _window: {fileID: 508791496}
   _background: {fileID: 1954085918}
 --- !u!1 &1011236385
 GameObject:
