@@ -6,7 +6,7 @@ public class PauseMenuManager : MonoBehaviour
     [SerializeField] private GameObject _pauseMenu;
 
     private bool _isPaused = false;
-    private PauseMenuAnimation _pauseMenuAnimation;
+    private MenuBackgroundAnimation _pauseMenuAnimation;
 
     void Awake()
     {
@@ -17,7 +17,7 @@ public class PauseMenuManager : MonoBehaviour
             return;
         }
 
-        _pauseMenuAnimation = _pauseMenu.GetComponent<PauseMenuAnimation>();
+        _pauseMenuAnimation = _pauseMenu.GetComponent<MenuBackgroundAnimation>();
         if (_pauseMenuAnimation == null)
         {
             Debug.LogError("PauseMenuAnimation script not found on the pause menu GameObject.");

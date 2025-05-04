@@ -6,10 +6,16 @@ public class MainMenuManager : MonoBehaviour
 {
     [SerializeField] private GameObject _mainMenu;
     [SerializeField] private GameObject _settingsMenu;
+    [SerializeField] private GameObject _settingsWindow;
+    [SerializeField] private GameObject _controlsWindow;
     [SerializeField] private Camera _mainCamera;
 
     [SerializeField] private Vector3 _targetCameraPosition = new(0, -1f, -16f);
     [SerializeField] private float _cameraMoveDuration = 2f;
+
+    private MenuBackgroundAnimation _settingsMenuAnimation;
+    private MenuSlideAnimation _settingsWindowAnimation;
+    private MenuSlideAnimation _controlsWindowAnimation;
 
     void Awake()
     {
@@ -23,6 +29,30 @@ public class MainMenuManager : MonoBehaviour
         if (_settingsMenu == null)
         {
             Debug.LogError("Settings menu is not assigned!");
+            enabled = false;
+            return;
+        }
+
+        _settingsMenuAnimation = _settingsMenu.GetComponent<MenuBackgroundAnimation>();
+        if (_settingsMenuAnimation == null)
+        {
+            Debug.LogError("MenuBackgroundAnimation script not found on the settings menu GameObject.");
+            enabled = false;
+            return;
+        }
+
+        _settingsWindowAnimation = _settingsWindow.GetComponent<MenuSlideAnimation>();
+        if (_settingsWindowAnimation == null)
+        {
+            Debug.LogError("MenuSlideAnimation script not found on the settings window GameObject.");
+            enabled = false;
+            return;
+        }
+
+        _controlsWindowAnimation = _controlsWindow.GetComponent<MenuSlideAnimation>();
+        if (_controlsWindowAnimation == null)
+        {
+            Debug.LogError("MenuSlideAnimation script not found on the controls window GameObject.");
             enabled = false;
             return;
         }
@@ -46,7 +76,14 @@ public class MainMenuManager : MonoBehaviour
     {
         if (_settingsMenu.activeSelf && Input.GetKeyDown(KeyCode.Escape))
         {
-            CloseSettings();
+            if (_controlsWindow.activeSelf)
+            {
+                CloseControlsWindow();
+            }
+            else if (_settingsWindow.activeSelf)
+            {
+                CloseSettings();
+            }
         }
     }
 
@@ -67,14 +104,41 @@ public class MainMenuManager : MonoBehaviour
 
     public void OpenSettings()
     {
-        _mainMenu.SetActive(false);
         _settingsMenu.SetActive(true);
+        _settingsWindowAnimation.Direction = MenuSlideAnimation.SlideDirection.Down;
+        _settingsWindowAnimation.Speed = MenuSlideAnimation.SlideSpeed.Slow;
+        _settingsWindow.SetActive(true);
+        _controlsWindow.SetActive(false);
     }
 
     public void CloseSettings()
     {
-        _settingsMenu.SetActive(false);
-        _mainMenu.SetActive(true);
+        _settingsMenuAnimation.CloseMenu();
+        _settingsWindowAnimation.Direction = MenuSlideAnimation.SlideDirection.Down;
+        _settingsWindowAnimation.Speed = MenuSlideAnimation.SlideSpeed.Slow;
+        _settingsWindowAnimation.CloseMenu();
+    }
+
+    public void OpenControlsWindow()
+    {
+        _settingsWindowAnimation.Direction = MenuSlideAnimation.SlideDirection.Up;
+        _settingsWindowAnimation.Speed = MenuSlideAnimation.SlideSpeed.Fast;
+        _controlsWindowAnimation.Direction = MenuSlideAnimation.SlideDirection.Down;
+        _controlsWindowAnimation.Speed = MenuSlideAnimation.SlideSpeed.Fast;
+
+        _settingsWindowAnimation.CloseMenu();
+        _controlsWindow.SetActive(true);
+    }
+
+    public void CloseControlsWindow()
+    {
+        _settingsWindowAnimation.Direction = MenuSlideAnimation.SlideDirection.Up;
+        _settingsWindowAnimation.Speed = MenuSlideAnimation.SlideSpeed.Fast;
+        _controlsWindowAnimation.Direction = MenuSlideAnimation.SlideDirection.Down;
+        _controlsWindowAnimation.Speed = MenuSlideAnimation.SlideSpeed.Fast;
+
+        _controlsWindowAnimation.CloseMenu();
+        _settingsWindow.SetActive(true);
     }
 
     public void QuitGame()
