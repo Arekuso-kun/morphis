@@ -10,16 +10,17 @@ public class SettingsManager : MonoBehaviour
     [SerializeField] private TMP_Dropdown _fpsDropdown;
     [SerializeField] private Toggle _vsyncToggle;
 
-
     private Resolution[] _resolutions;
-    private List<Resolution> _availableResolutions = new List<Resolution>();
+    private List<Resolution> _availableResolutions = new();
+    private bool _isLoadingSettings = true;
 
-    void Start()
+    void Awake()
     {
         SetupResolutionOptions();
         SetupFullscreenOptions();
         SetupFPSOptions();
         SetupVsyncOptions();
+        LoadSettings();
     }
 
     void SetupResolutionOptions()
@@ -57,41 +58,14 @@ public class SettingsManager : MonoBehaviour
             "Borderless",
             "Windowed"
         });
-
-        switch (Screen.fullScreenMode)
-        {
-            case FullScreenMode.ExclusiveFullScreen:
-                _fullscreenDropdown.value = 0;
-                break;
-            case FullScreenMode.FullScreenWindow:
-                _fullscreenDropdown.value = 1;
-                break;
-            case FullScreenMode.Windowed:
-                _fullscreenDropdown.value = 2;
-                break;
-        }
-
-        _fullscreenDropdown.RefreshShownValue();
     }
 
     void SetupFPSOptions()
     {
         _fpsDropdown.ClearOptions();
-        _fpsDropdown.AddOptions(new System.Collections.Generic.List<string> {
+        _fpsDropdown.AddOptions(new List<string> {
             "30", "60", "120", "144", "Unlimited"
         });
-
-        int current = Application.targetFrameRate;
-        switch (current)
-        {
-            case 30: _fpsDropdown.value = 0; break;
-            case 60: _fpsDropdown.value = 1; break;
-            case 120: _fpsDropdown.value = 2; break;
-            case 144: _fpsDropdown.value = 3; break;
-            default: _fpsDropdown.value = 4; break;
-        }
-
-        _fpsDropdown.RefreshShownValue();
     }
 
     void SetupVsyncOptions()
@@ -99,18 +73,44 @@ public class SettingsManager : MonoBehaviour
         _vsyncToggle.isOn = QualitySettings.vSyncCount > 0;
     }
 
-
     public void OnResolutionChanged()
     {
-        var selectedRes = _availableResolutions[_resolutionDropdown.value];
-        var refreshRate = selectedRes.refreshRateRatio;
-
-        Screen.SetResolution(selectedRes.width, selectedRes.height, Screen.fullScreenMode, refreshRate);
+        if (_isLoadingSettings) return;
+        ApplyResolution(_resolutionDropdown.value);
+        SaveSettings();
     }
 
     public void OnFullscreenChanged()
     {
-        switch (_fullscreenDropdown.value)
+        if (_isLoadingSettings) return;
+        ApplyFullscreen(_fullscreenDropdown.value);
+        SaveSettings();
+    }
+
+    public void OnFPSChanged()
+    {
+        if (_isLoadingSettings) return;
+        ApplyFPS(_fpsDropdown.value);
+        SaveSettings();
+    }
+
+    public void OnVSyncChanged()
+    {
+        if (_isLoadingSettings) return;
+        ApplyVSync(_vsyncToggle.isOn);
+        SaveSettings();
+    }
+
+    private void ApplyResolution(int resolutionIndex)
+    {
+        var selectedRes = _availableResolutions[resolutionIndex];
+        var refreshRate = selectedRes.refreshRateRatio;
+        Screen.SetResolution(selectedRes.width, selectedRes.height, Screen.fullScreenMode, refreshRate);
+    }
+
+    private void ApplyFullscreen(int fullscreenMode)
+    {
+        switch (fullscreenMode)
         {
             case 0: Screen.fullScreenMode = FullScreenMode.ExclusiveFullScreen; break;
             case 1: Screen.fullScreenMode = FullScreenMode.FullScreenWindow; break;
@@ -118,20 +118,70 @@ public class SettingsManager : MonoBehaviour
         }
     }
 
-    public void OnFPSChanged()
+    private void ApplyFPS(int fpsLimit)
     {
-        switch (_fpsDropdown.value)
+        switch (fpsLimit)
         {
             case 0: Application.targetFrameRate = 30; break;
             case 1: Application.targetFrameRate = 60; break;
             case 2: Application.targetFrameRate = 120; break;
             case 3: Application.targetFrameRate = 144; break;
-            case 4: Application.targetFrameRate = -1; break; // Unlimited
+            case 4: Application.targetFrameRate = -1; break;
         }
     }
 
-    public void OnVSyncChanged()
+    private void ApplyVSync(bool isOn)
     {
-        QualitySettings.vSyncCount = _vsyncToggle.isOn ? 1 : 0;
+        QualitySettings.vSyncCount = isOn ? 1 : 0;
+
+        _fpsDropdown.interactable = !isOn;
+    }
+
+    public void SaveSettings()
+    {
+        PlayerPrefs.SetInt("ResolutionIndex", _resolutionDropdown.value);
+        PlayerPrefs.SetInt("FullscreenMode", _fullscreenDropdown.value);
+        PlayerPrefs.SetInt("FPSLimit", _fpsDropdown.value);
+        PlayerPrefs.SetInt("VSync", _vsyncToggle.isOn ? 1 : 0);
+        PlayerPrefs.Save();
+    }
+
+    public void LoadSettings()
+    {
+        _isLoadingSettings = true;
+
+        if (PlayerPrefs.HasKey("ResolutionIndex"))
+        {
+            int resolutionIndex = PlayerPrefs.GetInt("ResolutionIndex");
+            _resolutionDropdown.value = resolutionIndex;
+            ApplyResolution(resolutionIndex);
+        }
+
+        if (PlayerPrefs.HasKey("FullscreenMode"))
+        {
+            int fullscreenMode = PlayerPrefs.GetInt("FullscreenMode");
+            _fullscreenDropdown.value = fullscreenMode;
+            ApplyFullscreen(fullscreenMode);
+        }
+
+        if (PlayerPrefs.HasKey("FPSLimit"))
+        {
+            int fpsLimit = PlayerPrefs.GetInt("FPSLimit");
+            _fpsDropdown.value = fpsLimit;
+            ApplyFPS(fpsLimit);
+        }
+
+        if (PlayerPrefs.HasKey("VSync"))
+        {
+            bool vsyncOn = PlayerPrefs.GetInt("VSync") == 1;
+            _vsyncToggle.isOn = vsyncOn;
+            ApplyVSync(vsyncOn);
+        }
+
+        _resolutionDropdown.RefreshShownValue();
+        _fullscreenDropdown.RefreshShownValue();
+        _fpsDropdown.RefreshShownValue();
+
+        _isLoadingSettings = false;
     }
 }
