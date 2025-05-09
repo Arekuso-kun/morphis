@@ -103,6 +103,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _grid: {fileID: 6021022702415473218}
+  _invalidMaterial: {fileID: 2100000, guid: c87df1cbbd6ffa84b9dd4cfe222c8594, type: 2}
+  _validMaterial: {fileID: 2100000, guid: 4bc8aea93ddbff7418aad6bdbbb28f85, type: 2}
 --- !u!114 &7989263903256635570
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -266,6 +268,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _grid: {fileID: 0}
+  _invalidMaterial: {fileID: 0}
+  _validMaterial: {fileID: 0}
 --- !u!114 &5655971333852013326
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -361,8 +365,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2086d3aa610f0248a8ef9835192f5fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _grid: {fileID: 6021022702415473218}
-  _generatedObject: {fileID: 4663665466285102535}
+  Grid: {fileID: 6021022702415473218}
+  GeneratedObject: {fileID: 4663665466285102535}
   StatusUpdate: []
   PulseSpeed: 5
   MinAlpha: 0.85

@@ -4,10 +4,10 @@ using UnityEngine;
 public class InteractionManager : MonoBehaviour
 {
     [Tooltip("The grid for the generated object")]
-    [SerializeField] private GameObject _grid;
+    public GameObject Grid;
 
     [Tooltip("The generated object to be assigned to the main object")]
-    [SerializeField] private GameObject _generatedObject;
+    public GameObject GeneratedObject;
 
     [Tooltip("List of GameObjects that need to be updated when the object is transformed")]
     public List<GameObject> StatusUpdate = new();
@@ -28,14 +28,14 @@ public class InteractionManager : MonoBehaviour
 
     void Start()
     {
-        if (_generatedObject == null)
+        if (GeneratedObject == null)
         {
             Debug.LogError("Generated object not assigned!");
             enabled = false;
             return;
         }
 
-        _meshTransformer = _generatedObject.GetComponent<MeshTransformer>();
+        _meshTransformer = GeneratedObject.GetComponent<MeshTransformer>();
         if (_meshTransformer == null)
         {
             Debug.LogError("MeshTransformer component is missing on Generated Object!");
@@ -87,19 +87,19 @@ public class InteractionManager : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
-            if (hit.transform == transform || hit.transform == _generatedObject.transform)
+            if (hit.transform == transform || hit.transform == GeneratedObject.transform)
             {
                 if (!_isHovering)
                 {
                     ApplyHoverEffect(true);
-                    ShowPreviewObject();
+                    // ShowPreviewObject();
                 }
 
                 if (Input.GetMouseButtonDown(0) && !_gridSnap.IsRotating) // Left click
                 {
                     SaveObjectState();
                     ApplyTransformation();
-                    HidePreviewObject();
+                    // HidePreviewObject();
 
                     foreach (GameObject obj in StatusUpdate)
                         obj.GetComponent<UpdateTrigger>().NeedsUpdate = true;
@@ -108,13 +108,13 @@ public class InteractionManager : MonoBehaviour
             else if (_isHovering)
             {
                 ApplyHoverEffect(false);
-                HidePreviewObject();
+                // HidePreviewObject();
             }
         }
         else if (_isHovering)
         {
             ApplyHoverEffect(false);
-            HidePreviewObject();
+            // HidePreviewObject();
         }
 
         if (_isHovering && _previewMaterial != null)
@@ -154,7 +154,7 @@ public class InteractionManager : MonoBehaviour
     {
         Mesh newMesh = Instantiate(initialMesh);
 
-        Vector3 centerOffset = _generatedObject.GetComponent<Renderer>().bounds.center - transform.position;
+        Vector3 centerOffset = GeneratedObject.GetComponent<Renderer>().bounds.center - transform.position;
         centerOffset.y = 0;
 
         Vector3[] newVertices = initialMesh.vertices;
@@ -177,21 +177,26 @@ public class InteractionManager : MonoBehaviour
         Mesh newMesh = OffsetVertices(generatedMesh);
         _mainObject.GetComponent<MeshFilter>().mesh = newMesh;
 
-        Vector3 boundsSize = _generatedObject.GetComponent<Renderer>().bounds.size;
+        Vector3 boundsSize = GeneratedObject.GetComponent<Renderer>().bounds.size;
         _mainObject.GetComponent<BoxCollider>().size = boundsSize;
 
         _mainObject.transform.rotation = Quaternion.identity;
+
+        _mainObject.transform.position = GeneratedObject.GetComponent<Renderer>().bounds.center;
+
+        _mainObject.GetComponent<GridSnap>().IsOutOfBounds = true;
+        _mainObject.GetComponent<GridSnap>().IsDragging = true;
     }
 
     private void ApplyHoverEffect(bool isHovering)
     {
         if (isHovering)
         {
-            _generatedObject.layer = LayerMask.NameToLayer("Hover");
+            GeneratedObject.layer = LayerMask.NameToLayer("Hover");
         }
         else
         {
-            _generatedObject.layer = LayerMask.NameToLayer("Objects");
+            GeneratedObject.layer = LayerMask.NameToLayer("Objects");
         }
 
         this._isHovering = isHovering;
@@ -209,7 +214,7 @@ public class InteractionManager : MonoBehaviour
         Mesh newMesh = OffsetVertices(generatedMesh);
         _previewObject.GetComponent<MeshFilter>().mesh = Instantiate(newMesh);
 
-        Vector3 boundsSize = _generatedObject.GetComponent<Renderer>().bounds.size;
+        Vector3 boundsSize = GeneratedObject.GetComponent<Renderer>().bounds.size;
         _previewObject.GetComponent<BoxCollider>().size = boundsSize;
 
         _previewObject.transform.rotation = Quaternion.identity;

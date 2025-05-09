@@ -63,16 +63,29 @@ public class TransformObjectGenerator : MonoBehaviour
 
     private void GeneratePositions()
     {
-        if (_availableModes.Count % 2 == 0)
+        if (_availableModes.Count == 1)
         {
-            _positions.Add(new Vector3(7.5f, 0, 15));
-            _positions.Add(new Vector3(-7.5f, 0, 15));
+            _positions.Add(new Vector3(7.5f, 0, -15f));
+            transform.position += new Vector3(-7.5f, 0, -2.5f);
+            _transformContainer.position += new Vector3(0, 0, 7.5f);
+            _containerPosition += new Vector3(0, 0, 7.5f);
+        }
+        else if (_availableModes.Count % 2 == 0)
+        {
             _positions.Add(new Vector3(17.5f, 0, 0));
             _positions.Add(new Vector3(-17.5f, 0, 0));
+            _positions.Add(new Vector3(7.5f, 0, 15f));
+            _positions.Add(new Vector3(-7.5f, 0, 15f));
+
+            if (_availableModes.Count == 2)
+            {
+                _transformContainer.position += new Vector3(0, 0, 5f);
+                _containerPosition += new Vector3(0, 0, 5f);
+            }
         }
         else
         {
-            _positions.Add(new Vector3(0, 0, 15));
+            _positions.Add(new Vector3(0, 0, 15f));
             _positions.Add(new Vector3(17.5f, 0, 0));
             _positions.Add(new Vector3(-17.5f, 0, 0));
         }

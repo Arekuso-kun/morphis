@@ -31,9 +31,7 @@ public class ColorManager : MonoBehaviour
     private readonly float outlineValue = 0.9f;
     private readonly float outlineAlpha = 1.0f;
 
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    void Awake()
     {
         float hue = Random.value;
         SetHue(hue);

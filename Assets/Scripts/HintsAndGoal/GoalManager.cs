@@ -23,6 +23,8 @@ public class GoalManager : MonoBehaviour
     [SerializeField] private float _peakEmission = 2f;
     [SerializeField] private float _baseEmission = 0f;
 
+    public bool IsCorrect { get; private set; } = false;
+
     private MeshFilter _mainMeshFilter;
     private MeshFilter _meshFilter;
     private Renderer _renderer;
@@ -77,10 +79,29 @@ public class GoalManager : MonoBehaviour
             if (areEqual)
             {
                 Debug.Log("Meshes are equal, starting animation...");
-                StartCoroutine(AnimateHeight());
+                // StartCoroutine(AnimateHeight());
+                IsCorrect = true;
+            }
+            else
+            {
+                Debug.Log("Meshes are not equal, resetting...");
+                IsCorrect = false;
             }
 
             GetComponent<UpdateTrigger>().NeedsUpdate = false;
+        }
+
+        if (_mainObject.GetComponent<GridSnap>().IsSnappedToPoint)
+        {
+            GetComponent<MeshRenderer>().enabled = false;
+            GetComponent<BoxCollider>().enabled = false;
+            GetComponent<Rigidbody>().isKinematic = true;
+        }
+        else
+        {
+            GetComponent<MeshRenderer>().enabled = true;
+            GetComponent<BoxCollider>().enabled = true;
+            GetComponent<Rigidbody>().isKinematic = false;
         }
     }
 

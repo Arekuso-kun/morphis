@@ -8,9 +8,21 @@ public class GridSnap : MonoBehaviour
     [SerializeField] private GenerateGrid _grid;
     [SerializeField] private float _moveSmoothSpeed = 20f;
 
-    public bool IsDragging = false;
-    public bool IsRotating = false;
+    [Header("Platform Reference")]
+    [SerializeField] private BoxCollider platformCollider;
+    [SerializeField] private BoxCollider gridAreaCollider;
 
+    [Header("Snap Point")]
+    [SerializeField] private GameObject snapPoint;
+    [SerializeField] private float snapThreshold = 0.5f;
+
+    [HideInInspector] public bool IsSnappedToPoint = false;
+    [HideInInspector] public bool IsDragging = false;
+    [HideInInspector] public bool IsRotating = false;
+    [HideInInspector] public bool IsOutOfBounds = true;
+
+    private Bounds _platformBounds;
+    private Bounds _gridBounds;
     private float _gridSize;
     private Camera _mainCamera;
     private float _halfSize;
@@ -25,26 +37,50 @@ public class GridSnap : MonoBehaviour
             enabled = false;
             return;
         }
+
+        if (platformCollider == null)
+        {
+            Debug.LogError("Platform object collider not assigned!");
+            enabled = false;
+            return;
+        }
+
+        if (gridAreaCollider == null)
+        {
+            Debug.LogError("Grid area collider not assigned!");
+            enabled = false;
+            return;
+        }
     }
 
     void Start()
     {
         _mainCamera = Camera.main;
+
+        _platformBounds = platformCollider.bounds;
+        _gridBounds = gridAreaCollider.bounds;
+
         _gridSize = _grid.SquareSize / 2.0f;
         _halfSize = _grid.Size * _grid.SquareSize / 2.0f;
         _gridPosition = _grid.transform.position;
 
-        MoveToCenter();
+        MoveToDefaultPosition();
         _targetPosition = transform.position;
     }
 
     void Update()
     {
+        _platformBounds = platformCollider.bounds;
+        _gridBounds = gridAreaCollider.bounds;
+
+        Vector3 currentPosition = transform.position;
+        Vector3 checkPosition = new(currentPosition.x, _gridBounds.center.y, currentPosition.z);
+        IsOutOfBounds = !_gridBounds.Contains(checkPosition);
+
         if (CameraController.GlobalInteractionLock) return;
 
         HandleDragging();
         HandleRotation();
-        KeepWithinBounds();
 
         if (IsDragging)
             transform.position = Vector3.Lerp(transform.position, _targetPosition, _moveSmoothSpeed * Time.deltaTime);
@@ -58,12 +94,26 @@ public class GridSnap : MonoBehaviour
             if (Physics.Raycast(ray, out RaycastHit hit) && hit.transform == transform)
             {
                 IsDragging = true;
+                IsSnappedToPoint = false;
             }
         }
 
         if (Input.GetMouseButtonUp(0))
         {
             IsDragging = false;
+
+            if (snapPoint != null)
+            {
+                Vector3 snapPointPosition = snapPoint.transform.position;
+                Vector3 snapPointPositionToCheck = new(snapPointPosition.x, transform.position.y, snapPointPosition.z);
+                float distance = Vector3.Distance(transform.position, snapPointPositionToCheck);
+                if (distance <= snapThreshold)
+                {
+                    _targetPosition = new(snapPointPosition.x, transform.position.y, snapPointPosition.z);
+                    IsSnappedToPoint = true;
+                    transform.position = _targetPosition;
+                }
+            }
         }
 
         if (IsDragging)
@@ -79,11 +129,13 @@ public class GridSnap : MonoBehaviour
                     Mathf.Round(point.z / _gridSize) * _gridSize
                 );
 
-                // Limit the gridPoint to the dimensions of the grid bounds
-                gridPoint.x = Mathf.Clamp(gridPoint.x, _gridPosition.x - _halfSize, _gridPosition.x + _halfSize);
-                gridPoint.z = Mathf.Clamp(gridPoint.z, _gridPosition.z - _halfSize, _gridPosition.z + _halfSize);
+                Vector3 originalPoint = new(point.x, transform.position.y, point.z);
+                originalPoint.x = Mathf.Clamp(originalPoint.x, _platformBounds.min.x, _platformBounds.max.x);
+                originalPoint.z = Mathf.Clamp(originalPoint.z, _platformBounds.min.z, _platformBounds.max.z);
 
-                _targetPosition = gridPoint;
+                IsOutOfBounds = !_gridBounds.Contains(new Vector3(gridPoint.x, _gridBounds.center.y, gridPoint.z));
+
+                _targetPosition = IsOutOfBounds ? originalPoint : gridPoint;
             }
         }
     }
@@ -130,19 +182,9 @@ public class GridSnap : MonoBehaviour
         IsRotating = false;
     }
 
-    private void MoveToCenter()
+    private void MoveToDefaultPosition()
     {
-        transform.position = _gridPosition + new Vector3(0, transform.position.y, 0);
+        transform.position = _gridPosition + new Vector3(-(_grid.Size * _grid.SquareSize), transform.position.y, 0);
         _targetPosition = transform.position;
-    }
-
-    private void KeepWithinBounds()
-    {
-        Vector3 clampedPosition = _targetPosition;
-
-        clampedPosition.x = Mathf.Clamp(clampedPosition.x, _gridPosition.x - _halfSize, _gridPosition.x + _halfSize);
-        clampedPosition.z = Mathf.Clamp(clampedPosition.z, _gridPosition.z - _halfSize, _gridPosition.z + _halfSize);
-
-        _targetPosition = clampedPosition;
     }
 }

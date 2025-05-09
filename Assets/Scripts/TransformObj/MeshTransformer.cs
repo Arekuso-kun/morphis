@@ -8,6 +8,10 @@ public class MeshTransformer : MonoBehaviour
     [Tooltip("The grid object for reference")]
     [SerializeField] private GameObject _grid;
 
+    [Header("Materials")]
+    [SerializeField] private Material _invalidMaterial;
+    [SerializeField] private Material _validMaterial;
+
     private GameObject _targetObject;
     private GameObject _targetGrid;
 
@@ -58,6 +62,11 @@ public class MeshTransformer : MonoBehaviour
             return;
         }
 
+        if (_targetObject.GetComponent<GridSnap>() == null)
+        {
+            Debug.LogWarning("GridSnap component not found on target object!");
+        }
+
         _targetGrid = _objectManager.GetGrid();
         if (_targetGrid == null)
         {
@@ -87,6 +96,26 @@ public class MeshTransformer : MonoBehaviour
 
     void Update()
     {
+        if (_grid && _invalidMaterial && _validMaterial && _targetObject.GetComponent<GridSnap>())
+        {
+            if (_targetObject.GetComponent<GridSnap>().IsOutOfBounds)
+            {
+                GetComponent<MeshRenderer>().enabled = false;
+                GetComponent<BoxCollider>().enabled = false;
+                GetComponent<Rigidbody>().isKinematic = true;
+                _grid.GetComponent<MeshRenderer>().material = _invalidMaterial;
+                Debug.Log("Out of bounds!");
+            }
+            else
+            {
+                GetComponent<MeshRenderer>().enabled = true;
+                GetComponent<BoxCollider>().enabled = true;
+                GetComponent<Rigidbody>().isKinematic = false;
+                _grid.GetComponent<MeshRenderer>().material = _validMaterial;
+                Debug.Log("In bounds!");
+            }
+        }
+
         if (_mode != _objectManager.Mode)
         {
             _mode = _objectManager.Mode;
