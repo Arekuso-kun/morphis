@@ -7,5 +7,6 @@ public enum TransformationMode
     Shrink = 4,
     Wavy = 5,
     WavySharp = 6,
-    Shear = 7
+    Shear = 7,
+    Expand = 8
 }

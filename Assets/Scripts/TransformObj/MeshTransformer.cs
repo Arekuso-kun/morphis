@@ -180,6 +180,9 @@ public class MeshTransformer : MonoBehaviour
             case TransformationMode.Shear:
                 ApplyShearTransformation(targetMeshFilter.mesh, targetObjectTransform, targetGridTransform, 0.5f);
                 break;
+            case TransformationMode.Expand:
+                ApplyStretchTransformation(targetMeshFilter.mesh, targetObjectTransform, targetGridTransform, 1.0f, 2.0f);
+                break;
             default:
                 Debug.LogError("Invalid transformation mode selected!");
                 return;
@@ -261,7 +264,7 @@ public class MeshTransformer : MonoBehaviour
         _newUVs = targetMesh.uv;
     }
 
-    void ApplyStretchTransformation(Mesh targetMesh, Transform targetObjectTransform, Transform targetGridTransform, float stretchFactor)
+    void ApplyStretchTransformation(Mesh targetMesh, Transform targetObjectTransform, Transform targetGridTransform, float stretchFactor, float expandFactor = 1.0f)
     {
         Vector3 targetObjectPosition = targetObjectTransform.position;
         Vector3 targetGridPosition = targetGridTransform.position;
@@ -277,7 +280,7 @@ public class MeshTransformer : MonoBehaviour
             Vector3 offsetVertex = new(targetGridPosition.x, targetObjectPosition.y, targetGridPosition.z);
             Vector3 adjustedVertex = transformedPoints[i] - offsetVertex;
 
-            _newVertices[i] = new Vector3(adjustedVertex.x * stretchFactor, adjustedVertex.y, adjustedVertex.z);
+            _newVertices[i] = new Vector3(adjustedVertex.x * stretchFactor * expandFactor, adjustedVertex.y * expandFactor, adjustedVertex.z * expandFactor);
         }
 
         _newTriangles = targetMesh.triangles;

@@ -3106,6 +3106,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Button
       objectReference: {fileID: 0}
+    - target: {fileID: 3834726139593512707, guid: 972941ce0ca08b14881e676a1dec0c68, type: 3}
+      propertyPath: m_text
+      value: Reset Camera
+      objectReference: {fileID: 0}
     - target: {fileID: 4971435150114810141, guid: 972941ce0ca08b14881e676a1dec0c68, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -4388,7 +4392,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7586367313230567088, guid: 16e65034566b5a54f9a86b0049f66c06, type: 3}
       propertyPath: _availableModes.Array.size
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7586367313230567088, guid: 16e65034566b5a54f9a86b0049f66c06, type: 3}
       propertyPath: '_statusUpdate.Array.data[0]'
@@ -4420,7 +4424,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7586367313230567088, guid: 16e65034566b5a54f9a86b0049f66c06, type: 3}
       propertyPath: '_availableModes.Array.data[0]'
-      value: 1
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 7586367313230567088, guid: 16e65034566b5a54f9a86b0049f66c06, type: 3}
       propertyPath: '_availableModes.Array.data[1]'
