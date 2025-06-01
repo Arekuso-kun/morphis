@@ -76,6 +76,8 @@ public class LevelStartAnimation : MonoBehaviour
             _cameraController.LockUserInput = false;
             CameraController.GlobalInteractionLock = false;
 
+            _cameraController.SetOriginalCameraState();
+
             foreach (GameObject obj in _toEnable)
             {
                 obj.SetActive(true);

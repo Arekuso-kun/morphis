@@ -46,17 +46,22 @@ public class CameraController : MonoBehaviour
         set => _distance = value;
     }
 
+    public float MinDistance
+    {
+        get => _minDistance;
+        set => _minDistance = value;
+    }
+
+    public float MaxDistance
+    {
+        get => _maxDistance;
+        set => _maxDistance = value;
+    }
+
     public float Tilt
     {
         get => _rotation.y;
         set => _rotation.y = value;
-    }
-
-    void Start()
-    {
-        _originalDistance = _distance;
-        _originalRotation = _rotation;
-        _originalTarget = _target;
     }
 
     void Update()
@@ -107,6 +112,13 @@ public class CameraController : MonoBehaviour
                 !Mathf.Approximately(_rotation.y, _originalRotation.y) ||
                 _target != _originalTarget;
         }
+    }
+
+    public void SetOriginalCameraState()
+    {
+        _originalDistance = _distance;
+        _originalRotation = _rotation;
+        _originalTarget = _target;
     }
 
     public void ResetCamera()

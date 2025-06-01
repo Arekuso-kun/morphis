@@ -1,15 +1,17 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class MeshSaver : MonoBehaviour
 {
-    [SerializeField] private string _levelName = "Level_00";
-
     private MeshFilter _meshFilter;
     private BoxCollider _boxCollider;
     private HistoryManager _historyManager;
+    private string _levelName;
 
     void Awake()
     {
+        _levelName = SceneManager.GetActiveScene().name;
+
         _meshFilter = GetComponent<MeshFilter>();
         if (_meshFilter == null)
         {

@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Linq;
 using System.Threading.Tasks;
+using DG.Tweening;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 [RequireComponent(typeof(BoxCollider))]
@@ -14,21 +16,18 @@ public class GoalManager : MonoBehaviour
     [Tooltip("The tolerance for comparing vertices")]
     [SerializeField] private float _tolerance = 0.5f;
 
-    [Header("Height Animation Settings")]
-    [SerializeField] private float _heightDuration = 2f;
-    [SerializeField] private float _startHeight = -1f;
-
-    [Header("Emission Pulse Settings")]
-    [SerializeField] private float _pulseDuration = 0.3f;
-    [SerializeField] private float _peakEmission = 2f;
-    [SerializeField] private float _baseEmission = 0f;
+    [Header("Transition Effects")]
+    [SerializeField] private Camera _mainCamera;
+    [SerializeField] private CanvasGroup _fadeCanvasGroup;
 
     public bool IsCorrect { get; private set; } = false;
 
     private MeshFilter _mainMeshFilter;
+    private GridSnap _mainGridSnap;
     private MeshFilter _meshFilter;
     private Renderer _renderer;
     private BoxCollider _boxCollider;
+    private CameraController _cameraController;
 
     private bool _isComparing = false;
 
@@ -41,10 +40,40 @@ public class GoalManager : MonoBehaviour
             return;
         }
 
+        _mainGridSnap = _mainObject.GetComponent<GridSnap>();
+        if (_mainGridSnap == null)
+        {
+            Debug.LogError("GridSnap component not found on the main object!");
+            enabled = false;
+            return;
+        }
+
         _mainMeshFilter = _mainObject.GetComponent<MeshFilter>();
         if (_mainMeshFilter == null)
         {
             Debug.LogError("MeshFilter component not found on the main object!");
+            enabled = false;
+            return;
+        }
+
+        if (_mainCamera == null)
+        {
+            Debug.LogError("Main camera is not assigned!");
+            enabled = false;
+            return;
+        }
+
+        _cameraController = _mainCamera.GetComponent<CameraController>();
+        if (_cameraController == null)
+        {
+            Debug.LogError("CameraController component not found on the main camera!");
+            enabled = false;
+            return;
+        }
+
+        if (_fadeCanvasGroup == null)
+        {
+            Debug.LogError("Fade CanvasGroup is not assigned!");
             enabled = false;
             return;
         }
@@ -56,10 +85,6 @@ public class GoalManager : MonoBehaviour
 
     void Start()
     {
-
-        _renderer.material.SetFloat("_Height", _startHeight);
-        _renderer.material.SetFloat("_Emission", _baseEmission);
-
         UpdateCollider();
     }
 
@@ -81,6 +106,8 @@ public class GoalManager : MonoBehaviour
                 Debug.Log("Meshes are equal, starting animation...");
                 // StartCoroutine(AnimateHeight());
                 IsCorrect = true;
+
+                StartCoroutine(LoadNextScene());
             }
             else
             {
@@ -105,60 +132,65 @@ public class GoalManager : MonoBehaviour
         }
     }
 
-    IEnumerator AnimateHeight()
+    IEnumerator LoadNextScene()
     {
-        float currentHeight;
-        float elapsed = 0f;
-
-        Vector3 boundsSize = _renderer.bounds.size;
-        float targetHeight = boundsSize.y + 1f;
-
-        while (elapsed < _heightDuration)
+        while (!_mainGridSnap.IsSnappedToPoint)
         {
-            elapsed += Time.deltaTime;
-            float t = Mathf.Clamp01(elapsed / _heightDuration);
-            currentHeight = Mathf.Lerp(_startHeight, targetHeight, t);
-            _renderer.material.SetFloat("_Height", currentHeight);
             yield return null;
         }
 
-        currentHeight = targetHeight;
-        _renderer.material.SetFloat("_Height", currentHeight);
+        _cameraController.LockCameraChanges = true;
+        _cameraController.LockUserInput = true;
+        CameraController.GlobalInteractionLock = true;
 
-        StartCoroutine(EmissionPulse());
+        float targetDistance = Mathf.Min(_cameraController.Distance + 5f, _cameraController.MaxDistance);
+        float targetFOV = _mainCamera.fieldOfView + 5f;
+
+        Sequence transitionSequence = DOTween.Sequence();
+
+        transitionSequence.Join(DOTween.To(
+            () => _cameraController.Distance,
+            x => _cameraController.Distance = x,
+            targetDistance,
+            4f
+        ).SetEase(Ease.InOutSine));
+
+        transitionSequence.Join(DOTween.To(
+            () => _mainCamera.fieldOfView,
+            x => _mainCamera.fieldOfView = x,
+            targetFOV,
+            4f
+        ).SetEase(Ease.InOutSine));
+
+        _fadeCanvasGroup.gameObject.SetActive(true);
+        _fadeCanvasGroup.alpha = 0;
+        transitionSequence.Insert(
+            3f, _fadeCanvasGroup.DOFade(1f, 2f).SetEase(Ease.InOutSine)
+        );
+
+        transitionSequence.OnComplete(() =>
+        {
+            SceneManager.LoadScene(GetNextSceneName());
+        });
+
+        yield return transitionSequence.WaitForCompletion();
     }
 
-    IEnumerator EmissionPulse()
+    string GetNextSceneName()
     {
-        float startEmission = _baseEmission;
-        float targetEmission = _peakEmission;
-        float halfDuration = _pulseDuration / 2f;
+        string currentScene = SceneManager.GetActiveScene().name;
 
-        // up
-        float elapsed = 0f;
-        while (elapsed < halfDuration)
+        if (currentScene.StartsWith("Level_"))
         {
-            elapsed += Time.deltaTime;
-            float t = Mathf.Clamp01(elapsed / halfDuration);
-            float emission = Mathf.Lerp(startEmission, targetEmission, t);
-            _renderer.material.SetFloat("_Emission", emission);
-            yield return null;
+            string numberPart = currentScene.Substring(6);
+            if (int.TryParse(numberPart, out int levelNumber))
+            {
+                int nextLevelNumber = levelNumber + 1;
+                return $"Level_{nextLevelNumber:D2}";
+            }
         }
 
-        // down
-        startEmission = _peakEmission;
-        targetEmission = _baseEmission;
-        elapsed = 0f;
-        while (elapsed < halfDuration)
-        {
-            elapsed += Time.deltaTime;
-            float t = Mathf.Clamp01(elapsed / halfDuration);
-            float emission = Mathf.Lerp(startEmission, targetEmission, t);
-            _renderer.material.SetFloat("_Emission", emission);
-            yield return null;
-        }
-
-        _renderer.material.SetFloat("_Emission", _baseEmission);
+        return "MainMenu";
     }
 
     async Task<bool> CompareMeshesAsync(Vector3[] meshA, Vector3[] meshB)

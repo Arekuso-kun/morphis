@@ -104,7 +104,7 @@ public class MeshTransformer : MonoBehaviour
                 GetComponent<BoxCollider>().enabled = false;
                 GetComponent<Rigidbody>().isKinematic = true;
                 _grid.GetComponent<MeshRenderer>().material = _invalidMaterial;
-                Debug.Log("Out of bounds!");
+                // Debug.Log("Out of bounds!");
             }
             else
             {
@@ -112,7 +112,7 @@ public class MeshTransformer : MonoBehaviour
                 GetComponent<BoxCollider>().enabled = true;
                 GetComponent<Rigidbody>().isKinematic = false;
                 _grid.GetComponent<MeshRenderer>().material = _validMaterial;
-                Debug.Log("In bounds!");
+                // Debug.Log("In bounds!");
             }
         }
 

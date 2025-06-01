@@ -1,18 +1,21 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class LevelLoader : MonoBehaviour
 {
-    [SerializeField] private string _levelName = "Level_00";
     [SerializeField] private GameObject _hintObject;
     [SerializeField] private GameObject _goalObject;
     [SerializeField] private GameObject _transformObject;
 
     private List<ObjectState> _hintStates = new();
     private int _currentHintIndex = -1;
+    private string _levelName;
 
     void Awake()
     {
+        _levelName = SceneManager.GetActiveScene().name;
+
         if (!ValidateObject(_hintObject, "Hint")) return;
         if (!ValidateObject(_goalObject, "Goal")) return;
 
