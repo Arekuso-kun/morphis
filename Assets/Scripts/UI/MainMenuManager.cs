@@ -8,6 +8,8 @@ public class MainMenuManager : MonoBehaviour
     [SerializeField] private GameObject _settingsMenu;
     [SerializeField] private GameObject _settingsWindow;
     [SerializeField] private GameObject _controlsWindow;
+    [SerializeField] private GameObject _levelSelectorMenu;
+    [SerializeField] private GameObject _levelSelectorWindow;
     [SerializeField] private Camera _mainCamera;
 
     [SerializeField] private Vector3 _targetCameraPosition = new(0, -1f, -16f);
@@ -16,6 +18,8 @@ public class MainMenuManager : MonoBehaviour
     private MenuBackgroundAnimation _settingsMenuAnimation;
     private MenuSlideAnimation _settingsWindowAnimation;
     private MenuSlideAnimation _controlsWindowAnimation;
+    private MenuBackgroundAnimation _levelSelectorMenuAnimation;
+    private MenuSlideAnimation _levelSelectorWindowAnimation;
 
     void Awake()
     {
@@ -47,6 +51,20 @@ public class MainMenuManager : MonoBehaviour
             return;
         }
 
+        if (_levelSelectorMenu == null)
+        {
+            Debug.LogError("Level selector menu is not assigned!");
+            enabled = false;
+            return;
+        }
+
+        if (_levelSelectorWindow == null)
+        {
+            Debug.LogError("Level selector window is not assigned!");
+            enabled = false;
+            return;
+        }
+
         _settingsMenuAnimation = _settingsMenu.GetComponent<MenuBackgroundAnimation>();
         if (_settingsMenuAnimation == null)
         {
@@ -73,6 +91,22 @@ public class MainMenuManager : MonoBehaviour
         _controlsWindowAnimation.Direction = MenuSlideAnimation.SlideDirection.Down;
         _controlsWindowAnimation.Speed = MenuSlideAnimation.SlideSpeed.Fast;
 
+        _levelSelectorMenuAnimation = _levelSelectorMenu.GetComponent<MenuBackgroundAnimation>();
+        if (_levelSelectorMenuAnimation == null)
+        {
+            Debug.LogError("MenuBackgroundAnimation script not found on the level selector menu GameObject.");
+            enabled = false;
+            return;
+        }
+
+        _levelSelectorWindowAnimation = _levelSelectorWindow.GetComponent<MenuSlideAnimation>();
+        if (_levelSelectorWindowAnimation == null)
+        {
+            Debug.LogError("MenuSlideAnimation script not found on the level selector window GameObject.");
+            enabled = false;
+            return;
+        }
+
         if (_mainCamera == null)
         {
             Debug.LogError("Main camera is not assigned!");
@@ -90,15 +124,22 @@ public class MainMenuManager : MonoBehaviour
 
     void Update()
     {
-        if (_settingsMenu.activeSelf && Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (_controlsWindow.activeSelf)
+            if (_settingsMenu.activeSelf)
             {
-                CloseControlsWindow();
+                if (_controlsWindow.activeSelf)
+                {
+                    CloseControlsWindow();
+                }
+                else if (_settingsWindow.activeSelf)
+                {
+                    CloseSettings();
+                }
             }
-            else if (_settingsWindow.activeSelf)
+            else if (_levelSelectorMenu.activeSelf)
             {
-                CloseSettings();
+                CloseLevelSelector();
             }
         }
     }
@@ -151,6 +192,17 @@ public class MainMenuManager : MonoBehaviour
 
         _controlsWindowAnimation.CloseMenu();
         _settingsWindow.SetActive(true);
+    }
+
+    public void OpenLevelSelector()
+    {
+        _levelSelectorMenu.SetActive(true);
+    }
+
+    public void CloseLevelSelector()
+    {
+        _levelSelectorMenuAnimation.CloseMenu();
+        _levelSelectorWindowAnimation.CloseMenu();
     }
 
     public void QuitGame()
