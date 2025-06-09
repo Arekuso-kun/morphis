@@ -298,17 +298,15 @@ public class MeshTransformer : MonoBehaviour
         Vector3[] transformedPoints = new Vector3[targetVertices.Length];
         targetObjectTransform.TransformPoints(targetVertices, transformedPoints);
 
-        float gridMin = -_gridSize / 2;
-
         for (int i = 0; i < targetVertices.Length; i++)
         {
             Vector3 offsetVertex = new(targetGridPosition.x, targetObjectPosition.y, targetGridPosition.z);
             Vector3 adjustedVertex = transformedPoints[i] - offsetVertex;
 
-            float normalizedX = (adjustedVertex.x - gridMin) / _gridSize;
+            float normalizedX = adjustedVertex.x / _gridSize;
 
             float waveFactor = normalizedX * Mathf.PI * waveCount;
-            float waveHeight = (sharp ? SharpSin(waveFactor) : Mathf.Sin(waveFactor)) / waveCount;
+            float waveHeight = (sharp ? SharpSin(waveFactor) : Mathf.Sin(waveFactor)) / 2;
 
             _newVertices[i] = new Vector3(adjustedVertex.x, adjustedVertex.y, adjustedVertex.z + waveHeight);
         }

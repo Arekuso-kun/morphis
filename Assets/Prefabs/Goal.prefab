@@ -69,7 +69,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a3c524bb37131c949bf49f3bc8725153, type: 2}
+  - {fileID: 2100000, guid: 25aa6f91b170c1049b3cb03104ac8740, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -105,16 +105,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _mainObject: {fileID: 0}
   _tolerance: 0.5
-  _heightDuration: 2
-  _startHeight: -1
-  _pulseDuration: 0.3
-  _peakEmission: 2
-  _baseEmission: 0
   _mainCamera: {fileID: 0}
-  _zoomOutDuration: 2
-  _zoomOutTarget: 60
   _fadeCanvasGroup: {fileID: 0}
-  _fadeDuration: 1.5
 --- !u!114 &4293710539569543808
 MonoBehaviour:
   m_ObjectHideFlags: 0
