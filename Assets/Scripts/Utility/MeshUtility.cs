@@ -43,7 +43,6 @@ public static class MeshUtility
 
             stateList[i].meshFileName = meshFileName;
             stateList[i].isGoal = (i == stateList.Count - 1);
-            if (i == stateList.Count - 1) stateList[i].rotation = Quaternion.identity;
         }
 
         AssetDatabase.SaveAssets();

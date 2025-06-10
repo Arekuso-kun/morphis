@@ -83,11 +83,6 @@ public class GoalManager : MonoBehaviour
         _boxCollider = GetComponent<BoxCollider>();
     }
 
-    void Start()
-    {
-        UpdateCollider();
-    }
-
     async void Update()
     {
         if (_isComparing) return;
@@ -295,12 +290,5 @@ public class GoalManager : MonoBehaviour
         return Mathf.Abs(a.x - b.x) <= _tolerance
             && Mathf.Abs(a.y - b.y) <= _tolerance
             && Mathf.Abs(a.z - b.z) <= _tolerance;
-    }
-
-    void UpdateCollider()
-    {
-        Vector3 boundsSize = _renderer.bounds.size;
-        boundsSize.y = Mathf.Max(boundsSize.y, 0.01f);
-        _boxCollider.size = boundsSize;
     }
 }

@@ -50,6 +50,8 @@ public class GenerateCube : MonoBehaviour
         }
 
         UpdateMesh();
+
+        Debug.Log($"Vertices count: {_vertices.Length}, Triangles count: {_triangles.Length}");
     }
 
     private void CreateFace(int faceIndex, ref int vertexOffset, ref int triangleOffset)

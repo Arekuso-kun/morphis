@@ -34,6 +34,7 @@ public class ColorManager : MonoBehaviour
     void Awake()
     {
         float hue = Random.value;
+        // hue = 0.83f;
         SetHue(hue);
     }
 

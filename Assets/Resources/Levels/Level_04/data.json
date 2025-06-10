@@ -1,0 +1,46 @@
+{
+  "states": [
+    {
+      "meshFileName": "hint_0.asset",
+      "position": {
+        "x": -1.9999942779541016,
+        "y": 1.0,
+        "z": 0.000003814697265625
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 1.0
+      },
+      "colliderSize": {
+        "x": 2.0,
+        "y": 2.0,
+        "z": 2.0
+      },
+      "mode": 1,
+      "isGoal": false
+    },
+    {
+      "meshFileName": "goal.asset",
+      "position": {
+        "x": 0.0,
+        "y": 1.0,
+        "z": 0.0
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 1.0
+      },
+      "colliderSize": {
+        "x": 7.071078777313232,
+        "y": 2.0,
+        "z": 2.8786916732788088
+      },
+      "mode": 0,
+      "isGoal": true
+    }
+  ]
+}

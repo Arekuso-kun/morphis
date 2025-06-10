@@ -141,7 +141,7 @@ public class MeshTransformer : MonoBehaviour
         BoxCollider boxCollider = GetComponent<BoxCollider>();
 
         Vector3 boundsSize = GetComponent<Renderer>().bounds.size;
-        boundsSize.y = Mathf.Max(boundsSize.y, 0.01f);
+        boundsSize.y = Mathf.Max(boundsSize.y, 0.0001f);
         boxCollider.size = boundsSize;
 
         Vector3 boundsCenter = GetComponent<Renderer>().bounds.center;
