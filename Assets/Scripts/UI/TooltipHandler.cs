@@ -13,7 +13,7 @@ public class TooltipHandler : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 
     public enum TooltipPosition { Above, Below }
     [SerializeField] private TooltipPosition position = TooltipPosition.Above;
-    [SerializeField] private float verticalOffset = 50f;
+    [SerializeField] private float verticalOffset;
 
     private RectTransform buttonRect;
     private RectTransform canvasRect;
@@ -42,25 +42,26 @@ public class TooltipHandler : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         Vector2 newSize = new(tooltipText.preferredWidth + padding.x, tooltipText.preferredHeight + padding.y);
         tooltipBox.sizeDelta = newSize;
 
-        Vector3[] buttonCorners = new Vector3[4];
-        buttonRect.GetWorldCorners(buttonCorners);
+        float height = buttonRect.rect.height * buttonRect.lossyScale.y;
+        float scaledOffset = verticalOffset * buttonRect.lossyScale.y;
 
-        Vector3 worldPosition;
+        Vector3 tooltipPosition = buttonRect.position;
+
         if (position == TooltipPosition.Above)
         {
-            worldPosition = (buttonCorners[1] + buttonCorners[2]) / 2f; // top center
-            worldPosition.y += verticalOffset;
+            tooltipPosition.y += height / 2f + scaledOffset;
         }
         else
         {
-            worldPosition = (buttonCorners[0] + buttonCorners[3]) / 2f; // bottom center
-            worldPosition.y -= verticalOffset;
+            tooltipPosition.y -= height / 2f + scaledOffset;
         }
 
-        tooltipBox.position = worldPosition;
+        tooltipBox.position = tooltipPosition;
 
         ClampTooltipToCanvas();
     }
+
+
 
     private void ClampTooltipToCanvas()
     {

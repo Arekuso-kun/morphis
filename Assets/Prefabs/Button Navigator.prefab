@@ -150,7 +150,7 @@ MonoBehaviour:
   tooltipText: {fileID: 3834726139593512707}
   padding: {x: 20, y: 10}
   position: 0
-  verticalOffset: 22
+  verticalOffset: 35
 --- !u!1 &3888843563137715345
 GameObject:
   m_ObjectHideFlags: 0
