@@ -154,7 +154,7 @@ public class MainMenuManager : MonoBehaviour
             .SetDelay(1f)
             .OnComplete(() =>
             {
-                SceneManager.LoadScene("MainScene");
+                SceneManager.LoadScene("Level_01");
                 _mainCamera.GetComponent<Parallax>().enabled = true;
             });
     }

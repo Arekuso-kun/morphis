@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class InteractionManager : MonoBehaviour
@@ -11,6 +12,10 @@ public class InteractionManager : MonoBehaviour
 
     [Tooltip("List of GameObjects that need to be updated when the object is transformed")]
     public List<GameObject> StatusUpdate = new();
+
+    public TextMeshProUGUI TransformationNameText;
+    public TextMeshProUGUI TransformationDescriptionText;
+    public GameObject HoverInfoContainer;
 
     [Header("Pulse Settings")]
     public float PulseSpeed = 5f;
@@ -25,6 +30,19 @@ public class InteractionManager : MonoBehaviour
     private GridSnap _gridSnap;
 
     private ObjectManager _objectManager;
+
+    private Dictionary<TransformationMode, (string name, string description)> _transformationDescriptions = new()
+    {
+        { TransformationMode.Circular, ("Circular", "Transforms X axis into the angle from the center and the Z axis into the distance from the center.") },
+        { TransformationMode.CircularSquared, ("Circular Squared", "Transforms X axis into the angle from the center and the Z axis into the distance from the center, expanded as a square.") },
+        { TransformationMode.Stretch, ("Stretch", "Stretches on the X axis.") },
+        { TransformationMode.Shrink, ("Shrink", "Compresses on the X axis.") },
+        { TransformationMode.Wavy, ("Wavy", "Adds smooth wave distortions.") },
+        { TransformationMode.WavySharp, ("Wavy Sharp", "Adds sharp-edged wave distortions.") },
+        { TransformationMode.Shear, ("Shear", "Tilts sideways.") },
+        { TransformationMode.Expand, ("Expand", "Expands in all directions.") }
+    };
+
 
     void Start()
     {
@@ -92,14 +110,12 @@ public class InteractionManager : MonoBehaviour
                 if (!_isHovering)
                 {
                     ApplyHoverEffect(true);
-                    // ShowPreviewObject();
                 }
 
                 if (Input.GetMouseButtonDown(0) && !_gridSnap.IsRotating) // Left click
                 {
                     SaveObjectState();
                     ApplyTransformation();
-                    // HidePreviewObject();
 
                     foreach (GameObject obj in StatusUpdate)
                         obj.GetComponent<UpdateTrigger>().NeedsUpdate = true;
@@ -108,13 +124,11 @@ public class InteractionManager : MonoBehaviour
             else if (_isHovering)
             {
                 ApplyHoverEffect(false);
-                // HidePreviewObject();
             }
         }
         else if (_isHovering)
         {
             ApplyHoverEffect(false);
-            // HidePreviewObject();
         }
 
         if (_isHovering && _previewMaterial != null)
@@ -190,42 +204,23 @@ public class InteractionManager : MonoBehaviour
 
     private void ApplyHoverEffect(bool isHovering)
     {
-        if (isHovering)
-        {
-            GeneratedObject.layer = LayerMask.NameToLayer("Hover");
-        }
-        else
-        {
-            GeneratedObject.layer = LayerMask.NameToLayer("Objects");
-        }
-
+        GeneratedObject.layer = LayerMask.NameToLayer(isHovering ? "Hover" : "Objects");
         this._isHovering = isHovering;
+
+        if (HoverInfoContainer != null)
+        {
+            HoverInfoContainer.SetActive(isHovering);
+        }
+
+        if (isHovering && TransformationNameText != null && TransformationDescriptionText != null)
+        {
+            var mode = _objectManager.Mode;
+            if (_transformationDescriptions.TryGetValue(mode, out var info))
+            {
+                TransformationNameText.text = info.name;
+                TransformationDescriptionText.text = info.description;
+            }
+        }
     }
 
-    private void ShowPreviewObject()
-    {
-        _previewObject.GetComponent<MeshRenderer>().enabled = true;
-        _previewObject.GetComponent<BoxCollider>().enabled = true;
-        _previewObject.GetComponent<Rigidbody>().isKinematic = false;
-        _mainObject.GetComponent<MeshRenderer>().enabled = false;
-
-        Mesh generatedMesh = _meshTransformer.GetMesh();
-
-        Mesh newMesh = OffsetVertices(generatedMesh);
-        _previewObject.GetComponent<MeshFilter>().mesh = Instantiate(newMesh);
-
-        Vector3 boundsSize = GeneratedObject.GetComponent<Renderer>().bounds.size;
-        _previewObject.GetComponent<BoxCollider>().size = boundsSize;
-
-        _previewObject.transform.rotation = Quaternion.identity;
-        _previewObject.transform.position = _mainObject.transform.position;
-    }
-
-    private void HidePreviewObject()
-    {
-        _previewObject.GetComponent<MeshRenderer>().enabled = false;
-        _previewObject.GetComponent<BoxCollider>().enabled = false;
-        _previewObject.GetComponent<Rigidbody>().isKinematic = true;
-        _mainObject.GetComponent<MeshRenderer>().enabled = true;
-    }
 }

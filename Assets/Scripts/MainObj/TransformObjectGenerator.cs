@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class TransformObjectGenerator : MonoBehaviour
@@ -28,6 +29,10 @@ public class TransformObjectGenerator : MonoBehaviour
 
     [Tooltip("List of GameObjects that need to be updated when the object is transformed")]
     [SerializeField] private List<GameObject> _statusUpdate = new();
+
+    [SerializeField] private TextMeshProUGUI _transformationNameText;
+    [SerializeField] private TextMeshProUGUI _transformationDescriptionText;
+    [SerializeField] private GameObject _hoverInfoContainer;
 
     private List<Vector3> _positions = new();
 
@@ -117,6 +122,10 @@ public class TransformObjectGenerator : MonoBehaviour
 
             foreach (GameObject obj in _statusUpdate)
                 newObject.GetComponent<InteractionManager>().StatusUpdate.Add(obj);
+
+            newObject.GetComponent<InteractionManager>().HoverInfoContainer = _hoverInfoContainer;
+            newObject.GetComponent<InteractionManager>().TransformationNameText = _transformationNameText;
+            newObject.GetComponent<InteractionManager>().TransformationDescriptionText = _transformationDescriptionText;
         }
     }
 }
