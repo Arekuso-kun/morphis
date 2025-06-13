@@ -127,6 +127,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 11979658450995277, guid: a794266f6d9dacb46b024c12db46c14a, type: 3}
+      propertyPath: disableRotation
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1051386095335196214, guid: a794266f6d9dacb46b024c12db46c14a, type: 3}
       propertyPath: m_Name
       value: Level

@@ -16,6 +16,9 @@ public class GridSnap : MonoBehaviour
     [SerializeField] private GameObject snapPoint;
     [SerializeField] private float snapThreshold = 0.5f;
 
+    [Header("Rotation Settings")]
+    [SerializeField] private bool disableRotation = false;
+
     [HideInInspector] public bool IsSnappedToPoint = false;
     [HideInInspector] public bool IsDragging = false;
     [HideInInspector] public bool IsRotating = false;
@@ -142,15 +145,15 @@ public class GridSnap : MonoBehaviour
 
     private void HandleRotation()
     {
-        if (IsRotating) return;
+        if (disableRotation || IsRotating) return;
 
         if (Input.GetKeyDown(KeyCode.W))
         {
-            StartCoroutine(RotateSmooth(Vector3.right, -90f));
+            StartCoroutine(RotateSmooth(Vector3.right, 90f));
         }
         if (Input.GetKeyDown(KeyCode.S))
         {
-            StartCoroutine(RotateSmooth(Vector3.right, 90f));
+            StartCoroutine(RotateSmooth(Vector3.right, -90f));
         }
         if (Input.GetKeyDown(KeyCode.A))
         {

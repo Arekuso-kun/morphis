@@ -313,6 +313,9 @@ MonoBehaviour:
   _customPositions: []
   _containerPosition: {x: 0, y: 0, z: 0}
   _statusUpdate: []
+  _transformationNameText: {fileID: 0}
+  _transformationDescriptionText: {fileID: 0}
+  _hoverInfoContainer: {fileID: 0}
 --- !u!1 &8552759203489020052
 GameObject:
   m_ObjectHideFlags: 0
@@ -452,6 +455,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7654581526727f44abae030624cef188, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _gridSnap: {fileID: 2775617971975735648}
 --- !u!65 &7869736674306376734
 BoxCollider:
   m_ObjectHideFlags: 0

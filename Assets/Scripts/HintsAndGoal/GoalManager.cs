@@ -131,6 +131,8 @@ public class GoalManager : MonoBehaviour
     {
         while (!_mainGridSnap.IsSnappedToPoint)
         {
+            if (!IsCorrect) yield break;
+
             yield return null;
         }
 

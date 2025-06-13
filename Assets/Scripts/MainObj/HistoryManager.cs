@@ -3,6 +3,8 @@ using System.Collections.Generic;
 
 public class HistoryManager : MonoBehaviour
 {
+    [SerializeField] private GridSnap _gridSnap;
+
     private Stack<Mesh> _undoMeshStack = new();
     private Stack<ObjectState> _undoStateStack = new();
 
@@ -17,6 +19,13 @@ public class HistoryManager : MonoBehaviour
 
     void Awake()
     {
+        if (_gridSnap == null)
+        {
+            Debug.LogError("GridSnap component is not assigned!");
+            enabled = false;
+            return;
+        }
+
         _meshFilter = GetComponent<MeshFilter>();
         if (_meshFilter == null)
         {
@@ -131,6 +140,7 @@ public class HistoryManager : MonoBehaviour
 
     private void ApplyChanges()
     {
+        _gridSnap.IsSnappedToPoint = false;
         _meshFilter.mesh = _currentMesh;
         _boxCollider.size = _currentState.colliderSize;
         transform.localPosition = _currentState.position;
