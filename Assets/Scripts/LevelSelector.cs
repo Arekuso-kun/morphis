@@ -11,16 +11,25 @@ public class LevelSelector : MonoBehaviour
 
     void Start()
     {
+        int highestUnlocked = PlayerPrefs.GetInt("HighestLevelUnlocked", 1);
+
         for (int i = 1; i <= levelCount; i++)
         {
             GameObject buttonObj = Instantiate(levelButtonPrefab, gridParent);
-            Button button = buttonObj.GetComponent<Button>();
+            Button button = buttonObj.GetComponentInChildren<Button>();
             TMP_Text buttonText = buttonObj.GetComponentInChildren<TMP_Text>();
 
             string levelName = $"Level_{i:00}";
             buttonText.text = $"{i}";
 
-            button.onClick.AddListener(() => SceneManager.LoadScene(levelName));
+            if (i <= highestUnlocked)
+            {
+                button.onClick.AddListener(() => SceneManager.LoadScene(levelName));
+            }
+            else
+            {
+                button.interactable = false;
+            }
         }
     }
 }

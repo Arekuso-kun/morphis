@@ -167,6 +167,13 @@ public class GoalManager : MonoBehaviour
 
         transitionSequence.OnComplete(() =>
         {
+            int currentLevel = GetCurrentLevelNumber();
+            if (currentLevel > 0)
+            {
+                PlayerPrefs.SetInt($"Level_{currentLevel}_Completed", 1);
+                PlayerPrefs.SetInt("HighestLevelUnlocked", Mathf.Max(PlayerPrefs.GetInt("HighestLevelUnlocked", 1), currentLevel + 1));
+                PlayerPrefs.Save();
+            }
             SceneManager.LoadScene(GetNextSceneName());
         });
 
@@ -189,6 +196,21 @@ public class GoalManager : MonoBehaviour
 
         return "MainMenu";
     }
+
+    int GetCurrentLevelNumber()
+    {
+        string currentScene = SceneManager.GetActiveScene().name;
+        if (currentScene.StartsWith("Level_"))
+        {
+            string numberPart = currentScene.Substring(6);
+            if (int.TryParse(numberPart, out int levelNumber))
+            {
+                return levelNumber;
+            }
+        }
+        return -1;
+    }
+
 
     async Task<bool> CompareMeshesAsync(Vector3[] meshA, Vector3[] meshB)
     {

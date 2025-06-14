@@ -197,6 +197,7 @@ public class MainMenuManager : MonoBehaviour
     public void OpenLevelSelector()
     {
         _levelSelectorMenu.SetActive(true);
+        _levelSelectorWindow.SetActive(true);
     }
 
     public void CloseLevelSelector()

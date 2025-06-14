@@ -2520,6 +2520,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2521199317506961515}
   - component: {fileID: 2911367960884999612}
+  - component: {fileID: 2911367960884999614}
   m_Layer: 5
   m_Name: Btns
   m_TagString: Untagged
@@ -2551,6 +2552,14 @@ MonoBehaviour:
   m_Spacing: {x: 10, y: 10}
   m_Constraint: 0
   m_ConstraintCount: 2
+--- !u!222 &2911367960884999614
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2911367960884999611}
+  m_CullTransparentMesh: 1
 --- !u!1 &2993989668688524680
 GameObject:
   m_ObjectHideFlags: 0
