@@ -28,6 +28,9 @@ public class GoalManager : MonoBehaviour
     private Renderer _renderer;
     private BoxCollider _boxCollider;
     private CameraController _cameraController;
+    private Quaternion _lastRotation;
+    private Quaternion _rotation;
+
 
     private bool _isComparing = false;
 
@@ -87,21 +90,28 @@ public class GoalManager : MonoBehaviour
     {
         if (_isComparing) return;
 
-        Vector3[] currentMesh = _mainMeshFilter.mesh.vertices;
-        Vector3[] savedMesh = _meshFilter.mesh.vertices;
+        _rotation = _mainObject.transform.rotation;
+
+        if (_rotation != _lastRotation)
+        {
+            _lastRotation = _rotation;
+            GetComponent<UpdateTrigger>().NeedsUpdate = true;
+        }
 
         if (GetComponent<UpdateTrigger>().NeedsUpdate)
         {
             _isComparing = true;
+
+            Vector3[] currentMesh = _mainMeshFilter.mesh.vertices;
+            Vector3[] savedMesh = _meshFilter.mesh.vertices;
+
             bool areEqual = await CompareMeshesAsync(currentMesh, savedMesh);
             _isComparing = false;
 
             if (areEqual)
             {
                 Debug.Log("Meshes are equal, starting animation...");
-                // StartCoroutine(AnimateHeight());
                 IsCorrect = true;
-
                 StartCoroutine(LoadNextScene());
             }
             else
@@ -113,18 +123,11 @@ public class GoalManager : MonoBehaviour
             GetComponent<UpdateTrigger>().NeedsUpdate = false;
         }
 
-        if (_mainObject.GetComponent<GridSnap>().IsSnappedToPoint)
-        {
-            GetComponent<MeshRenderer>().enabled = false;
-            GetComponent<BoxCollider>().enabled = false;
-            GetComponent<Rigidbody>().isKinematic = true;
-        }
-        else
-        {
-            GetComponent<MeshRenderer>().enabled = true;
-            GetComponent<BoxCollider>().enabled = true;
-            GetComponent<Rigidbody>().isKinematic = false;
-        }
+        bool isSnapped = _mainObject.GetComponent<GridSnap>().IsSnappedToPoint;
+
+        GetComponent<MeshRenderer>().enabled = !isSnapped;
+        GetComponent<BoxCollider>().enabled = !isSnapped;
+        GetComponent<Rigidbody>().isKinematic = isSnapped;
     }
 
     IEnumerator LoadNextScene()
@@ -211,10 +214,12 @@ public class GoalManager : MonoBehaviour
         return -1;
     }
 
-
     async Task<bool> CompareMeshesAsync(Vector3[] meshA, Vector3[] meshB)
     {
-        return await Task.Run(() => MeshesAreEqual(meshA, meshB));
+        Vector3[] rotatedMeshA = meshA.Select(v => _mainObject.transform.rotation * v).ToArray();
+        Vector3[] rotatedMeshB = meshB.Select(v => transform.rotation * v).ToArray();
+
+        return await Task.Run(() => MeshesAreEqual(rotatedMeshA, rotatedMeshB));
     }
 
     bool MeshesAreEqual(Vector3[] meshA, Vector3[] meshB)
