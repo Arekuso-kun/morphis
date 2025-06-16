@@ -173,11 +173,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5757366525697939357, guid: a794266f6d9dacb46b024c12db46c14a, type: 3}
       propertyPath: _availableModes.Array.size
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5757366525697939357, guid: a794266f6d9dacb46b024c12db46c14a, type: 3}
       propertyPath: '_availableModes.Array.data[0]'
-      value: 5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5757366525697939357, guid: a794266f6d9dacb46b024c12db46c14a, type: 3}
       propertyPath: '_availableModes.Array.data[1]'

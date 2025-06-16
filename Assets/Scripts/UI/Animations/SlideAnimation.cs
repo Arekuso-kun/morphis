@@ -3,6 +3,14 @@ using DG.Tweening;
 
 public class SlideAnimation : MonoBehaviour
 {
+    public enum SlideDirection
+    {
+        Horizontal,
+        Vertical
+    }
+
+    [SerializeField] private SlideDirection slideDirection = SlideDirection.Horizontal;
+
     private RectTransform _rectTransform;
     private Vector2 _offScreenPosition;
     private Vector2 _onScreenPosition;
@@ -11,7 +19,16 @@ public class SlideAnimation : MonoBehaviour
     {
         _rectTransform = GetComponent<RectTransform>();
         _onScreenPosition = _rectTransform.anchoredPosition;
-        _offScreenPosition = new Vector2(-_onScreenPosition.x, _onScreenPosition.y);
+
+        switch (slideDirection)
+        {
+            case SlideDirection.Horizontal:
+                _offScreenPosition = new Vector2(-_onScreenPosition.x, _onScreenPosition.y);
+                break;
+            case SlideDirection.Vertical:
+                _offScreenPosition = new Vector2(_onScreenPosition.x, -_onScreenPosition.y);
+                break;
+        }
     }
 
     private void OnEnable()

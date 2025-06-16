@@ -1,9 +1,13 @@
+using TMPro;
 using UnityEngine;
 
 public class MaterialManager : MonoBehaviour
 {
     [SerializeField] private GridSnap _gridSnap;
     [SerializeField] private GoalManager _goalManager;
+
+    [SerializeField] private TextMeshProUGUI ErrorText;
+    [SerializeField] private GameObject ErrorContainer;
 
     private Material _defaultMaterial;
     private Material _runtimeMaterial;
@@ -43,19 +47,27 @@ public class MaterialManager : MonoBehaviour
             if (_goalManager.IsCorrect)
             {
                 _runtimeMaterial.SetColor("_BaseColor", Color.green);
-                // _runtimeMaterial.SetTexture("_BaseMap", null);
             }
             else
             {
                 _runtimeMaterial.SetColor("_BaseColor", Color.red);
-                // _runtimeMaterial.SetTexture("_BaseMap", null);
+
+                if (!ErrorContainer.activeSelf)
+                {
+                    ErrorContainer.SetActive(true);
+                }
             }
+
         }
         else
         {
             _renderer.material = new Material(_defaultMaterial);
             _runtimeMaterial = _renderer.material;
+
+            if (ErrorContainer.activeSelf)
+            {
+                ErrorContainer.GetComponent<SlideAnimation>().ClosePanel();
+            }
         }
     }
-
 }
