@@ -193,6 +193,10 @@ public class GoalManager : MonoBehaviour
             if (int.TryParse(numberPart, out int levelNumber))
             {
                 int nextLevelNumber = levelNumber + 1;
+
+                if (nextLevelNumber > 20)
+                    return "EndScene";
+
                 return $"Level_{nextLevelNumber:D2}";
             }
         }

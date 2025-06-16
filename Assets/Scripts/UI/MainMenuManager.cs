@@ -1,3 +1,4 @@
+using System;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -154,7 +155,12 @@ public class MainMenuManager : MonoBehaviour
             .SetDelay(1f)
             .OnComplete(() =>
             {
-                SceneManager.LoadScene("Level_01");
+                int highestUnlocked = PlayerPrefs.GetInt("HighestLevelUnlocked", 1);
+                highestUnlocked = Mathf.Clamp(highestUnlocked, 1, 20);
+                string levelToLoad = $"Level_{highestUnlocked:00}";
+
+                SceneManager.LoadScene(levelToLoad);
+
                 _mainCamera.GetComponent<Parallax>().enabled = true;
             });
     }
