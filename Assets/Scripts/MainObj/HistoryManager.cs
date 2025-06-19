@@ -4,6 +4,7 @@ using System.Collections.Generic;
 public class HistoryManager : MonoBehaviour
 {
     [SerializeField] private GridSnap _gridSnap;
+    [SerializeField] private UpdateTrigger _goalUpdateTrigger;
 
     private Stack<Mesh> _undoMeshStack = new();
     private Stack<ObjectState> _undoStateStack = new();
@@ -38,6 +39,13 @@ public class HistoryManager : MonoBehaviour
         if (_boxCollider == null)
         {
             Debug.LogError("BoxCollider component is missing!");
+            enabled = false;
+            return;
+        }
+
+        if (_goalUpdateTrigger == null)
+        {
+            Debug.LogError("UpdateTrigger component is not assigned!");
             enabled = false;
             return;
         }
@@ -145,6 +153,8 @@ public class HistoryManager : MonoBehaviour
         _boxCollider.size = _currentState.colliderSize;
         transform.localPosition = _currentState.position;
         transform.rotation = _currentState.rotation;
+
+        _goalUpdateTrigger.NeedsUpdate = true;
     }
 
     public void ResetTransformations()

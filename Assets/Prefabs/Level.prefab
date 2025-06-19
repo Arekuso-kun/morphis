@@ -3949,6 +3949,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7939125892292456534, guid: 16e65034566b5a54f9a86b0049f66c06, type: 3}
+      propertyPath: _goalUpdateTrigger
+      value: 
+      objectReference: {fileID: 888495979268845830}
     - target: {fileID: 8353509972557959096, guid: 16e65034566b5a54f9a86b0049f66c06, type: 3}
       propertyPath: size
       value: 2
@@ -4255,6 +4259,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d038b993c5925974a95d3fcba2b9a81d, type: 3}
+--- !u!114 &888495979268845830 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4293710539569543808, guid: d038b993c5925974a95d3fcba2b9a81d, type: 3}
+  m_PrefabInstance: {fileID: 4017985603139931014}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6033488890737281142}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46f9ecd766fb49643938ed957f4a7a5f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6033488890737281142 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7239961584563602416, guid: d038b993c5925974a95d3fcba2b9a81d, type: 3}
