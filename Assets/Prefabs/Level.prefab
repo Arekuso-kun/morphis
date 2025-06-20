@@ -3339,7 +3339,7 @@ MonoBehaviour:
   _distance: 49
   _minDistance: 10
   _maxDistance: 60
-  _zoomSpeed: 10
+  _zoomSpeed: 15
   _rotation: {x: 0, y: 40}
   _rotationSpeed: 5
   _tiltMultiplier: 0.25

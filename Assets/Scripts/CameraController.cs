@@ -10,7 +10,7 @@ public class CameraController : MonoBehaviour
     [SerializeField] private float _distance = 49f;
     [SerializeField] private float _minDistance = 10f;
     [SerializeField] private float _maxDistance = 60f;
-    [SerializeField] private float _zoomSpeed = 10f;
+    [SerializeField] private float _zoomSpeed = 15f;
 
     [Header("Rotation Settings")]
     [SerializeField] private Vector2 _rotation = new(0f, 40f);
