@@ -102,7 +102,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Size: 8
   SquareSize: 1
-  Subdivisions: 16
+  Subdivisions: 12
 --- !u!65 &2616460615069264972
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -439,6 +439,7 @@ MonoBehaviour:
   gridAreaCollider: {fileID: 0}
   snapPoint: {fileID: 0}
   snapThreshold: 0.5
+  disableRotation: 0
   IsSnappedToPoint: 0
   IsDragging: 0
   IsRotating: 0
@@ -456,6 +457,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _gridSnap: {fileID: 2775617971975735648}
+  _goalUpdateTrigger: {fileID: 0}
 --- !u!65 &7869736674306376734
 BoxCollider:
   m_ObjectHideFlags: 0
